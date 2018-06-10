@@ -10,9 +10,13 @@
 		3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */; };
 		3D17EFBE20C5F599002AEBE2 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFBD20C5F599002AEBE2 /* art.scnassets */; };
 		3D17EFC020C5F599002AEBE2 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFBF20C5F599002AEBE2 /* GameViewController.swift */; };
-		3D17EFC320C5F599002AEBE2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFC120C5F599002AEBE2 /* Main.storyboard */; };
 		3D17EFC520C5F599002AEBE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFC420C5F599002AEBE2 /* Assets.xcassets */; };
 		3D17EFC820C5F599002AEBE2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFC620C5F599002AEBE2 /* LaunchScreen.storyboard */; };
+		3D17EFD420C75156002AEBE2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFD320C75156002AEBE2 /* Extensions.swift */; };
+		3D5B785820CCC1B40048AEE7 /* NavigationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */; };
+		3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */; };
+		3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */; };
+		3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,10 +24,14 @@
 		3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3D17EFBD20C5F599002AEBE2 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		3D17EFBF20C5F599002AEBE2 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
-		3D17EFC220C5F599002AEBE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3D17EFC420C5F599002AEBE2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D17EFC720C5F599002AEBE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3D17EFC920C5F599002AEBE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3D17EFD320C75156002AEBE2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationWindowController.swift; sourceTree = "<group>"; };
+		3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavOptionsController.swift; sourceTree = "<group>"; };
+		3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSearchController.swift; sourceTree = "<group>"; };
+		3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,14 +65,34 @@
 			isa = PBXGroup;
 			children = (
 				3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */,
+				3D5B785520CCA72F0048AEE7 /* Controllers */,
+				3D5B785620CCA7460048AEE7 /* Helpers */,
 				3D17EFBD20C5F599002AEBE2 /* art.scnassets */,
-				3D17EFBF20C5F599002AEBE2 /* GameViewController.swift */,
-				3D17EFC120C5F599002AEBE2 /* Main.storyboard */,
 				3D17EFC420C5F599002AEBE2 /* Assets.xcassets */,
 				3D17EFC620C5F599002AEBE2 /* LaunchScreen.storyboard */,
 				3D17EFC920C5F599002AEBE2 /* Info.plist */,
 			);
 			path = "Conant Map";
+			sourceTree = "<group>";
+		};
+		3D5B785520CCA72F0048AEE7 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */,
+				3D17EFBF20C5F599002AEBE2 /* GameViewController.swift */,
+				3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */,
+				3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */,
+				3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		3D5B785620CCA7460048AEE7 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3D17EFD320C75156002AEBE2 /* Extensions.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -94,7 +122,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "Johnny Waity";
 				TargetAttributes = {
 					3D17EFB720C5F599002AEBE2 = {
@@ -129,7 +157,6 @@
 				3D17EFBE20C5F599002AEBE2 /* art.scnassets in Resources */,
 				3D17EFC820C5F599002AEBE2 /* LaunchScreen.storyboard in Resources */,
 				3D17EFC520C5F599002AEBE2 /* Assets.xcassets in Resources */,
-				3D17EFC320C5F599002AEBE2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,7 +167,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */,
+				3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */,
+				3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */,
 				3D17EFC020C5F599002AEBE2 /* GameViewController.swift in Sources */,
+				3D5B785820CCC1B40048AEE7 /* NavigationWindowController.swift in Sources */,
+				3D17EFD420C75156002AEBE2 /* Extensions.swift in Sources */,
 				3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -148,14 +180,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		3D17EFC120C5F599002AEBE2 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3D17EFC220C5F599002AEBE2 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		3D17EFC620C5F599002AEBE2 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -281,11 +305,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86FFSYZRW3;
 				INFOPLIST_FILE = "Conant Map/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.johnnywaity.Conant-Map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -296,11 +321,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86FFSYZRW3;
 				INFOPLIST_FILE = "Conant Map/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.johnnywaity.Conant-Map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
