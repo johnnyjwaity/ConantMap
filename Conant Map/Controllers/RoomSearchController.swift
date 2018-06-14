@@ -8,28 +8,101 @@
 
 import UIKit
 
-class RoomSearchController: UIViewController {
+class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate{
+    
+    var pageCont:NavigationPageViewController? = nil
+    
+    
+//    init(pageController:NavigationPageViewController) {
+//        pageCont = pageController
+//        super.init(nibName: nil, bundle: nil)
+//    }
+//
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.brown
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        
+        
+        setupView()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    func setPageContoller(cont:NavigationPageViewController) {
+        pageCont = cont
     }
-    */
+
+    func setupView(){
+        view.backgroundColor = UIColor.white
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonClicked))
+        let coverView:UIView = {
+            let v = UIView()
+            v.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1.0)
+            v.translatesAutoresizingMaskIntoConstraints = false
+            return v
+        }()
+        
+        view.addSubview(coverView)
+        coverView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        coverView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        coverView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        coverView.heightAnchor.constraint(equalToConstant: UIApplication.shared.statusBarFrame.height).isActive = true
+        
+        
+        navigationItem.title = "Select Room"
+        
+        let search = UISearchBar()
+        search.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(search)
+        search.topAnchor.constraint(equalTo: view.topAnchor, constant: (navigationController?.navigationBar.frame.height)!).isActive = true
+        search.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        search.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        search.delegate = self
+        //search.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        
+        
+        let table:UITableView = UITableView(frame: CGRect.zero, style: UITableViewStyle.plain)
+        table.delegate = self
+        table.dataSource = self
+        table.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        table.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(table)
+        table.topAnchor.constraint(equalTo: search.bottomAnchor).isActive = true
+        table.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        table.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+        table.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        
+    }
+    @objc
+    func cancelButtonClicked(){
+        pageCont?.changePage(page: 0, direction: .reverse)
+    }
+    
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
+        cell?.textLabel?.text = String(indexPath.item)
+        
+        return cell!
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        pageCont?.changePage(page: 0, direction: .reverse)
+        
+    }
+    
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        print(searchBar.text)
+        searchBar.endEditing(true)
+    }
+
+    
 
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Conant Map/Controllers/GameViewController.swift"
+            timestampString = "550696386.391844"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "149"
+            endingLineNumber = "149"
+            landmarkName = "spawnNodes()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Conant_Map.GameViewController.spawnNodes() -&gt; ()"
+                  moduleName = "Conant Map"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/JohnnyWaity/Documents/XCode/Conant%20Map/Conant%20Map/Controllers/GameViewController.swift"
+                  timestampString = "550695820.842392"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "149"
+                  endingLineNumber = "149"
+                  offsetFromSymbolStart = "664">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Conant_Map.GameViewController.spawnNodes() -&gt; ()"
+                  moduleName = "Conant Map"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/JohnnyWaity/Documents/XCode/Conant%20Map/Conant%20Map/Controllers/GameViewController.swift"
+                  timestampString = "550695820.844967"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "149"
+                  endingLineNumber = "149"
+                  offsetFromSymbolStart = "2376">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

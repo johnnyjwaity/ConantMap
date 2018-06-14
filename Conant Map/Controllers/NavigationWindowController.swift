@@ -13,13 +13,13 @@ class NavigationWindowController: UIViewController {
     
     
     
-    let cancelButton:UIButton = {
-        let b = UIButton(type: UIButtonType.system)
-        b.setTitle("Cancel", for: UIControlState.normal)
-        b.translatesAutoresizingMaskIntoConstraints = false
-        b.addTarget(self, action: #selector(cancelButtonClicked), for: UIControlEvents.touchUpInside)
-        return b
-    }()
+//    let cancelButton:UIButton = {
+//        let b = UIButton(type: UIButtonType.system)
+//        b.setTitle("Cancel", for: UIControlState.normal)
+//        b.translatesAutoresizingMaskIntoConstraints = false
+//        b.addTarget(self, action: #selector(cancelButtonClicked), for: UIControlEvents.touchUpInside)
+//        return b
+//    }()
     
     let pageViewController = NavigationPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
 
@@ -33,12 +33,6 @@ class NavigationWindowController: UIViewController {
         view.backgroundColor = UIColor.white
         view.layer.cornerRadius = 15
         
-        view.addSubview(cancelButton)
-        cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 5).isActive = true
-        cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 5).isActive = true
-        cancelButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        cancelButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        
         
         
         let pageView = pageViewController.view!
@@ -47,16 +41,13 @@ class NavigationWindowController: UIViewController {
         pageView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         pageView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         pageView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        pageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.9).isActive = true
+        pageView.heightAnchor.constraint(equalTo: view.heightAnchor).isActive = true
         
         
         
     }
     
-    @objc
-    func cancelButtonClicked(){
-        pageViewController.changePage(page:1)
-    }
+    
     
 
     
@@ -65,19 +56,33 @@ class NavigationWindowController: UIViewController {
 
 class NavigationPageViewController: UIPageViewController {
     
-    let controllers:[UIViewController] = [NavOptionsController(), RoomSearchController(), RoomSearchController()]
+    var controllers:[UIViewController] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.red
         view.layer.cornerRadius = 15
         view.translatesAutoresizingMaskIntoConstraints = false
+        
+        let options = NavOptionsController()
+        options.setPageContoller(cont: self)
+        controllers.append(options)
+        let room1 = RoomSearchController()
+        room1.setPageContoller(cont: self)
+        controllers.append(UINavigationController(rootViewController: room1))
+        let room2 = RoomSearchController()
+        room2.setPageContoller(cont: self)
+        controllers.append(UINavigationController(rootViewController: room2))
+        
+        
         //dataSource = self
         let controllersInit:[UIViewController] = [controllers[0]]
         setViewControllers(controllersInit, direction: .forward, animated: true, completion: nil)
     }
     
-    func changePage(page:Int){
-        setViewControllers([controllers[page]], direction: .forward, animated: true, completion: nil)
+    func changePage(page:Int, direction:UIPageViewControllerNavigationDirection){
+        setViewControllers([controllers[page]], direction: direction, animated: true, completion: nil)
     }
 }
+
+

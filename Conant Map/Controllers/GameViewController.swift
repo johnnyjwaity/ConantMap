@@ -32,14 +32,17 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         initView()
         initScene()
         setUpView()
-        
+        //logicTest()
+        spawnNodes()
     }
+    
+    
     
     func initView(){
         let sV = SCNView(frame: UIScreen.main.bounds)
         view.addSubview(sV)
         gameView = sV
-        //gameView.allowsCameraControl = true;
+        gameView.allowsCameraControl = true;
         gameView.autoenablesDefaultLighting = true;
     }
     
@@ -137,6 +140,29 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
             
         }
     }
+    
+    func spawnNodes(){
+        let nodes = NodeParser.parse(file: "floor1")
+        print(nodes.count)
+        let testNode = gameScene.rootNode.childNode(withName: "TestNode", recursively: false)
+        let firstNode = NodeParser.searchForNode(name: "Node", nodes: nodes)
+        let xOffset = Double((testNode?.position.x)!) - (firstNode?.x)!
+        let zOffet = Double((testNode?.position.z)!) - (firstNode?.y)!
+        let parent = SCNNode()
+        for n in nodes {
+            
+            let g = SCNPyramid(width: 0.1, height: 0.1, length: 0.1)
+            g.firstMaterial?.diffuse.contents = UIColor.purple
+            let sn = SCNNode(geometry: g)
+            sn.position = SCNVector3(n.x + xOffset, Double((testNode?.position.y)!), n.y + zOffet)
+            parent.addChildNode(sn)
+        }
+        gameScene.rootNode.addChildNode(parent)
+        gameScene.write(to: URL(fileURLWithPath: "Map2.scn"), options: nil, delegate: nil, progressHandler: nil)
+        print("Wrote")
+    }
+    
+    
     
     
     

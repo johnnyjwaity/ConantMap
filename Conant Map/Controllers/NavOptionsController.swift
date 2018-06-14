@@ -10,14 +10,30 @@ import UIKit
 
 class NavOptionsController: UIViewController {
 
+    var pageCont:NavigationPageViewController? = nil
+    
+//    init(pageController:NavigationPageViewController) {
+//        pageCont = pageController
+//        super.init(nibName: nil, bundle: nil)
+//    }
+//
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupView()
         // Do any additional setup after loading the view.
     }
     
     
-    
+    func setPageContoller(cont:NavigationPageViewController) {
+        pageCont = cont
+    }
     
 
     func setupView(){
@@ -28,6 +44,7 @@ class NavOptionsController: UIViewController {
         b.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
         b.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.90).isActive = true
         b.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        b.addTarget(self, action: #selector(fromButton), for: .touchUpInside)
         
         let b2 = SelectButton(text:"To:")
         view.addSubview(b2)
@@ -35,9 +52,16 @@ class NavOptionsController: UIViewController {
         b2.topAnchor.constraint(equalTo: b.bottomAnchor, constant: 20).isActive = true
         b2.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.90).isActive = true
         b2.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        b2.addTarget(self, action: #selector(toButton), for: .touchUpInside)
     }
-    
-
+    @objc
+    func fromButton(){
+        pageCont?.changePage(page: 1, direction: .forward)
+    }
+    @objc
+    func toButton(){
+        pageCont?.changePage(page: 2, direction: .forward)
+    }
     
 
 }
@@ -50,7 +74,6 @@ class SelectButton:UIButton {
         labelText = text
         super.init(frame: .zero)
         setupView()
-        addTarget(self, action: #selector(clicked), for: .touchUpInside)
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError()
@@ -116,15 +139,7 @@ class SelectButton:UIButton {
             
         }
     }
-    @objc
-    func clicked(){
-        if isHighlighted {
-            backgroundColor = UIColor.lightGray
-        }
-        else {
-            backgroundColor = UIColor.white
-        }
-    }
+    
     
     
 }
