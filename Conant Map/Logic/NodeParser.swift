@@ -27,7 +27,6 @@ class NodeParser {
             }
             let header = Array(line)[0]
             let phrase = String(line.suffix(line.count-1))
-            print(phrase)
             switch header {
             case "%":
                 if n != nil{
@@ -66,7 +65,6 @@ class NodeParser {
     static func searchForNode(name:String, nodes:[Node]) -> Node? {
         for n in nodes {
             if n.name == name {
-                //print("Not nil" + n.name)
                 return n
             }
         }

@@ -143,24 +143,28 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     
     func spawnNodes(){
         let nodes = NodeParser.parse(file: "floor1")
-        print(nodes.count)
-        let testNode = gameScene.rootNode.childNode(withName: "TestNode", recursively: false)
-        let firstNode = NodeParser.searchForNode(name: "Node", nodes: nodes)
-        let xOffset = Double((testNode?.position.x)!) - (firstNode?.x)!
-        let zOffet = Double((testNode?.position.z)!) - (firstNode?.y)!
-        let parent = SCNNode()
         for n in nodes {
-            
             let g = SCNPyramid(width: 0.1, height: 0.1, length: 0.1)
             g.firstMaterial?.diffuse.contents = UIColor.purple
             let sn = SCNNode(geometry: g)
-            sn.position = SCNVector3(n.x + xOffset, Double((testNode?.position.y)!), n.y + zOffet)
-            parent.addChildNode(sn)
+            sn.position = SCNVector3(n.x * -1, -0.389, n.y)
+            n.posiiton = sn.position
+            gameScene.rootNode.addChildNode(sn)
         }
-        gameScene.rootNode.addChildNode(parent)
-        gameScene.write(to: URL(fileURLWithPath: "Map2.scn"), options: nil, delegate: nil, progressHandler: nil)
-        print("Wrote")
+        
+        let nodes2:[Node] = NodeParser.parse(file: "floor2")
+        let y = 0.804
+        for n in nodes2 {
+            let g = SCNPyramid(width: 0.1, height: 0.1, length: 0.1)
+            g.firstMaterial?.diffuse.contents = UIColor.purple
+            let sn = SCNNode(geometry: g)
+            sn.position = SCNVector3((n.x * -1) + 2.2840004, y, n.y - 0.522)
+            n.posiiton = sn.position
+            gameScene.rootNode.addChildNode(sn)
+        }
+        //print(NodeParser.searchForNode(name: "Node", nodes: nodes2)?.posiiton)
     }
+    
     
     
     
