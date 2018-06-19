@@ -26,14 +26,22 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     let upConstant:CGFloat = UIScreen.main.bounds.height * -1
     
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         initView()
         initScene()
         setUpView()
-        //logicTest()
-        spawnNodes()
+        let nodes = spawnNodes()
+        var rooms:[String] = []
+        for a:[Node] in nodes {
+            for ra in a {
+                for r in ra.rooms {
+                    rooms.append(r)
+                }
+            }
+        }
+        UserDefaults.standard.set(rooms, forKey: "rooms")
     }
     
     
@@ -141,7 +149,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         }
     }
     
-    func spawnNodes(){
+    func spawnNodes() -> [[Node]]{
         let nodes = NodeParser.parse(file: "floor1")
         for n in nodes {
             let g = SCNPyramid(width: 0.1, height: 0.1, length: 0.1)
@@ -156,16 +164,32 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let y = 0.804
         for n in nodes2 {
             let g = SCNPyramid(width: 0.1, height: 0.1, length: 0.1)
-            g.firstMaterial?.diffuse.contents = UIColor.purple
+            g.firstMaterial?.diffuse.contents = UIColor.clear
             let sn = SCNNode(geometry: g)
             sn.position = SCNVector3((n.x * -1) + 2.2840004, y, n.y - 0.522)
             n.posiiton = sn.position
             gameScene.rootNode.addChildNode(sn)
         }
-        //print(NodeParser.searchForNode(name: "Node", nodes: nodes2)?.posiiton)
+        
+        return [nodes, nodes2]
     }
     
-    
+//    let start = NodeParser.searchForNode(name: "Node", nodes: nodes)
+//    let end = NodeParser.searchForNode(name: "Node (59)", nodes: nodes)
+//    let path = Pathfinder.search(start: start!, end: end!, nodes: nodes)!
+//    var counter = 0
+//    for p in path {
+//    print(p.name)
+//    }
+//    for n in path {
+//    if counter == 0 {
+//    counter = 1
+//    continue
+//    }
+//    let tempNode = SCNNode()
+//    gameScene.rootNode.addChildNode(tempNode.buildLineInTwoPointsWithRotation(from: path[counter-1].posiiton, to: n.posiiton, radius: 0.07, color: UIColor.purple))
+//    counter += 1
+//    }
     
     
     

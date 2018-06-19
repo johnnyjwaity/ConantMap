@@ -125,7 +125,11 @@ extension SCNNode {
     }
 }
 
-//extension ended.
-
-
-//end
+extension Array where Iterator.Element == String {
+    func sortByComparison (_ c:String) -> [String] {
+        let sorted:[String] = self.filter({(room:String) -> Bool in
+            return room.lowercased().contains(c.lowercased())
+        })
+        return sorted
+    }
+}

@@ -12,15 +12,11 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     
     var pageCont:NavigationPageViewController? = nil
     
+    var rooms:[String] = []
+    var displayedRooms:[String] = []
     
-//    init(pageController:NavigationPageViewController) {
-//        pageCont = pageController
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
+    let table:UITableView = UITableView(frame: CGRect.zero, style: UITableViewStyle.plain)
+    let searchCont = UISearchController(searchResultsController: nil)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +32,12 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     func setupView(){
         view.backgroundColor = UIColor.white
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonClicked))
+        
+        searchCont.obscuresBackgroundDuringPresentation = false
+        searchCont.hidesNavigationBarDuringPresentation = false
+        
+        searchCont.searchBar.delegate = self
+        navigationItem.searchController = searchCont
         let coverView:UIView = {
             let v = UIView()
             v.backgroundColor = UIColor(red: 0.969, green: 0.969, blue: 0.969, alpha: 1.0)
@@ -52,23 +54,23 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         
         navigationItem.title = "Select Room"
         
-        let search = UISearchBar()
-        search.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(search)
-        search.topAnchor.constraint(equalTo: view.topAnchor, constant: (navigationController?.navigationBar.frame.height)!).isActive = true
-        search.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        search.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        search.delegate = self
+//        let search = UISearchBar()
+//        search.translatesAutoresizingMaskIntoConstraints = false
+//        view.addSubview(search)
+//        search.topAnchor.constraint(equalTo: view.topAnchor, constant: (navigationController?.navigationBar.frame.height)!).isActive = true
+//        search.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+//        search.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+//        search.delegate = self
         //search.heightAnchor.constraint(equalToConstant: 45).isActive = true
         
         
-        let table:UITableView = UITableView(frame: CGRect.zero, style: UITableViewStyle.plain)
+        
         table.delegate = self
         table.dataSource = self
         table.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         table.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(table)
-        table.topAnchor.constraint(equalTo: search.bottomAnchor).isActive = true
+        table.heightAnchor.constraint(equalToConstant: view.frame.height - (navigationController?.navigationBar.frame.height)! * 2).isActive = true
         table.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         table.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         table.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -76,33 +78,38 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     @objc
     func cancelButtonClicked(){
-        pageCont?.changePage(page: 0, direction: .reverse)
+        pageCont?.changePage(page: 0, direction: .reverse, room: nil)
     }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return displayedRooms.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
-        cell?.textLabel?.text = String(indexPath.item)
-        
+        cell?.textLabel?.text = displayedRooms[indexPath.item]
         return cell!
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        pageCont?.changePage(page: 0, direction: .reverse)
+        pageCont?.changePage(page: 0, direction: .reverse, room: tableView.cellForRow(at: indexPath)?.textLabel?.text)
         
     }
     
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print(searchBar.text)
+        displayedRooms = rooms.sortByComparison(searchBar.text!)
+        table.reloadData()
         searchBar.endEditing(true)
+        searchCont.isActive = false
     }
+    
+    
 
     
 
 }
+
+

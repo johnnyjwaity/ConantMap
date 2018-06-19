@@ -51,6 +51,17 @@ class OverlayController: UIViewController {
     }
     @objc
     func navButtonClicked(){
+        for c:UIViewController in (self.p.navWindowCont?.pageViewController.controllers)! {
+            if let nc = c as? UINavigationController {
+                if let rs = nc.visibleViewController as? RoomSearchController {
+                    print("Loaded Data")
+                    rs.rooms = UserDefaults.standard.array(forKey: "rooms") as! [String]
+                    rs.displayedRooms = rs.rooms
+                    rs.table.reloadData()
+                }
+                
+            }
+        }
         self.p.animate()
     }
     

@@ -20,6 +20,7 @@ class NodeParser {
         }catch{
             print(error)
         }
+        var count = 0
         var n:Node? = nil
         for line in lines {
             if Array(line).count <= 0 {
@@ -32,7 +33,8 @@ class NodeParser {
                 if n != nil{
                     nodes.append(n!)
                 }
-                n = Node(phrase)
+                n = Node(phrase, id: count)
+                count+=1
                 break;
             case "x":
                 n?.x = Double(phrase)!

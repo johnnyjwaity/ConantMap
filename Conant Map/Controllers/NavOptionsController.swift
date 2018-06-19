@@ -56,11 +56,11 @@ class NavOptionsController: UIViewController {
     }
     @objc
     func fromButton(){
-        pageCont?.changePage(page: 1, direction: .forward)
+        pageCont?.changePage(page: 1, direction: .forward, room: nil)
     }
     @objc
     func toButton(){
-        pageCont?.changePage(page: 2, direction: .forward)
+        pageCont?.changePage(page: 2, direction: .forward, room: nil)
     }
     
 

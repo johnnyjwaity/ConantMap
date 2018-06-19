@@ -20,6 +20,7 @@
 		3D5B785820CCC1B40048AEE7 /* NavigationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */; };
 		3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */; };
 		3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */; };
+		3D81F0ED20D591A6002002D5 /* Pathfinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D81F0EC20D591A6002002D5 /* Pathfinder.swift */; };
 		3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +40,7 @@
 		3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationWindowController.swift; sourceTree = "<group>"; };
 		3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavOptionsController.swift; sourceTree = "<group>"; };
 		3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSearchController.swift; sourceTree = "<group>"; };
+		3D81F0EC20D591A6002002D5 /* Pathfinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pathfinder.swift; sourceTree = "<group>"; };
 		3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -107,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				3D3DDCD920D1EE1100B865CE /* NodeParser.swift */,
+				3D81F0EC20D591A6002002D5 /* Pathfinder.swift */,
 			);
 			path = Logic;
 			sourceTree = "<group>";
@@ -205,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D81F0ED20D591A6002002D5 /* Pathfinder.swift in Sources */,
 				3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */,
 				3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */,
 				3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */,
@@ -345,7 +349,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86FFSYZRW3;
 				INFOPLIST_FILE = "Conant Map/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.johnnywaity.Conant-Map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -361,7 +365,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 86FFSYZRW3;
 				INFOPLIST_FILE = "Conant Map/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.johnnywaity.Conant-Map";
 				PRODUCT_NAME = "$(TARGET_NAME)";

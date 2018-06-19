@@ -80,9 +80,11 @@ class NavigationPageViewController: UIPageViewController {
         setViewControllers(controllersInit, direction: .forward, animated: true, completion: nil)
     }
     
-    func changePage(page:Int, direction:UIPageViewControllerNavigationDirection){
+    func changePage(page:Int, direction:UIPageViewControllerNavigationDirection, room:String?){
         setViewControllers([controllers[page]], direction: direction, animated: true, completion: nil)
     }
+    
+    
 }
 
 
