@@ -57,6 +57,7 @@ class NavigationWindowController: UIViewController {
 class NavigationPageViewController: UIPageViewController {
     
     var controllers:[UIViewController] = []
+    var currentPage = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,7 +67,7 @@ class NavigationPageViewController: UIPageViewController {
         
         let options = NavOptionsController()
         options.setPageContoller(cont: self)
-        controllers.append(options)
+        controllers.append(UINavigationController(rootViewController: options))
         let room1 = RoomSearchController()
         room1.setPageContoller(cont: self)
         controllers.append(UINavigationController(rootViewController: room1))
@@ -76,12 +77,31 @@ class NavigationPageViewController: UIPageViewController {
         
         
         //dataSource = self
-        let controllersInit:[UIViewController] = [controllers[0]]
+        let placeholder = UIViewController()
+        placeholder.view.backgroundColor = UIColor.white
+        let controllersInit:[UIViewController] = [placeholder]
         setViewControllers(controllersInit, direction: .forward, animated: true, completion: nil)
+        //changePage(page: 0, direction: .forward, room: nil)
     }
     
     func changePage(page:Int, direction:UIPageViewControllerNavigationDirection, room:String?){
         setViewControllers([controllers[page]], direction: direction, animated: true, completion: nil)
+        if let r = room {
+            let navOptContNav = controllers[0] as! UINavigationController
+            let navOptCont = navOptContNav.visibleViewController as! NavOptionsController
+            switch currentPage {
+                case 1:
+                    navOptCont.buttons[0].roomLbl.text = r
+                    break
+                case 2:
+                    navOptCont.buttons[1].roomLbl.text = r
+                    break
+                default:
+                    break
+            }
+        }
+
+        currentPage = page
     }
     
     

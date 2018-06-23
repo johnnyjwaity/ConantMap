@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3D1130E520DACDAC009AD6E4 /* NavigationSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1130E420DACDAC009AD6E4 /* NavigationSession.swift */; };
+		3D1130E720DCAE8E009AD6E4 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1130E620DCAE8E009AD6E4 /* Camera.swift */; };
 		3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */; };
 		3D17EFBE20C5F599002AEBE2 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFBD20C5F599002AEBE2 /* art.scnassets */; };
 		3D17EFC020C5F599002AEBE2 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFBF20C5F599002AEBE2 /* GameViewController.swift */; };
@@ -25,6 +27,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3D1130E420DACDAC009AD6E4 /* NavigationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationSession.swift; sourceTree = "<group>"; };
+		3D1130E620DCAE8E009AD6E4 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		3D17EFB820C5F599002AEBE2 /* Conant Map.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Conant Map.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3D17EFBD20C5F599002AEBE2 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -101,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				3D3DDCD620D1ED4F00B865CE /* Node.swift */,
+				3D1130E420DACDAC009AD6E4 /* NavigationSession.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -110,6 +115,7 @@
 			children = (
 				3D3DDCD920D1EE1100B865CE /* NodeParser.swift */,
 				3D81F0EC20D591A6002002D5 /* Pathfinder.swift */,
+				3D1130E620DCAE8E009AD6E4 /* Camera.swift */,
 			);
 			path = Logic;
 			sourceTree = "<group>";
@@ -216,6 +222,8 @@
 				3D17EFC020C5F599002AEBE2 /* GameViewController.swift in Sources */,
 				3D3DDCDA20D1EE1100B865CE /* NodeParser.swift in Sources */,
 				3D5B785820CCC1B40048AEE7 /* NavigationWindowController.swift in Sources */,
+				3D1130E720DCAE8E009AD6E4 /* Camera.swift in Sources */,
+				3D1130E520DACDAC009AD6E4 /* NavigationSession.swift in Sources */,
 				3D17EFD420C75156002AEBE2 /* Extensions.swift in Sources */,
 				3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */,
 			);

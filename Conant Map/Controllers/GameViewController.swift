@@ -25,14 +25,15 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     var navConstrints:[String:NSLayoutConstraint] = [:]
     let upConstant:CGFloat = UIScreen.main.bounds.height * -1
     
-    
+    var navSession:NavigationSession? = nil
+    var nodes:[[Node]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         initView()
         initScene()
         setUpView()
-        let nodes = spawnNodes()
+        nodes = spawnNodes()
         var rooms:[String] = []
         for a:[Node] in nodes {
             for ra in a {
@@ -82,6 +83,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         }
         
         navWindowCont = NavigationWindowController()
+        
         let win:UIView = (navWindowCont?.view)!
         win.translatesAutoresizingMaskIntoConstraints = false
         gameView.addSubview(win)
@@ -116,7 +118,16 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         }
     }
     
+    
+    
     func animate(){
+        
+        let navOptions = (navWindowCont?.pageViewController.controllers[0] as! UINavigationController).visibleViewController as! NavOptionsController
+        if navOptions.parentController == nil {
+            navOptions.setParentController(self)
+        }
+        
+        
         visible = !visible
         
         if visible {
@@ -153,7 +164,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let nodes = NodeParser.parse(file: "floor1")
         for n in nodes {
             let g = SCNPyramid(width: 0.1, height: 0.1, length: 0.1)
-            g.firstMaterial?.diffuse.contents = UIColor.purple
+            g.firstMaterial?.diffuse.contents = UIColor.clear
             let sn = SCNNode(geometry: g)
             sn.position = SCNVector3(n.x * -1, -0.389, n.y)
             n.posiiton = sn.position
@@ -174,23 +185,13 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         return [nodes, nodes2]
     }
     
-//    let start = NodeParser.searchForNode(name: "Node", nodes: nodes)
-//    let end = NodeParser.searchForNode(name: "Node (59)", nodes: nodes)
-//    let path = Pathfinder.search(start: start!, end: end!, nodes: nodes)!
-//    var counter = 0
-//    for p in path {
-//    print(p.name)
-//    }
-//    for n in path {
-//    if counter == 0 {
-//    counter = 1
-//    continue
-//    }
-//    let tempNode = SCNNode()
-//    gameScene.rootNode.addChildNode(tempNode.buildLineInTwoPointsWithRotation(from: path[counter-1].posiiton, to: n.posiiton, radius: 0.07, color: UIColor.purple))
-//    counter += 1
-//    }
-    
+    func navigate(start:String, end:String){
+        if let cns = navSession {
+            cns.stopNav()
+        }
+        navSession = NavigationSession(room1: start, room2: end, view: self, nodes: nodes)
+        navSession?.startNav()
+    }
     
     
     

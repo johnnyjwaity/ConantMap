@@ -23,7 +23,6 @@ class OverlayController: UIViewController {
         b.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
         b.addTarget(self, action: #selector(navButtonClicked), for: UIControlEvents.touchUpInside)
         b.layer.cornerRadius = 8
-        
         return b
     }()
     
@@ -51,6 +50,7 @@ class OverlayController: UIViewController {
     }
     @objc
     func navButtonClicked(){
+        self.p.navWindowCont?.pageViewController.changePage(page: 0, direction: .forward, room: nil)
         for c:UIViewController in (self.p.navWindowCont?.pageViewController.controllers)! {
             if let nc = c as? UINavigationController {
                 if let rs = nc.visibleViewController as? RoomSearchController {
@@ -62,6 +62,7 @@ class OverlayController: UIViewController {
                 
             }
         }
+        
         self.p.animate()
     }
     

@@ -11,16 +11,9 @@ import UIKit
 class NavOptionsController: UIViewController {
 
     var pageCont:NavigationPageViewController? = nil
-    
-//    init(pageController:NavigationPageViewController) {
-//        pageCont = pageController
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-    
+    var buttons:[SelectButton] = []
+    var parentController:GameViewController? = nil
+
     
     
     override func viewDidLoad() {
@@ -41,10 +34,11 @@ class NavOptionsController: UIViewController {
         let b = SelectButton(text:"From:")
         view.addSubview(b)
         b.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        b.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
+        b.topAnchor.constraint(equalTo: view.topAnchor, constant: (navigationController?.navigationBar.frame.height)! + 20).isActive = true
         b.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.90).isActive = true
         b.heightAnchor.constraint(equalToConstant: 80).isActive = true
         b.addTarget(self, action: #selector(fromButton), for: .touchUpInside)
+        buttons.append(b)
         
         let b2 = SelectButton(text:"To:")
         view.addSubview(b2)
@@ -53,6 +47,26 @@ class NavOptionsController: UIViewController {
         b2.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.90).isActive = true
         b2.heightAnchor.constraint(equalToConstant: 80).isActive = true
         b2.addTarget(self, action: #selector(toButton), for: .touchUpInside)
+        buttons.append(b2)
+        
+        
+        let startButton:UIButton = {
+            let but = UIButton(type: UIButtonType.system)
+            but.translatesAutoresizingMaskIntoConstraints = false
+            but.setTitle("Start Route", for: UIControlState.normal)
+            but.setTitleColor(UIColor.white, for: .normal)
+            but.backgroundColor = UIView().tintColor
+            but.layer.cornerRadius = 8
+            but.titleLabel?.font = UIFont.boldSystemFont(ofSize: 25)
+            but.addTarget(self, action: #selector(startNavigation), for: .touchUpInside)
+            return but
+        }()
+        view.addSubview(startButton)
+        startButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        startButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20).isActive = true
+        startButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8).isActive = true
+        startButton.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        
     }
     @objc
     func fromButton(){
@@ -62,13 +76,28 @@ class NavOptionsController: UIViewController {
     func toButton(){
         pageCont?.changePage(page: 2, direction: .forward, room: nil)
     }
-    
+    @objc
+    func startNavigation(){
+        parentController?.navigate(start: buttons[0].roomLbl.text!, end: buttons[1].roomLbl.text!)
+        
+    }
 
+    func setParentController(_ parentCont: GameViewController) {
+        parentController = parentCont
+    }
 }
 
 class SelectButton:UIButton {
     
     let labelText:String
+    
+    let roomLbl:UILabel = {
+        let l = UILabel()
+        l.translatesAutoresizingMaskIntoConstraints = false
+        l.text = "Unselected..."
+        l.font = UIFont.italicSystemFont(ofSize: 16)
+        return l
+    }()
     
     init(text:String) {
         labelText = text
@@ -115,13 +144,7 @@ class SelectButton:UIButton {
         point.widthAnchor.constraint(equalToConstant: 30).isActive = true
         
         
-        let roomLbl:UILabel = {
-            let l = UILabel()
-            l.translatesAutoresizingMaskIntoConstraints = false
-            l.text = "Unselected..."
-            l.font = UIFont.italicSystemFont(ofSize: 16)
-            return l
-        }()
+        
         
         addSubview(roomLbl)
         roomLbl.leftAnchor.constraint(equalTo: lbl.rightAnchor, constant: 10).isActive = true

@@ -133,3 +133,16 @@ extension Array where Iterator.Element == String {
         return sorted
     }
 }
+
+extension Array where Iterator.Element == [Node] {
+    func searchForByRoom(_ room:String) -> Node? {
+        for na:[Node] in self {
+            for n:Node in na {
+                if n.rooms.contains(room) {
+                    return n
+                }
+            }
+        }
+        return nil
+    }
+}
