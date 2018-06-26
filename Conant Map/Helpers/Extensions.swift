@@ -146,3 +146,18 @@ extension Array where Iterator.Element == [Node] {
         return nil
     }
 }
+
+extension SCNVector3 {
+    func multiply(_ num:Float) -> SCNVector3{
+        return SCNVector3(x*num, y*num, z*num)
+    }
+    func add(_ point:CGPoint) -> SCNVector3{
+        return SCNVector3(CGFloat(x)+point.x, CGFloat(y), CGFloat(z)+point.y)
+    }
+}
+
+extension CGPoint {
+    func toVector()->SCNVector3 {
+        return SCNVector3(x, 0, y)
+    }
+}

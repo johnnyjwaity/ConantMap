@@ -28,6 +28,8 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
     var navSession:NavigationSession? = nil
     var nodes:[[Node]] = []
     
+    var camera:Camera? = nil
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         initView()
@@ -51,7 +53,7 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let sV = SCNView(frame: UIScreen.main.bounds)
         view.addSubview(sV)
         gameView = sV
-        gameView.allowsCameraControl = true;
+//        gameView.allowsCameraControl = true;
         gameView.autoenablesDefaultLighting = true;
     }
     
@@ -62,12 +64,15 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         
         gameView.scene = gameScene
         gameView.isPlaying = true;
-        
+        camera = Camera(gameScene)
         
         
     }
     func setUpView(){
 //        upConstant = -1 * gameView.frame.height
+        
+        
+        
         
         cont = OverlayController(parentController: self)
         let overlay = (cont?.view!)!
@@ -103,8 +108,17 @@ class GameViewController: UIViewController, SCNSceneRendererDelegate {
         let swipeListenerDown = UISwipeGestureRecognizer(target: self, action: #selector(swiped))
         swipeListenerDown.direction = .down
         overlay.addGestureRecognizer(swipeListenerDown)
+        
+        
+        let panListener = UIPanGestureRecognizer(target: self, action: #selector(handlePan))
+        panListener.maximumNumberOfTouches = 2
+        gameView.addGestureRecognizer(panListener)
     }
     
+    @objc
+    func handlePan(gesture:UIGestureRecognizer){
+        camera?.handleInput(gesture)
+    }
     
     @objc
     func swiped(gesture:UIGestureRecognizer){
