@@ -12,12 +12,12 @@ import SceneKit
 class NavigationSession {
     let start:Node
     let end:Node
-    let viewManager:GameViewController
+    let viewManager:MapViewController
     let nodes:[[Node]]
     var path:[Node]? = nil
     var displayedPath:[SCNNode] = []
     
-    init(room1:String, room2:String, view:GameViewController, nodes:[[Node]]) {
+    init(room1:String, room2:String, view:MapViewController, nodes:[[Node]]) {
         start = nodes.searchForByRoom(room1)!
         end = nodes.searchForByRoom(room2)!
         viewManager = view
@@ -25,9 +25,7 @@ class NavigationSession {
     }
     
     func startNav(){
-        if !viewManager.visible {
-            viewManager.animate()
-        }
+        
         path = Pathfinder.search(start: start, end: end, nodes: nodes[0])
         displayPath()
     }
@@ -39,7 +37,7 @@ class NavigationSession {
             let startNode:Node = path![i]
             let endNode:Node = path![i-1]
             let n = SCNNode()
-            displayedPath.append(n.buildLineInTwoPointsWithRotation(from: startNode.posiiton, to: endNode.posiiton, radius: 0.01, color: UIColor.purple))
+            displayedPath.append(n.buildLineInTwoPointsWithRotation(from: startNode.position, to: endNode.position, radius: 0.01, color: UIColor.purple))
         }
         for sn in displayedPath {
             

@@ -37,8 +37,8 @@ class Pathfinder {
                         }
                         else {
                             if let curParent = parents[con]! {
-                                let currentDisance = distance(pos1: con.posiiton, pos2: curParent.posiiton)
-                                let newDistane = distance(pos1: con.posiiton, pos2: cn.posiiton)
+                                let currentDisance = distance(pos1: con.position, pos2: curParent.position)
+                                let newDistane = distance(pos1: con.position, pos2: cn.position)
                                 if newDistane < currentDisance {
                                     parents[con] = cn
                                 }
@@ -75,7 +75,7 @@ class Pathfinder {
                     return path.reversed()
                 }
                 let oParent:Node = parents[oNode]!!
-                let f = heuristics[oNode]! + distance(pos1: oNode.posiiton, pos2: oParent.posiiton)
+                let f = heuristics[oNode]! + distance(pos1: oNode.position, pos2: oParent.position)
                 if smallestFnode == nil || f < smallestFnum {
                     smallestFnum = f
                     smallestFnode = oNode
@@ -89,7 +89,7 @@ class Pathfinder {
     static func calculateHeuristic(_ heuristic:Heuristic, currentNode:Node, endNode:Node) -> Float {
         switch heuristic {
         case .ManhattenDistance:
-            return abs(currentNode.posiiton.x - endNode.posiiton.x) + abs(currentNode.posiiton.z - endNode.posiiton.z)
+            return abs(currentNode.position.x - endNode.position.x) + abs(currentNode.position.z - endNode.position.z)
         default:
             return 0.0
         }

@@ -11,7 +11,7 @@
 		3D1130E720DCAE8E009AD6E4 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1130E620DCAE8E009AD6E4 /* Camera.swift */; };
 		3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */; };
 		3D17EFBE20C5F599002AEBE2 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFBD20C5F599002AEBE2 /* art.scnassets */; };
-		3D17EFC020C5F599002AEBE2 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFBF20C5F599002AEBE2 /* GameViewController.swift */; };
+		3D17EFC020C5F599002AEBE2 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFBF20C5F599002AEBE2 /* MapViewController.swift */; };
 		3D17EFC520C5F599002AEBE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFC420C5F599002AEBE2 /* Assets.xcassets */; };
 		3D17EFC820C5F599002AEBE2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFC620C5F599002AEBE2 /* LaunchScreen.storyboard */; };
 		3D17EFD420C75156002AEBE2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFD320C75156002AEBE2 /* Extensions.swift */; };
@@ -25,6 +25,12 @@
 		3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */; };
 		3D81F0ED20D591A6002002D5 /* Pathfinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D81F0EC20D591A6002002D5 /* Pathfinder.swift */; };
 		3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */; };
+		3D996A7F20E34A3500604AA1 /* Stair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A7E20E34A3500604AA1 /* Stair.swift */; };
+		3D996A8120E34ADE00604AA1 /* StairParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8020E34ADE00604AA1 /* StairParser.swift */; };
+		3D996A8320E34E9500604AA1 /* StructureParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8220E34E9500604AA1 /* StructureParser.swift */; };
+		3D996A8520E34EA300604AA1 /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8420E34EA300604AA1 /* Structure.swift */; };
+		3D996A8820E55AF100604AA1 /* RoomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8720E55AF100604AA1 /* RoomCell.swift */; };
+		3D996A8C20E57BFF00604AA1 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8B20E57BFF00604AA1 /* Global.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +39,7 @@
 		3D17EFB820C5F599002AEBE2 /* Conant Map.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Conant Map.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3D17EFBD20C5F599002AEBE2 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
-		3D17EFBF20C5F599002AEBE2 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		3D17EFBF20C5F599002AEBE2 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		3D17EFC420C5F599002AEBE2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D17EFC720C5F599002AEBE2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3D17EFC920C5F599002AEBE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -48,6 +54,12 @@
 		3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSearchController.swift; sourceTree = "<group>"; };
 		3D81F0EC20D591A6002002D5 /* Pathfinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pathfinder.swift; sourceTree = "<group>"; };
 		3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
+		3D996A7E20E34A3500604AA1 /* Stair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stair.swift; sourceTree = "<group>"; };
+		3D996A8020E34ADE00604AA1 /* StairParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StairParser.swift; sourceTree = "<group>"; };
+		3D996A8220E34E9500604AA1 /* StructureParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureParser.swift; sourceTree = "<group>"; };
+		3D996A8420E34EA300604AA1 /* Structure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structure.swift; sourceTree = "<group>"; };
+		3D996A8720E55AF100604AA1 /* RoomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomCell.swift; sourceTree = "<group>"; };
+		3D996A8B20E57BFF00604AA1 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +96,7 @@
 				3D5B785520CCA72F0048AEE7 /* Controllers */,
 				3D3DDCD820D1EDDF00B865CE /* Logic */,
 				3D3DDCD520D1ED2E00B865CE /* Model */,
+				3D996A8620E55AAF00604AA1 /* Cells */,
 				3D5B785620CCA7460048AEE7 /* Helpers */,
 				3D3DDCD020D1EBB200B865CE /* Data */,
 				3D17EFBD20C5F599002AEBE2 /* art.scnassets */,
@@ -109,6 +122,8 @@
 			children = (
 				3D3DDCD620D1ED4F00B865CE /* Node.swift */,
 				3D1130E420DACDAC009AD6E4 /* NavigationSession.swift */,
+				3D996A7E20E34A3500604AA1 /* Stair.swift */,
+				3D996A8420E34EA300604AA1 /* Structure.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -119,6 +134,8 @@
 				3D3DDCD920D1EE1100B865CE /* NodeParser.swift */,
 				3D81F0EC20D591A6002002D5 /* Pathfinder.swift */,
 				3D1130E620DCAE8E009AD6E4 /* Camera.swift */,
+				3D996A8020E34ADE00604AA1 /* StairParser.swift */,
+				3D996A8220E34E9500604AA1 /* StructureParser.swift */,
 			);
 			path = Logic;
 			sourceTree = "<group>";
@@ -127,7 +144,7 @@
 			isa = PBXGroup;
 			children = (
 				3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */,
-				3D17EFBF20C5F599002AEBE2 /* GameViewController.swift */,
+				3D17EFBF20C5F599002AEBE2 /* MapViewController.swift */,
 				3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */,
 				3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */,
 				3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */,
@@ -139,8 +156,17 @@
 			isa = PBXGroup;
 			children = (
 				3D17EFD320C75156002AEBE2 /* Extensions.swift */,
+				3D996A8B20E57BFF00604AA1 /* Global.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		3D996A8620E55AAF00604AA1 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				3D996A8720E55AF100604AA1 /* RoomCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,14 +248,20 @@
 				3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */,
 				3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */,
 				3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */,
+				3D996A7F20E34A3500604AA1 /* Stair.swift in Sources */,
 				3D3DDCD720D1ED4F00B865CE /* Node.swift in Sources */,
-				3D17EFC020C5F599002AEBE2 /* GameViewController.swift in Sources */,
+				3D17EFC020C5F599002AEBE2 /* MapViewController.swift in Sources */,
 				3D3DDCDA20D1EE1100B865CE /* NodeParser.swift in Sources */,
+				3D996A8C20E57BFF00604AA1 /* Global.swift in Sources */,
 				3D5B785820CCC1B40048AEE7 /* NavigationWindowController.swift in Sources */,
 				3D1130E720DCAE8E009AD6E4 /* Camera.swift in Sources */,
+				3D996A8820E55AF100604AA1 /* RoomCell.swift in Sources */,
 				3D1130E520DACDAC009AD6E4 /* NavigationSession.swift in Sources */,
+				3D996A8520E34EA300604AA1 /* Structure.swift in Sources */,
 				3D17EFD420C75156002AEBE2 /* Extensions.swift in Sources */,
+				3D996A8120E34ADE00604AA1 /* StairParser.swift in Sources */,
 				3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */,
+				3D996A8320E34E9500604AA1 /* StructureParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

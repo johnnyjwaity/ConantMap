@@ -26,13 +26,11 @@ class Node: Hashable {
     public var description:String {
         return self.name
     }
-    let floor:Int = 0
-    var x:Double = 0
-    var y:Double = 0
+    var floor:Int = 0
     var connections:[Node] = []
     var strConnections:[String] = []
     var rooms:[String] = []
-    var posiiton:SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
+    var position:SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
     init(_ nodeName:String, id:Int) {
         name = nodeName
         hashValue = id
