@@ -15,6 +15,25 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     var rooms:[String] = []
     var sortedRooms:[String] = []
 
+    var delegate:RoomSearchDelegate!
+    
+    var searchingFor:NavPosition
+    
+    init() {
+        searchingFor = .Undetermined
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    init(_ searchingFor:NavPosition) {
+        self.searchingFor = searchingFor
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError()
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         rooms = Global.rooms
@@ -23,7 +42,7 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func setupView(){
-        view.translatesAutoresizingMaskIntoConstraints = false
+        //view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = UIColor.white
         view.layer.cornerRadius = 8
         let navBar:UIView = {
@@ -73,7 +92,7 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let cell = selectedCell {
             if indexPath.item == cell.item {
-                return 100
+                return 125
             }
         }
         return 75
@@ -86,6 +105,11 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = RoomCell()
         cell.setUpCell(room: sortedRooms[indexPath.item])
+        cell.toButton.tag = indexPath.row
+        cell.toButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)
+        
+        cell.fromButton.tag = indexPath.row
+        cell.fromButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)
         return cell
     }
     
@@ -94,6 +118,12 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if searchingFor != .Undetermined {
+            let cell = tableView.cellForRow(at: indexPath) as! RoomCell
+            delegate.roomSelected(controller: self, name: cell.roomName, pos: searchingFor)
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
         if let cell = selectedCell {
             let rCell = tableView.cellForRow(at: cell) as! RoomCell
             rCell.deselected()
@@ -102,6 +132,16 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         print("Selected Cell")
         let cell = tableView.cellForRow(at: indexPath) as! RoomCell
         cell.selected()
+        tableView.beginUpdates()
+        tableView.endUpdates()
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if let cell = selectedCell {
+            let rCell = tableView.cellForRow(at: cell) as! RoomCell
+            rCell.deselected()
+        }
+        selectedCell = nil
         tableView.beginUpdates()
         tableView.endUpdates()
     }
@@ -122,6 +162,18 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         sortedRooms = contains
         sortedRooms.append(contentsOf: discard)
         tableView.reloadData()
+    }
+    
+    @objc
+    func navButtonClicked(sender:UIButton) {
+        for child in sender.subviews {
+            if let d = child as? DataHolder {
+                print(d.data["room"] as! String)
+                let room:String = d.data["room"] as! String
+                let direction = NavPosition.To.toNavPosition(direction: (sender.titleLabel?.text)!)
+                delegate.roomSelected(controller: self, name: room, pos: direction)
+            }
+        }
     }
 
 }

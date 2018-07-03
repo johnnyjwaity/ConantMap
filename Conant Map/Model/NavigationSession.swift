@@ -7,53 +7,33 @@
 //
 
 import Foundation
-import SceneKit
 
-class NavigationSession {
+struct NavigationSession {
+    let startStr:String
+    let endStr:String
     let start:Node
     let end:Node
-    let viewManager:MapViewController
-    let nodes:[[Node]]
-    var path:[Node]? = nil
-    var displayedPath:[SCNNode] = []
-    
-    init(room1:String, room2:String, view:MapViewController, nodes:[[Node]]) {
-        start = nodes.searchForByRoom(room1)!
-        end = nodes.searchForByRoom(room2)!
-        viewManager = view
-        self.nodes = nodes
-    }
-    
-    func startNav(){
-        
-        path = Pathfinder.search(start: start, end: end, nodes: nodes[0])
-        displayPath()
-    }
+    let usesElevators:Bool
     
     
-    func displayPath(){
-        removePath()
-        for i in 1...(path?.count)!-1 {
-            let startNode:Node = path![i]
-            let endNode:Node = path![i-1]
-            let n = SCNNode()
-            displayedPath.append(n.buildLineInTwoPointsWithRotation(from: startNode.position, to: endNode.position, radius: 0.01, color: UIColor.purple))
+    init(start: String, end: String, usesElevators:Bool) {
+        startStr = start
+        endStr = end
+        var startNode:Node!
+        var endNode:Node!
+        for floor in Global.nodes {
+            for node in floor {
+                if node.rooms.contains(start) {
+                    startNode = node
+                }
+                if node.rooms.contains(end) {
+                    endNode = node
+                }
+            }
         }
-        for sn in displayedPath {
-            
-            viewManager.gameScene.rootNode.addChildNode(sn)
-        }
-    }
-    
-    func removePath(){
-        for sn in displayedPath {
-            sn.removeFromParentNode()
-        }
-        displayedPath = []
-    }
-    
-    func stopNav(){
-        removePath()
+        self.start = startNode
+        self.end = endNode
+        self.usesElevators = usesElevators
     }
     
 }

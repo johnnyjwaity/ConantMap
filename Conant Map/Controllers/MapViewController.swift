@@ -10,7 +10,9 @@ import UIKit
 import QuartzCore
 import SceneKit
 
-class MapViewController: UIViewController, SCNSceneRendererDelegate {
+class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate {
+    
+    
     
     
     static var main:MapViewController? = nil
@@ -59,6 +61,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate {
     
     func setUpView(){
         overlayController = OverlayController()
+        overlayController?.delegate = self
         let overlay:UIView = (overlayController?.view)!
         gameView.addSubview(overlay)
         overlay.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 20).isActive = true
@@ -73,7 +76,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate {
     @objc
     func handlePan(gesture:UIGestureRecognizer){
         let panGesture:UIPanGestureRecognizer = gesture as! UIPanGestureRecognizer
-        var translation = panGesture.translation(in: gameView)
+        let translation = panGesture.translation(in: gameView)
         switch panGesture.state {
         case .began:
             break
@@ -86,7 +89,6 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate {
         default:
             break
         }
-        
     }
     
     
@@ -120,6 +122,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate {
         }
         //Sets Nodes variable with both arrays
         nodes = [floor1Nodes, floor2Nodes]
+        Global.nodes = nodes
     }
     
     /*Gets All Rooms from nodes */
@@ -135,7 +138,24 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate {
         Global.rooms = rooms
     }
     
-    
+    func resizeOverlay(_ size: OverlaySize) {
+        var newBottomConstant = bottomConstant
+        switch size {
+        case .Large:
+            newBottomConstant = -20
+            break
+        case .Medium:
+            newBottomConstant = -496.5
+        case .Small:
+            newBottomConstant = -688
+            break
+        }
+        bottomConstant = newBottomConstant
+        bottomAnchor?.constant = newBottomConstant
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
     
 
 }

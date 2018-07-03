@@ -90,8 +90,6 @@ class Pathfinder {
         switch heuristic {
         case .ManhattenDistance:
             return abs(currentNode.position.x - endNode.position.x) + abs(currentNode.position.z - endNode.position.z)
-        default:
-            return 0.0
         }
     }
     static func distance(pos1:SCNVector3, pos2:SCNVector3) -> Float {

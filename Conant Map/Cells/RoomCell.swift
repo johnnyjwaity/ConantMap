@@ -11,44 +11,42 @@ import UIKit
 class RoomCell: UITableViewCell {
 
     var dropDownTopAnchor:NSLayoutConstraint? = nil
+    var roomName:String!
     
+    let fromButton:UIButton = {
+        let fromButton = UIButton(type: .system)
+        fromButton.setTitle("From Here", for: .normal)
+        fromButton.translatesAutoresizingMaskIntoConstraints = false
+        fromButton.layer.cornerRadius = 8
+        fromButton.setBackgroundImage(UIView().tintColor.toImage(), for: .normal)
+        fromButton.setTitleColor(UIColor.white, for: .normal)
+        fromButton.clipsToBounds = true
+        fromButton.alpha = 0
+        return fromButton
+    }()
+    
+    let toButton:UIButton = {
+        let toButton = UIButton(type: .system)
+        toButton.setTitle("To Here", for: .normal)
+        toButton.translatesAutoresizingMaskIntoConstraints = false
+        toButton.layer.cornerRadius = 8
+        toButton.setBackgroundImage(UIView().tintColor.toImage(), for: UIControlState.normal)
+        toButton.setTitleColor(UIColor.white, for: .normal)
+        toButton.clipsToBounds = true
+        toButton.alpha = 0
+        return toButton
+    }()
     
     let dropDown:UIView = {
         let v = UIView()
         v.translatesAutoresizingMaskIntoConstraints = false
         v.backgroundColor = UIColor.white
-        let toButton = UIButton(type: UIButtonType.system)
-        toButton.setTitle("To Here", for: .normal)
-        toButton.backgroundColor = UIColor.blue
-        toButton.translatesAutoresizingMaskIntoConstraints = false
-        toButton.layer.cornerRadius = 8
-        
-        v.addSubview(toButton)
-        toButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        toButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        toButton.leftAnchor.constraint(equalTo: v.leftAnchor, constant: 33.3).isActive = true
-        toButton.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
-        
-        
-        let fromButton = UIButton(type: UIButtonType.system)
-        fromButton.setTitle("From Here", for: .normal)
-        fromButton.backgroundColor = UIColor.blue
-        fromButton.translatesAutoresizingMaskIntoConstraints = false
-        fromButton.layer.cornerRadius = 8
-        
-        
-        v.addSubview(fromButton)
-        fromButton.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        fromButton.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        fromButton.leftAnchor.constraint(equalTo: toButton.rightAnchor, constant: 33.3).isActive = true
-        fromButton.centerYAnchor.constraint(equalTo: v.centerYAnchor).isActive = true
-        
-        
         return v
     }()
     
     
     func setUpCell(room:String) {
+        roomName = room
         clipsToBounds = true
         backgroundColor = UIColor.white
         
@@ -85,25 +83,62 @@ class RoomCell: UITableViewCell {
         
         
         addSubview(dropDown)
-        dropDownTopAnchor = dropDown.topAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -25)
+        dropDownTopAnchor = dropDown.topAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -50)
         dropDownTopAnchor?.isActive = true
         dropDown.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
         dropDown.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        dropDown.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        dropDown.heightAnchor.constraint(equalToConstant: 50).isActive = true
         sendSubview(toBack: dropDown)
         
+        addSubview(toButton)
+        //sendSubview(toBack: toButton)
+        
+        toButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
+        toButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        toButton.leftAnchor.constraint(equalTo: dropDown.leftAnchor, constant: 25).isActive = true
+        toButton.centerYAnchor.constraint(equalTo: dropDown.centerYAnchor).isActive = true
+        let data = DataHolder()
+        data.isHidden = true
+        data.data["room"] = room
+        toButton.addSubview(data)
+        
+        addSubview(fromButton)
+        //sendSubview(toBack: fromButton)
+        fromButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
+        fromButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        fromButton.leftAnchor.constraint(equalTo: toButton.rightAnchor, constant: 25).isActive = true
+        fromButton.centerYAnchor.constraint(equalTo: dropDown.centerYAnchor).isActive = true
+        let data2 = DataHolder()
+        data2.isHidden = true
+        data2.data["room"] = room
+        fromButton.addSubview(data2)
     }
     
     func selected(){
         dropDownTopAnchor?.constant = 0
-        UIView.animate(withDuration: 0.5) {
+        
+        UIView.animate(withDuration: 0.3) {
             self.layoutIfNeeded()
+        }
+        UIView.animate(withDuration: 0.5) {
+            self.toButton.alpha = 1
+            self.fromButton.alpha = 1
         }
     }
     func deselected(){
-        dropDownTopAnchor?.constant = -25
-        UIView.animate(withDuration: 0.5) {
+        dropDownTopAnchor?.constant = -50
+        UIView.animate(withDuration: 0.3) {
             self.layoutIfNeeded()
         }
+        UIView.animate(withDuration: 0.2) {
+            self.toButton.alpha = 0
+            self.fromButton.alpha = 0
+        }
+    }
+    
+    override func prepareForReuse() {
+//        for sub in subviews {
+//            sub.removeFromSuperview()
+//        }
     }
 }

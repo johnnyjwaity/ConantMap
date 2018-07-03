@@ -9,4 +9,5 @@
 import Foundation
 struct Global {
     static var rooms:[String] = []
+    static var nodes:[[Node]] = []
 }

@@ -10,8 +10,23 @@ import Foundation
 import SceneKit
 
 class Node: Hashable {
-    var hashValue: Int
     
+    init(_ nodeName:String, id:Int) {
+        name = nodeName
+        hashValue = id
+    }
+    
+    let name:String
+    var floor:Int = 0
+    var connections:[Node] = []
+    var strConnections:[String] = []
+    var rooms:[String] = []
+    var position:SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
+    public var description:String {
+        return self.name
+    }
+    
+    var hashValue: Int
     static func == (lhs: Node, rhs: Node) -> Bool {
         if lhs.name == rhs.name {
             return true
@@ -19,22 +34,6 @@ class Node: Hashable {
         return false
     }
     
-    
-    
-    
-    let name:String
-    public var description:String {
-        return self.name
-    }
-    var floor:Int = 0
-    var connections:[Node] = []
-    var strConnections:[String] = []
-    var rooms:[String] = []
-    var position:SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
-    init(_ nodeName:String, id:Int) {
-        name = nodeName
-        hashValue = id
-    }
     
     
 }

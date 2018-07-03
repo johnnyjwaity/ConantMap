@@ -8,10 +8,12 @@
 
 import UIKit
 
-class OverlayController: UIViewController {
+class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegate {
     
-    let controllers:[UIViewController] = [RoomSearchController()]
+    var currentController:UIViewController!
+    var controllers:[String:UIViewController] = [:]
     
+    var delegate:OverlayDelegate!
     
     let dragBar:UIView = {
         let v = UIView()
@@ -48,6 +50,7 @@ class OverlayController: UIViewController {
         return v
     }()
     
+    let pageView = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: nil)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,15 +71,68 @@ class OverlayController: UIViewController {
         dragBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         dragBar.heightAnchor.constraint(equalToConstant: 25).isActive = true
         
-        let rms = controllers[0]
-        view.addSubview(rms.view)
-        rms.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        rms.view.bottomAnchor.constraint(equalTo: dragBar.topAnchor).isActive = true
-        rms.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        rms.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        
+//        view.addSubview(rms.view)
+//        rms.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+//        rms.view.bottomAnchor.constraint(equalTo: dragBar.topAnchor).isActive = true
+//        rms.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+//        rms.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        
+        view.addSubview(pageView.view)
+        pageView.view.translatesAutoresizingMaskIntoConstraints = false
+        pageView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        pageView.view.bottomAnchor.constraint(equalTo: dragBar.topAnchor).isActive = true
+        pageView.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
+        pageView.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        
+        let rms = RoomSearchController()
+        rms.delegate = self
+        currentController = rms
+        pageView.setViewControllers([rms], direction: .forward, animated: false, completion: nil)
+        
     }
     
+    func roomSelected(controller: RoomSearchController, name: String, pos: NavPosition) {
+        print(name)
+        if let navOptionsController = controllers["NavOptions"] {
+            let navOptions = navOptionsController as! NavOptionsController
+            navOptions.setRoom(pos: pos, room: name)
+            changePage(navOptions, direction: .reverse)
+        }
+        else{
+            let navOptions = NavOptionsController()
+            navOptions.delegate = self
+            navOptions.setRoom(pos: pos, room: name)
+            controllers["NavOptions"] = navOptions
+            changePage(navOptions, direction: .forward)
+        }
+    }
     
+    func findRoomRequested(location: NavPosition) {
+        if let r = controllers["RoomController"] {
+            let rms = r as! RoomSearchController
+            rms.searchingFor = location
+            changePage(rms, direction: .forward)
+        }
+        else {
+            let rms = RoomSearchController(location)
+            rms.delegate = self
+            controllers["RoomController"] = rms
+            changePage(rms, direction: .forward)
+        }
+    }
     
+    func changePage(_ controller:UIViewController, direction:UIPageViewControllerNavigationDirection){
+        currentController = controller
+        pageView.setViewControllers([controller], direction: direction, animated: true, completion: nil)
+        if let del = delegate {
+            if (currentController as? RoomSearchController) != nil {
+                del.resizeOverlay(.Large)
+            }
+            else if (currentController as? NavOptionsController) != nil {
+                del.resizeOverlay(.Medium)
+            }
+        }
+    }
 
 }
