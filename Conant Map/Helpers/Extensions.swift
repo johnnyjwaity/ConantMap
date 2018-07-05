@@ -51,6 +51,9 @@ func normalizeVector(_ iv: SCNVector3) -> SCNVector3 {
 }
 
 extension SCNNode {
+    func getZForward() -> SCNVector3 {
+        return SCNVector3(worldTransform.m31, worldTransform.m32, worldTransform.m33)
+    }
     
     func buildLineInTwoPointsWithRotation(from startPoint: SCNVector3,
                                           to endPoint: SCNVector3,
@@ -148,17 +151,40 @@ extension Array where Iterator.Element == [Node] {
 }
 
 extension SCNVector3 {
-    func multiply(_ num:Float) -> SCNVector3{
-        return SCNVector3(x*num, y*num, z*num)
+    static func + (lhs: SCNVector3, rhs:CGPoint) -> SCNVector3 {
+        var vec = lhs
+        vec.x += Float(rhs.x)
+        vec.z += Float(rhs.y)
+        return vec
     }
-    func add(_ point:CGPoint) -> SCNVector3{
-        return SCNVector3(CGFloat(x)+point.x, CGFloat(y), CGFloat(z)+point.y)
+    static func + (lhs: SCNVector3, rhs:SCNVector3) -> SCNVector3 {
+        var vec = lhs
+        vec.x += rhs.x
+        vec.y += rhs.y
+        vec.z += rhs.z
+        return vec
+    }
+    
+    static func * (lhs:SCNVector3, rhs:Double) -> SCNVector3 {
+        var vec = lhs
+        vec.x *= Float(rhs)
+        vec.y *= Float(rhs)
+        vec.z *= Float(rhs)
+        return vec
     }
 }
 
 extension CGPoint {
-    func toVector()->SCNVector3 {
-        return SCNVector3(x, 0, y)
+    func reverse() -> CGPoint {
+        return CGPoint(x: -x, y: -y)
+    }
+    static func * (lhs: CGPoint, rhs: Float) -> CGPoint {
+        let m = CGFloat(rhs)
+        return CGPoint(x: lhs.x * m, y: lhs.y * m)
+    }
+    static func / (lhs: CGPoint, rhs: Float) -> CGPoint {
+        let d = CGFloat(rhs)
+        return CGPoint(x: lhs.x / d, y: lhs.y / d)
     }
 }
 
@@ -174,3 +200,5 @@ extension UIColor {
         return img!
     }
 }
+
+

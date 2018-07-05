@@ -10,7 +10,9 @@ import UIKit
 import QuartzCore
 import SceneKit
 
-class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate {
+class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate {
+    
+    
     
     
     
@@ -47,6 +49,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         view.addSubview(sV)
         gameView = sV
         gameView.autoenablesDefaultLighting = true;
+        gameView.delegate = self
     }
     
     func initScene() {
@@ -56,7 +59,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         gameView.scene = gameScene
         gameView.isPlaying = true;
-        //camera = Camera(gameScene)
+        camera = Camera(gameScene)
     }
     
     func setUpView(){
@@ -71,6 +74,31 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         overlay.widthAnchor.constraint(equalToConstant: 300).isActive = true
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
         overlayController?.dragBar.addGestureRecognizer(pan)
+        
+        let floorSelect = FloorSelectController()
+        floorSelect.delegate = self
+        addChildViewController(floorSelect)
+        gameView.addSubview(floorSelect.view)
+        floorSelect.view.rightAnchor.constraint(equalTo: gameView.rightAnchor, constant: -20).isActive = true
+        floorSelect.view.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 20).isActive = true
+        floorSelect.view.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        floorSelect.view.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+        
+        let gamePan = UIPanGestureRecognizer(target: self, action: #selector(handleCameraMove(gesture:)))
+        gameView.addGestureRecognizer(gamePan)
+        
+        let zoom = UIPinchGestureRecognizer(target: self, action: #selector(handleCameraZoom(gesture:)))
+        gameView.addGestureRecognizer(zoom)
+    }
+    
+    @objc
+    func handleCameraMove(gesture:UIPanGestureRecognizer){
+        camera?.move(gesture.velocity(in: gameView), state: gesture.state, numOfTouches: gesture.numberOfTouches)
+    }
+    @objc
+    func handleCameraZoom(gesture:UIPinchGestureRecognizer) {
+        camera?.zoom(gesture.velocity, state: gesture.state)
     }
     
     @objc
@@ -91,6 +119,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
     }
     
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        camera?.applyVelocity()
+    }
     
     /*Loads Nodes into The application */
     func initNodes(){
@@ -157,5 +188,22 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
     }
     
+    func changeFloor(_ floor: Int) {
+        let floor1Node = gameScene.rootNode.childNode(withName: "Floor1", recursively: true)!
+        let floor2Node = gameScene.rootNode.childNode(withName: "Floor2", recursively: true)!
+        
+        switch floor {
+        case 1:
+            floor1Node.isHidden = false
+            floor2Node.isHidden = true
+            break
+        case 2:
+            floor1Node.isHidden = true
+            floor2Node.isHidden = false
+        default:
+            break
+        }
+        
+    }
 
 }

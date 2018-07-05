@@ -22,9 +22,10 @@
 		3D3CAE3D20E86E9C00735610 /* DataHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3CAE3C20E86E9C00735610 /* DataHolder.swift */; };
 		3D3CAE3F20E9AC0B00735610 /* NavOptionsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3CAE3E20E9AC0B00735610 /* NavOptionsDelegate.swift */; };
 		3D3CAE4120EC19D500735610 /* OverlayDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3CAE4020EC19D500735610 /* OverlayDelegate.swift */; };
+		3D3CAE4320EDCC7100735610 /* FloorSelectController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3CAE4220EDCC7100735610 /* FloorSelectController.swift */; };
+		3D3CAE4520EDEDA300735610 /* FloorSelectDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3CAE4420EDEDA300735610 /* FloorSelectDelegate.swift */; };
 		3D3DDCD720D1ED4F00B865CE /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3DDCD620D1ED4F00B865CE /* Node.swift */; };
 		3D3DDCDA20D1EE1100B865CE /* NodeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3DDCD920D1EE1100B865CE /* NodeParser.swift */; };
-		3D5B785820CCC1B40048AEE7 /* NavigationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */; };
 		3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */; };
 		3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */; };
 		3D81F0ED20D591A6002002D5 /* Pathfinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D81F0EC20D591A6002002D5 /* Pathfinder.swift */; };
@@ -55,9 +56,10 @@
 		3D3CAE3C20E86E9C00735610 /* DataHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHolder.swift; sourceTree = "<group>"; };
 		3D3CAE3E20E9AC0B00735610 /* NavOptionsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavOptionsDelegate.swift; sourceTree = "<group>"; };
 		3D3CAE4020EC19D500735610 /* OverlayDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayDelegate.swift; sourceTree = "<group>"; };
+		3D3CAE4220EDCC7100735610 /* FloorSelectController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorSelectController.swift; sourceTree = "<group>"; };
+		3D3CAE4420EDEDA300735610 /* FloorSelectDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorSelectDelegate.swift; sourceTree = "<group>"; };
 		3D3DDCD620D1ED4F00B865CE /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		3D3DDCD920D1EE1100B865CE /* NodeParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeParser.swift; sourceTree = "<group>"; };
-		3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationWindowController.swift; sourceTree = "<group>"; };
 		3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavOptionsController.swift; sourceTree = "<group>"; };
 		3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSearchController.swift; sourceTree = "<group>"; };
 		3D81F0EC20D591A6002002D5 /* Pathfinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pathfinder.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				3D3CAE3A20E8544900735610 /* RoomSearchDelegate.swift */,
 				3D3CAE3E20E9AC0B00735610 /* NavOptionsDelegate.swift */,
 				3D3CAE4020EC19D500735610 /* OverlayDelegate.swift */,
+				3D3CAE4420EDEDA300735610 /* FloorSelectDelegate.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -164,9 +167,9 @@
 			children = (
 				3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */,
 				3D17EFBF20C5F599002AEBE2 /* MapViewController.swift */,
-				3D5B785720CCC1B40048AEE7 /* NavigationWindowController.swift */,
 				3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */,
 				3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */,
+				3D3CAE4220EDCC7100735610 /* FloorSelectController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -274,11 +277,12 @@
 				3D17EFC020C5F599002AEBE2 /* MapViewController.swift in Sources */,
 				3D3DDCDA20D1EE1100B865CE /* NodeParser.swift in Sources */,
 				3D996A8C20E57BFF00604AA1 /* Global.swift in Sources */,
-				3D5B785820CCC1B40048AEE7 /* NavigationWindowController.swift in Sources */,
 				3D1130E720DCAE8E009AD6E4 /* Camera.swift in Sources */,
 				3D3CAE3D20E86E9C00735610 /* DataHolder.swift in Sources */,
 				3D996A8820E55AF100604AA1 /* RoomCell.swift in Sources */,
+				3D3CAE4520EDEDA300735610 /* FloorSelectDelegate.swift in Sources */,
 				3D1130E520DACDAC009AD6E4 /* NavigationSession.swift in Sources */,
+				3D3CAE4320EDCC7100735610 /* FloorSelectController.swift in Sources */,
 				3D3CAE3B20E8544900735610 /* RoomSearchDelegate.swift in Sources */,
 				3D996A8520E34EA300604AA1 /* Structure.swift in Sources */,
 				3D3CAE4120EC19D500735610 /* OverlayDelegate.swift in Sources */,
