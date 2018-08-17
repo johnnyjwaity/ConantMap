@@ -12,7 +12,9 @@ import UIKit
 
 
 class Pathfinder {
-    static func search(start:Node, end:Node, nodes:[Node]) -> [Node]? {
+    static func search(start:Node, end:Node) -> [Node]? {
+        
+        let nodes = Global.nodes[0]
         
         var parents:[Node:Node?] = [:]
         for n in nodes {

@@ -13,10 +13,6 @@ import SceneKit
 class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate {
     
     
-    
-    
-    
-    
     static var main:MapViewController? = nil
     var gameView:SCNView!
     var gameScene:SCNScene!
@@ -90,6 +86,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         let zoom = UIPinchGestureRecognizer(target: self, action: #selector(handleCameraZoom(gesture:)))
         gameView.addGestureRecognizer(zoom)
+        
+        let rotate = UIRotationGestureRecognizer(target: self, action: #selector(handleCameraRotate(gesture:)))
+        gameView.addGestureRecognizer(rotate)
     }
     
     @objc
@@ -99,6 +98,24 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     @objc
     func handleCameraZoom(gesture:UIPinchGestureRecognizer) {
         camera?.zoom(gesture.velocity, state: gesture.state)
+    }
+    var schoolRotation:Float!
+    @objc
+    func handleCameraRotate(gesture:UIRotationGestureRecognizer) {
+        let school = gameScene.rootNode.childNode(withName: "School", recursively: false)!
+        switch gesture.state {
+        case .began:
+            schoolRotation = school.eulerAngles.y
+            break
+        case .changed:
+            school.eulerAngles.y = schoolRotation + Float(-gesture.rotation)
+            break
+        case .ended:
+            schoolRotation = school.eulerAngles.y
+            break
+        default:
+            break
+        }
     }
     
     @objc
@@ -135,15 +152,31 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         //Iterates over each node to determine which floor it is on
         for n in allNodes {
             if let sn1:SCNNode = schoolNode.childNode(withName: "Floor1", recursively: false)?.childNode(withName: "Nodes1", recursively: false)?.childNode(withName: n.name, recursively: false){
-                n.position = sn1.position
+                let min = sn1.geometry?.boundingBox.min
+                let max = sn1.geometry?.boundingBox.max
+                let mid = min?.midpoint(max!)
+                let marker = SCNNode()
+                sn1.addChildNode(marker)
+                marker.position = mid!
+                n.position = marker.worldPosition
+                
+                //print(sn1.position)
                 n.floor = 1
+                n.sceneNode = sn1
                 //Changes Node color to clear
                 sn1.geometry?.firstMaterial?.diffuse.contents = UIColor.clear
                 floor1Nodes.append(n)
             }
             else if let sn2:SCNNode = schoolNode.childNode(withName: "Floor2", recursively: false)?.childNode(withName: "Nodes2", recursively: false)?.childNode(withName: n.name, recursively: false){
-                n.position = sn2.position
+                let min = sn2.geometry?.boundingBox.min
+                let max = sn2.geometry?.boundingBox.max
+                let mid = min?.midpoint(max!)
+                let marker = SCNNode()
+                sn2.addChildNode(marker)
+                marker.position = mid!
+                n.position = marker.worldPosition
                 n.floor = 2
+                n.sceneNode = sn2
                 //Changes Node Color To Clear
                 sn2.geometry?.firstMaterial?.diffuse.contents = UIColor.clear
                 floor2Nodes.append(n)
@@ -205,5 +238,102 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         
     }
+    
+    func startNavigation(_ session: NavigationSession) {
+        guard let path = Pathfinder.search(start: session.start, end: session.end) else{
+            return
+        }
+        drawPath(path, radius: 0.1, color: UIView().tintColor)
+    }
+    
+    func drawPath(_ path:[Node], radius:CGFloat, color:UIColor){
+        var prev:Node? = nil
+        for n in path {
+            if prev == nil {
+                prev = n
+                continue
+            }
+            print("Creating Line")
+            print(n.position)
+            let sphere = SCNSphere(radius: radius)
+            sphere.firstMaterial?.diffuse.contents = color
+            let sphereNode = SCNNode(geometry: sphere)
+            sphereNode.position = n.position
+            gameScene.rootNode.addChildNode(sphereNode)
+            gameScene.rootNode.addChildNode(SCNNode().buildLineInTwoPointsWithRotation(from: (prev?.position)!, to: n.position, radius: radius, color: color))
+            prev = n
+        }
+    }
+    
 
+}
+class   CylinderLine: SCNNode
+{
+    init( parent: SCNNode,//Needed to add destination point of your line
+        v1: SCNVector3,//source
+        v2: SCNVector3,//destination
+        radius: CGFloat,//somes option for the cylinder
+        radSegmentCount: Int, //other option
+        color: UIColor )// color of your node object
+    {
+        super.init()
+        print(v1)
+        print(v2)
+        //Calcul the height of our line
+        let  height = v1.distance(receiver: v2)
+        print(height)
+        
+        //set position to v1 coordonate
+        position = v1
+        
+        //Create the second node to draw direction vector
+        let nodeV2 = SCNNode()
+        
+        //define his position
+        nodeV2.position = v2
+        //add it to parent
+        parent.addChildNode(nodeV2)
+        
+        //Align Z axis
+        let zAlign = SCNNode()
+        zAlign.eulerAngles.x = Float(M_PI_2)
+        
+        //create our cylinder
+        let cyl = SCNCylinder(radius: radius, height: CGFloat(height))
+        cyl.radialSegmentCount = radSegmentCount
+        cyl.firstMaterial?.diffuse.contents = color
+        
+        //Create node with cylinder
+        let nodeCyl = SCNNode(geometry: cyl )
+        nodeCyl.position.y = -height/2
+        zAlign.addChildNode(nodeCyl)
+        
+        //Add it to child
+        addChildNode(zAlign)
+        
+        //set contrainte direction to our vector
+        constraints = [SCNLookAtConstraint(target: nodeV2)]
+    }
+    
+    override init() {
+        super.init()
+    }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
+}
+
+private extension SCNVector3{
+    func distance(receiver:SCNVector3) -> Float{
+        let xd = receiver.x - self.x
+        let yd = receiver.y - self.y
+        let zd = receiver.z - self.z
+        let distance = Float(sqrt(xd * xd + yd * yd + zd * zd))
+        
+        if (distance < 0){
+            return (distance * -1)
+        } else {
+            return (distance)
+        }
+    }
 }

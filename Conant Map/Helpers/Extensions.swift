@@ -39,7 +39,6 @@ extension UIImage{
 extension UIView {
     //var myConstraints:[String:NSLayoutConstraint] = [:]
 }
-
 func normalizeVector(_ iv: SCNVector3) -> SCNVector3 {
     let length = sqrt(iv.x * iv.x + iv.y * iv.y + iv.z * iv.z)
     if length == 0 {
@@ -49,6 +48,7 @@ func normalizeVector(_ iv: SCNVector3) -> SCNVector3 {
     return SCNVector3( iv.x / length, iv.y / length, iv.z / length)
     
 }
+
 
 extension SCNNode {
     func getZForward() -> SCNVector3 {
@@ -126,6 +126,7 @@ extension SCNNode {
         self.transform.m44 = 1.0
         return self
     }
+    
 }
 
 extension Array where Iterator.Element == String {
@@ -171,6 +172,13 @@ extension SCNVector3 {
         vec.y *= Float(rhs)
         vec.z *= Float(rhs)
         return vec
+    }
+    
+    func midpoint(_ vec:SCNVector3) -> SCNVector3{
+        let mx = self.x + vec.x
+        let my = self.y + vec.y
+        let mz = self.z + vec.z
+        return SCNVector3(mx/2, my/2, mz/2)
     }
 }
 

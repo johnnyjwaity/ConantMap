@@ -14,6 +14,8 @@ class NavOptionsController: UIViewController {
     let fromButton = UIButton(type: .system)
     var toRoom = "Select"
     let toButton = UIButton(type: .system)
+    
+    let elevatorSwitch = UISwitch()
 
     let routeButton = UIButton(type: UIButtonType.system)
     
@@ -44,6 +46,7 @@ class NavOptionsController: UIViewController {
         view.addSubview(routeButton)
         routeButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15).isActive = true
         routeButton.centerYAnchor.constraint(equalTo: title.centerYAnchor).isActive = true
+        routeButton.addTarget(self, action: #selector(startNav), for: .touchUpInside)
         
         
         let toFromContainer = UIView()
@@ -117,7 +120,7 @@ class NavOptionsController: UIViewController {
         elevatorLabel.leftAnchor.constraint(equalTo: switchBackground.leftAnchor, constant: 10).isActive = true
         elevatorLabel.centerYAnchor.constraint(equalTo: switchBackground.centerYAnchor).isActive = true
         
-        let elevatorSwitch = UISwitch()
+        
         elevatorSwitch.translatesAutoresizingMaskIntoConstraints = false
         switchBackground.addSubview(elevatorSwitch)
         elevatorSwitch.rightAnchor.constraint(equalTo: switchBackground.rightAnchor, constant: -10).isActive = true
@@ -128,6 +131,12 @@ class NavOptionsController: UIViewController {
     @objc
     func selectButtonClicked(sender:UIButton){
         delegate.findRoomRequested(location: ((sender.tag == 0) ? NavPosition.From : NavPosition.To))
+    }
+    
+    @objc
+    func startNav() {
+        let navSession = NavigationSession(start: fromRoom, end: toRoom, usesElevators: elevatorSwitch.isOn)
+        delegate.startRoute(navSession)
     }
     
     

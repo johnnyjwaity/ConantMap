@@ -18,12 +18,13 @@ class Camera {
     var panVelocity:CGPoint = CGPoint(x: 0, y: 0)
     var angleSpeed:Float = 0.00005
     
-    var startZoom:Float
+    var startRotation:Float
+    
     
     init(_ gameScene:SCNScene) {
         self.cam = gameScene.rootNode.childNode(withName: "camera", recursively: true)!
         self.camRig = gameScene.rootNode.childNode(withName: "Camera Rig", recursively: false)!
-        startZoom = camRig.position.y
+        startRotation = camRig.eulerAngles.y
     }
     
     func move(_ translation:CGPoint, state:UIGestureRecognizerState, numOfTouches:Int) {
@@ -73,6 +74,22 @@ class Camera {
         switch state {
         case .changed:
             camRig.position = camRig.position + (forwardVector * moveAmount)
+            break
+        default:
+            break
+        }
+    }
+    
+    func rotate(_ rotation:Float, state:UIGestureRecognizerState){
+        switch state {
+        case .began:
+            startRotation = camRig.eulerAngles.y
+            break
+        case .changed:
+            camRig.eulerAngles.y = startRotation + rotation
+            break
+        case .ended:
+            startRotation = camRig.eulerAngles.y
             break
         default:
             break

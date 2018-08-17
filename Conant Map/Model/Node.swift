@@ -22,6 +22,7 @@ class Node: Hashable {
     var strConnections:[String] = []
     var rooms:[String] = []
     var position:SCNVector3 = SCNVector3(x: 0, y: 0, z: 0)
+    var sceneNode:SCNNode!
     public var description:String {
         return self.name
     }

@@ -10,6 +10,7 @@ import Foundation
 
 protocol OverlayDelegate {
     func resizeOverlay(_ size:OverlaySize)
+    func startNavigation(_ session:NavigationSession)
 }
 
 enum OverlaySize{

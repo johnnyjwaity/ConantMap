@@ -10,6 +10,8 @@ import UIKit
 
 class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegate {
     
+    
+    
     var currentController:UIViewController!
     var controllers:[String:UIViewController] = [:]
     
@@ -135,4 +137,8 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         }
     }
 
+    
+    func startRoute(_ session: NavigationSession) {
+        delegate.startNavigation(session)
+    }
 }
