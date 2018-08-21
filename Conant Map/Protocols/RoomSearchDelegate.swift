@@ -10,6 +10,7 @@ import Foundation
 
 protocol RoomSearchDelegate {
     func roomSelected(controller:RoomSearchController, name:String, pos:NavPosition)
+    func showRoomInfo(controller:RoomSearchController, room:String)
 }
 
 enum NavPosition {

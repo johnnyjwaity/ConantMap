@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SceneKit
 
 struct NavigationSession {
     let startStr:String
@@ -14,6 +15,7 @@ struct NavigationSession {
     let start:Node
     let end:Node
     let usesElevators:Bool
+    var lines:[Int:[SCNNode]]
     
     
     init(start: String, end: String, usesElevators:Bool) {
@@ -34,6 +36,7 @@ struct NavigationSession {
         self.start = startNode
         self.end = endNode
         self.usesElevators = usesElevators
+        self.lines = [:]
     }
     
 }

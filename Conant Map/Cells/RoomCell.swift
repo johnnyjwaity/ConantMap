@@ -12,6 +12,7 @@ class RoomCell: UITableViewCell {
 
     var dropDownTopAnchor:NSLayoutConstraint? = nil
     var roomName:String!
+    var populationArray:[UIView] = []
     
     let fromButton:UIButton = {
         let fromButton = UIButton(type: .system)
@@ -37,6 +38,13 @@ class RoomCell: UITableViewCell {
         return toButton
     }()
     
+    let infoButton:UIButton = {
+        let b = UIButton(type: .infoLight)
+        b.translatesAutoresizingMaskIntoConstraints = false
+        return b
+    }()
+    
+    
     let dropDown:UIView = {
         let v = UIView()
         v.translatesAutoresizingMaskIntoConstraints = false
@@ -46,6 +54,10 @@ class RoomCell: UITableViewCell {
     
     
     func setUpCell(room:String) {
+        for subView in populationArray{
+            subView.removeFromSuperview()
+        }
+        populationArray = []
         roomName = room
         clipsToBounds = true
         backgroundColor = UIColor.white
@@ -57,9 +69,17 @@ class RoomCell: UITableViewCell {
         mainView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         mainView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         mainView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        mainView.heightAnchor.constraint(equalToConstant: 75).isActive = true
+        mainView.heightAnchor.constraint(equalToConstant: 74).isActive = true
+        populationArray.append(mainView)
         
         let icon = UIImageView(image: #imageLiteral(resourceName: "GreyCircle"), highlightedImage: nil)
+        icon.image = icon.image?.withRenderingMode(.alwaysTemplate)
+        if let structure = Global.structures.searchForStructure(room) {
+            icon.tintColor = structure.color
+            if structure.color == UIColor.white {
+                icon.tintColor = UIColor.lightGray
+            }
+        }
         icon.contentMode = .scaleAspectFit
         icon.translatesAutoresizingMaskIntoConstraints = false
         mainView.addSubview(icon)
@@ -82,6 +102,14 @@ class RoomCell: UITableViewCell {
         roomLbl.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         
+        mainView.addSubview(infoButton)
+        infoButton.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -10).isActive = true
+        infoButton.centerYAnchor.constraint(equalTo: mainView.centerYAnchor).isActive = true
+        let roomData = DataHolder()
+        roomData.data["room"] = room
+        infoButton.addSubview(roomData)
+        
+        
         addSubview(dropDown)
         dropDownTopAnchor = dropDown.topAnchor.constraint(equalTo: mainView.bottomAnchor, constant: -50)
         dropDownTopAnchor?.isActive = true
@@ -89,10 +117,11 @@ class RoomCell: UITableViewCell {
         dropDown.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         dropDown.heightAnchor.constraint(equalToConstant: 50).isActive = true
         sendSubview(toBack: dropDown)
+        populationArray.append(dropDown)
         
         addSubview(toButton)
         //sendSubview(toBack: toButton)
-        
+        populationArray.append(toButton)
         toButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
         toButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
         toButton.leftAnchor.constraint(equalTo: dropDown.leftAnchor, constant: 25).isActive = true
@@ -103,6 +132,7 @@ class RoomCell: UITableViewCell {
         toButton.addSubview(data)
         
         addSubview(fromButton)
+        populationArray.append(fromButton)
         //sendSubview(toBack: fromButton)
         fromButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
         fromButton.heightAnchor.constraint(equalToConstant: 35).isActive = true

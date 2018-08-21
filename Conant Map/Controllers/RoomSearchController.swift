@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SceneKit
 
 class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
@@ -103,23 +104,37 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = RoomCell()
+        var pcell = tableView.dequeueReusableCell(withIdentifier: "room")
+        if(pcell == nil){
+            pcell = RoomCell()
+        }
+        let cell = pcell as! RoomCell
         cell.setUpCell(room: sortedRooms[indexPath.item])
         cell.toButton.tag = indexPath.row
         cell.toButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)
         
         cell.fromButton.tag = indexPath.row
         cell.fromButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)
+        
+        cell.infoButton.addTarget(self, action: #selector(roomInfoClicked(sender:)), for: .touchUpInside)
         return cell
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         filterArray(searched: searchBar.text!)
     }
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        if let i = tableView.indexPathForSelectedRow {
+            tableView.deselectRow(at: i, animated: true)
+        }
+        
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! RoomCell
+        sendHighlightRequest(room: cell.roomName)
+        
         if searchingFor != .Undetermined {
-            let cell = tableView.cellForRow(at: indexPath) as! RoomCell
             delegate.roomSelected(controller: self, name: cell.roomName, pos: searchingFor)
             tableView.deselectRow(at: indexPath, animated: true)
             return
@@ -130,11 +145,28 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         }
         selectedCell = indexPath
         print("Selected Cell")
-        let cell = tableView.cellForRow(at: indexPath) as! RoomCell
         cell.selected()
         tableView.beginUpdates()
         tableView.endUpdates()
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func sendHighlightRequest(room:String){
+        if let s = Global.structures.searchForStructure(room) {
+            MapViewController.main?.removeHighlights()
+            MapViewController.main?.highlight(room: s)
+            MapViewController.main?.floorSelect.setFloor(s.floor)
+            let min:SCNVector3 = (Global.structures.searchForStructure(room)?.node.geometry?.boundingBox.min)!
+            let max:SCNVector3 = (Global.structures.searchForStructure(room)?.node.geometry?.boundingBox.max)!
+            let avg = min.midpoint(max)
+            MapViewController.main?.camera?.panToPosition(avg, type: .Room, room: (s.floor == 2) ? s : nil, floor: s.floor)
+        }
+        else{
+            MapViewController.main?.removeHighlights()
+            MapViewController.main?.camera?.panToPosition((Global.nodes.searchForByRoom(room)?.position)!, type: .Node, room: nil, floor: (Global.nodes.searchForByRoom(room)?.floor)!)
+            MapViewController.main?.floorSelect.setFloor((Global.nodes.searchForByRoom(room)?.floor)!)
+        }
+        
     }
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         if let cell = selectedCell {
@@ -151,12 +183,13 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         var discard:[String] = []
         let search = searched.lowercased()
         for roomI in rooms {
+            let roomOG = roomI
             let room = roomI.lowercased()
             if room.contains(search){
-                contains.append(room)
+                contains.append(roomOG)
             }
             else{
-                discard.append(room)
+                discard.append(roomOG)
             }
         }
         sortedRooms = contains
@@ -172,6 +205,15 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
                 let room:String = d.data["room"] as! String
                 let direction = NavPosition.To.toNavPosition(direction: (sender.titleLabel?.text)!)
                 delegate.roomSelected(controller: self, name: room, pos: direction)
+            }
+        }
+    }
+    @objc
+    func roomInfoClicked(sender:UIButton){
+        for child in sender.subviews {
+            if let d = child as? DataHolder {
+                let room:String = d.data["room"] as! String
+                delegate.showRoomInfo(controller: self, room: room)
             }
         }
     }

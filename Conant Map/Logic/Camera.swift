@@ -12,6 +12,8 @@ import UIKit
 
 
 class Camera {
+    
+    
     let cam:SCNNode
     let camRig:SCNNode
     let camSpeed:Float = 0.0005
@@ -19,19 +21,22 @@ class Camera {
     var angleSpeed:Float = 0.00005
     
     var startRotation:Float
+    let gameScene:SCNScene!
     
     
     init(_ gameScene:SCNScene) {
         self.cam = gameScene.rootNode.childNode(withName: "camera", recursively: true)!
         self.camRig = gameScene.rootNode.childNode(withName: "Camera Rig", recursively: false)!
         startRotation = camRig.eulerAngles.y
+        self.gameScene = gameScene
     }
     
     func move(_ translation:CGPoint, state:UIGestureRecognizerState, numOfTouches:Int) {
         if numOfTouches == 1 {
             switch state {
             case .changed:
-                panVelocity = translation.reverse() * camSpeed
+                let zoomLevel = abs(camRig.position.y) / 12.64
+                panVelocity = translation.reverse() * camSpeed * zoomLevel
                 break
             default:
                 break
@@ -42,6 +47,7 @@ class Camera {
             case .changed:
                 //print(cam.eulerAngles.x)
                 cam.eulerAngles.x += (-Float(translation.y) * angleSpeed)
+                
                 if cam.eulerAngles.x > 0 {
                     cam.eulerAngles.x = 0
                 }
@@ -54,6 +60,64 @@ class Camera {
             }
         }
         
+    }
+    
+    func panToPosition(_ positionR:SCNVector3, type:PanType, room:Structure?, floor:Int){
+        var position = positionR
+        print(positionR)
+        if type == .Room{
+            let testNode = SCNNode()
+            if room == nil {
+                gameScene.rootNode.childNode(withName: "School", recursively: false)?.addChildNode(testNode)
+            }
+            else{
+                room?.node.addChildNode(testNode)
+            }
+            
+            testNode.position = positionR
+            position = testNode.worldPosition
+        }
+        else{
+            position = positionR
+        }
+        
+        position.y += (floor == 1) ? 4.5 : 5
+        position.x -= (floor == 1) ? 1 : 0
+        position.z += (floor == 1) ? 6 : 6
+        print(positionR)
+        
+        let panAnimation = CABasicAnimation(keyPath: "position")
+        panAnimation.fromValue = NSValue(scnVector3: camRig.position)
+        panAnimation.toValue = NSValue(scnVector3: position)
+        panAnimation.duration = 0.4
+        self.camRig.position = position
+        camRig.addAnimation(panAnimation, forKey: nil)
+        
+        
+        let tiltAnimation = CABasicAnimation(keyPath: "eulerAngles.x")
+        tiltAnimation.fromValue = cam.eulerAngles.x
+        tiltAnimation.toValue = -0.452859402
+        tiltAnimation.duration = 0.4
+        cam.eulerAngles.x = -0.452859402
+        cam.addAnimation(tiltAnimation, forKey: nil)
+    }
+    
+    func showWholeMap(){
+        let center = SCNVector3(x: 2.392, y: 25, z: 19.874)
+        let panAnimation = CABasicAnimation(keyPath: "position")
+        panAnimation.fromValue = NSValue(scnVector3: camRig.position)
+        panAnimation.toValue = NSValue(scnVector3: center)
+        panAnimation.duration = 0.4
+        self.camRig.position = center
+        camRig.addAnimation(panAnimation, forKey: nil)
+        
+        
+        let tiltAnimation = CABasicAnimation(keyPath: "eulerAngles.x")
+        tiltAnimation.fromValue = cam.eulerAngles.x
+        tiltAnimation.toValue = -1.5
+        tiltAnimation.duration = 0.4
+        cam.eulerAngles.x = -1.5
+        cam.addAnimation(tiltAnimation, forKey: nil)
     }
     
     func applyVelocity(){
@@ -95,4 +159,9 @@ class Camera {
             break
         }
     }
+}
+
+enum PanType{
+    case Node
+    case Room
 }

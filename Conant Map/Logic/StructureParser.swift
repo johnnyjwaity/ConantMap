@@ -8,9 +8,10 @@
 
 import Foundation
 import UIKit
+import SceneKit
 
 class StructureParser {
-    static func parseStructures(_ file:String) -> [Structure]{
+    static func parseStructures(_ file:String, structureNodes:[[SCNNode]]) -> [Structure]{
         //Prepare Array For Structures
         var structures:[Structure] = []
         //Prepare Array For Lines
@@ -47,7 +48,26 @@ class StructureParser {
                 if let s = currentStructure {
                     structures.append(s)
                 }
-                currentStructure = Structure(phrase)
+                let nameArr = phrase.components(separatedBy: ",")
+                currentStructure = Structure(nameArr)
+                var currentFloor = 0
+                var foundS = false
+                for floor in structureNodes {
+                    currentFloor += 1
+                    for s in floor{
+                        for n in (s.name?.components(separatedBy: ","))!{
+                            if nameArr.contains(n){
+                                currentStructure?.node = s
+                                currentStructure?.floor = currentFloor
+                                foundS = true
+                            }
+                        }
+                    }
+                }
+                if !foundS{
+                    print("No building For \(nameArr)")
+                }
+                
                 break;
             case "@":
                 switch phrase {
@@ -71,6 +91,7 @@ class StructureParser {
             }
         }
         structures.append(currentStructure!)
+        
         return structures
     }
 }

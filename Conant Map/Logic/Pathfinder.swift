@@ -12,9 +12,47 @@ import UIKit
 
 
 class Pathfinder {
-    static func search(start:Node, end:Node) -> [Node]? {
+    
+    static func search(start:Node, end:Node, useElevator:Bool) -> [[Node]]? {
+        if start.floor != end.floor{
+            var closestStair:Stair? = nil
+            var closestDistance:Float = -1
+            for stair in Global.stairs{
+                if stair.floor != start.floor {
+                    continue
+                }
+                if stair.isElevator != useElevator {
+                    continue
+                }
+                let distance = calculateHeuristic(.ManhattenDistance, currentNode: start, endNode: stair.entryNode!)
+                if closestStair == nil {
+                    closestStair = stair
+                    closestDistance = distance
+                    continue
+                }
+                
+                if distance < closestDistance {
+                    closestDistance = distance
+                    closestStair = stair
+                }
+            }
+            let points:[Node] = [start, (closestStair?.entryNode)!, (closestStair?.complementary.entryNode)!, end]
+            return performMultiPath(points)
+        }
+        else{
+            return [findPath(start: start, end: end)!]
+        }
+    }
+    
+    static func performMultiPath(_ path:[Node]) -> [[Node]]?{
+        return [findPath(start: path[0], end: path[1])!, findPath(start: path[2], end: path[3])!]
+    }
+    
+    static func findPath(start:Node, end:Node) -> [Node]? {
         
-        let nodes = Global.nodes[0]
+        
+        
+        let nodes = Global.nodes[start.floor-1]
         
         var parents:[Node:Node?] = [:]
         for n in nodes {

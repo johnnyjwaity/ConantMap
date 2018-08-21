@@ -124,6 +124,35 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         }
     }
     
+    func showRoomInfo(controller: RoomSearchController, room: String) {
+        if let i = controllers["RoomInfoController"]{
+            let infoController = i as! RoomInfoController
+            infoController.setRoom(room)
+            changePage(infoController, direction: .forward)
+            delegate.resizeOverlay(.Medium)
+        }
+        else{
+            let infoController = RoomInfoController()
+            infoController.setRoom(room)
+            controllers["RoomInfoController"] = infoController
+            changePage(infoController, direction: .forward)
+            delegate.resizeOverlay(.Medium)
+        }
+    }
+    
+    func resetRoute() {
+        reset()
+    }
+    
+    func reset(){
+        controllers = [:]
+        let rms = RoomSearchController()
+        rms.delegate = self
+        currentController = rms
+        pageView.setViewControllers([rms], direction: .reverse, animated: true, completion: nil)
+        delegate.resizeOverlay(.Large)
+    }
+    
     func changePage(_ controller:UIViewController, direction:UIPageViewControllerNavigationDirection){
         currentController = controller
         pageView.setViewControllers([controller], direction: direction, animated: true, completion: nil)

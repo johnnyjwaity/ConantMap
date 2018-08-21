@@ -60,9 +60,16 @@ class FloorSelectController: UIViewController {
     
     @objc
     func buttonClick(sender:UIButton){
-        switchButton(floor1Button)
-        switchButton(floor2Button)
-        delegate.changeFloor(sender.tag)
+        setFloor(sender.tag)
+    }
+    
+    func setFloor(_ floor:Int){
+        if (floor == 1 && floor1Button.backgroundColor != UIView().tintColor) || (floor == 2 && floor2Button.backgroundColor != UIView().tintColor) {
+            switchButton(floor1Button)
+            switchButton(floor2Button)
+            delegate.changeFloor(floor)
+        }
+        
     }
     
     func switchButton(_ button:UIButton){

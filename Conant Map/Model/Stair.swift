@@ -14,6 +14,9 @@ class Stair{
     var isElevator:Bool = false
     var entryStr:String = ""
     
+    var entryNode:Node? = nil
+    var floor:Int = 0
+    var complementary:Stair!
     
     init(_ name:String){
         self.name = name

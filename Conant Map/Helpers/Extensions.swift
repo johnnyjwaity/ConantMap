@@ -151,6 +151,17 @@ extension Array where Iterator.Element == [Node] {
     }
 }
 
+extension Array where Iterator.Element == Structure {
+    func searchForStructure(_ room:String) -> Structure? {
+        for s in self{
+            if(s.name.contains(room)){
+                return s
+            }
+        }
+        return nil
+    }
+}
+
 extension SCNVector3 {
     static func + (lhs: SCNVector3, rhs:CGPoint) -> SCNVector3 {
         var vec = lhs

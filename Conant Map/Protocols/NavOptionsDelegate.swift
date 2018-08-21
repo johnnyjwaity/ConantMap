@@ -11,4 +11,5 @@ import Foundation
 protocol NavOptionsDelegate {
     func findRoomRequested(location:NavPosition)
     func startRoute(_ session:NavigationSession)
+    func resetRoute()
 }

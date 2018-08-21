@@ -22,10 +22,16 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     var bottomAnchor:NSLayoutConstraint? = nil
     var bottomConstant:CGFloat = -20
     
+    var floorSelect:FloorSelectController!
+    
     var nodes:[[Node]] = []
     var rooms:[String] = []
     
     var camera:Camera? = nil
+    
+    var currentNavSession:NavigationSession? = nil
+    
+    var highlightedRooms:[Structure] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +40,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         initScene()
         initNodes()
         initRooms()
+        initStructures()
+        initStairs()
         setUpView()
         
     }
@@ -71,7 +79,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
         overlayController?.dragBar.addGestureRecognizer(pan)
         
-        let floorSelect = FloorSelectController()
+        floorSelect = FloorSelectController()
         floorSelect.delegate = self
         addChildViewController(floorSelect)
         gameView.addSubview(floorSelect.view)
@@ -83,12 +91,12 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         let gamePan = UIPanGestureRecognizer(target: self, action: #selector(handleCameraMove(gesture:)))
         gameView.addGestureRecognizer(gamePan)
-        
+
         let zoom = UIPinchGestureRecognizer(target: self, action: #selector(handleCameraZoom(gesture:)))
         gameView.addGestureRecognizer(zoom)
-        
-        let rotate = UIRotationGestureRecognizer(target: self, action: #selector(handleCameraRotate(gesture:)))
-        gameView.addGestureRecognizer(rotate)
+
+//        let rotate = UIRotationGestureRecognizer(target: self, action: #selector(handleCameraRotate(gesture:)))
+//        gameView.addGestureRecognizer(rotate)
     }
     
     @objc
@@ -202,6 +210,53 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         Global.rooms = rooms
     }
     
+    func initStructures() {
+        let stuctures:[[SCNNode]] = [(gameScene.rootNode.childNode(withName: "Structures1", recursively: true)?.childNodes)!, (gameScene.rootNode.childNode(withName: "Structures2", recursively: true)?.childNodes)!]
+        Global.structures = StructureParser.parseStructures("colors", structureNodes: stuctures)
+    }
+    
+    func initStairs(){
+        let stairs = StairParser.parseStairs("stairs")
+        var validStairs:[Stair] = []
+        for stair in stairs{
+            var mapCheck = false
+            var nodeCheck = false
+            if let stairNode = gameScene.rootNode.childNode(withName: stair.name, recursively: true){
+                stairNode.geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+                mapCheck = true
+            }
+            else{
+                print("Stair Not Found\(stair.name)")
+            }
+            
+            for floor in Global.nodes{
+                for node in floor{
+                    if node.name == stair.entryStr{
+                        stair.entryNode = node
+                        stair.floor = node.floor
+                        nodeCheck = true
+                        break
+                    }
+                }
+            }
+            if(!nodeCheck){
+                print("Node not found: \(stair.entryStr) for stair: \(stair.name)")
+            }
+            if mapCheck && nodeCheck {
+                validStairs.append(stair)
+            }
+        }
+        for stair in validStairs {
+            for cStair in validStairs {
+                if stair.name != cStair.name && stair.id == cStair.id {
+                    stair.complementary = cStair
+                    break
+                }
+            }
+        }
+        Global.stairs = validStairs
+    }
+    
     func resizeOverlay(_ size: OverlaySize) {
         var newBottomConstant = bottomConstant
         switch size {
@@ -224,7 +279,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     func changeFloor(_ floor: Int) {
         let floor1Node = gameScene.rootNode.childNode(withName: "Floor1", recursively: true)!
         let floor2Node = gameScene.rootNode.childNode(withName: "Floor2", recursively: true)!
-        
+        switchVisiblePath(floor)
         switch floor {
         case 1:
             floor1Node.isHidden = false
@@ -236,33 +291,97 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         default:
             break
         }
-        
     }
     
     func startNavigation(_ session: NavigationSession) {
-        guard let path = Pathfinder.search(start: session.start, end: session.end) else{
+        currentNavSession = session
+        guard let path = Pathfinder.search(start: session.start, end: session.end, useElevator: session.usesElevators) else{
             return
         }
-        drawPath(path, radius: 0.1, color: UIView().tintColor)
+        floorSelect.setFloor(session.start.floor)
+        var makeVisible = true
+        for p in path {
+            let line = drawPath(p, radius: 0.1, color: (makeVisible) ? UIView().tintColor : UIColor.clear)
+            currentNavSession?.lines[p[0].floor] = line
+            makeVisible = false
+        }
+        removeHighlights()
+        for room in (currentNavSession?.start.rooms)! {
+            if let s = Global.structures.searchForStructure(room){
+                highlight(room: s)
+                break
+            }
+        }
+        for room in (currentNavSession?.end.rooms)! {
+            if let s = Global.structures.searchForStructure(room){
+                highlight(room: s)
+                break
+            }
+        }
+        camera?.showWholeMap()
+        
+    }
+    func switchVisiblePath(_ floor:Int){
+        if let session = currentNavSession {
+            for ml in session.lines.values {
+                for l in ml {
+                    l.geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+                }
+            }
+            if let lines = session.lines[floor] {
+                for line in lines {
+                    line.geometry?.firstMaterial?.diffuse.contents = UIView().tintColor
+                }
+            }
+        }
+        
     }
     
-    func drawPath(_ path:[Node], radius:CGFloat, color:UIColor){
+    func drawPath(_ path:[Node], radius:CGFloat, color:UIColor) -> [SCNNode]{
+        var nodesAdded:[SCNNode] = []
         var prev:Node? = nil
         for n in path {
-            if prev == nil {
-                prev = n
-                continue
-            }
-            print("Creating Line")
-            print(n.position)
             let sphere = SCNSphere(radius: radius)
             sphere.firstMaterial?.diffuse.contents = color
             let sphereNode = SCNNode(geometry: sphere)
             sphereNode.position = n.position
             gameScene.rootNode.addChildNode(sphereNode)
-            gameScene.rootNode.addChildNode(SCNNode().buildLineInTwoPointsWithRotation(from: (prev?.position)!, to: n.position, radius: radius, color: color))
+            nodesAdded.append(sphereNode)
+            if prev == nil {
+                prev = n
+                continue
+            }
+            let lineNode = SCNNode().buildLineInTwoPointsWithRotation(from: (prev?.position)!, to: n.position, radius: radius, color: color)
+            gameScene.rootNode.addChildNode(lineNode)
+            nodesAdded.append(lineNode)
             prev = n
         }
+        return nodesAdded
+    }
+    
+    func highlight(room:Structure){
+        let mat = SCNMaterial()
+        mat.diffuse.contents = room.node.geometry?.firstMaterial?.diffuse.contents as! UIColor
+        mat.emission.contents = UIColor.cyan
+        room.node.scale.y += 0.2
+        room.node.geometry?.materials[0] = mat
+        highlightedRooms.append(room)
+        let highlighAnim = CABasicAnimation(keyPath: "geometry.firstMaterial.emission.contents")
+        highlighAnim.fromValue = UIColor.cyan
+        highlighAnim.toValue = UIColor.clear
+        highlighAnim.duration = 1
+        highlighAnim.repeatCount = .infinity
+        highlighAnim.autoreverses = true
+        room.node.addAnimation(highlighAnim, forKey: "glow")
+    }
+    
+    func removeHighlights(){
+        for s in highlightedRooms{
+            s.node.removeAnimation(forKey: "glow")
+            s.node.geometry?.firstMaterial?.emission.contents = UIColor.clear
+            s.node.scale.y -= 0.2
+        }
+        highlightedRooms = []
     }
     
 

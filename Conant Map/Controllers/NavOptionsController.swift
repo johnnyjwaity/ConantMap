@@ -48,6 +48,15 @@ class NavOptionsController: UIViewController {
         routeButton.centerYAnchor.constraint(equalTo: title.centerYAnchor).isActive = true
         routeButton.addTarget(self, action: #selector(startNav), for: .touchUpInside)
         
+        let cancelButton = UIButton(type: .system)
+        cancelButton.setTitle("Cancel", for: .normal)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.titleLabel?.font = UIFont.systemFont(ofSize: 18)
+        view.addSubview(cancelButton)
+        cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 15).isActive = true
+        cancelButton.centerYAnchor.constraint(equalTo: title.centerYAnchor).isActive = true
+        cancelButton.addTarget(self, action: #selector(resetRoute), for: .touchUpInside)
+        
         
         let toFromContainer = UIView()
         toFromContainer.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 239/255)
@@ -137,6 +146,11 @@ class NavOptionsController: UIViewController {
     func startNav() {
         let navSession = NavigationSession(start: fromRoom, end: toRoom, usesElevators: elevatorSwitch.isOn)
         delegate.startRoute(navSession)
+    }
+    
+    @objc
+    func resetRoute(){
+        delegate.resetRoute()
     }
     
     

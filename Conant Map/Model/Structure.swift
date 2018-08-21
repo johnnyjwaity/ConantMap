@@ -8,12 +8,15 @@
 
 import Foundation
 import UIKit
+import SceneKit
 
 class Structure {
-    let name:String
+    let name:[String]
     var color:UIColor = UIColor.white
+    var node:SCNNode!
+    var floor:Int!
     
-    init(_ name:String) {
+    init(_ name:[String]) {
         self.name = name
     }
 }
