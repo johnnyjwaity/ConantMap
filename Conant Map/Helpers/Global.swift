@@ -12,4 +12,6 @@ struct Global {
     static var nodes:[[Node]] = []
     static var stairs:[Stair] = []
     static var structures:[Structure] = []
+    static var staff:[Staff] = []
+    static var classes:[Class] = []
 }

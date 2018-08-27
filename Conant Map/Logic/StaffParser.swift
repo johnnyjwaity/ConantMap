@@ -9,10 +9,15 @@
 import Foundation
 
 class StaffParser{
-    static func parseStructures(_ file:String){
+    static func parseStaff(_ file:String){
         //Prepare Array For Staff
         var staff:[Staff] = []
         var classes:[Class] = []
+        
+        var currentStaff:Staff? = nil
+        var currentClass:Class? = nil
+        
+        
         //Prepare Array For Lines
         var lines:[String] = []
         do{
@@ -36,9 +41,69 @@ class StaffParser{
             /*
              Header Types
              
+             Staff:
+             ! - name
+             # - phone
+             % - email
+             ^ - department
+             & - classes
+             
+             Class:
+             ? - name
+             * - location
+             $ - id
+             @ - period
+             
              */
+            let phrase = String(line.suffix(line.count-1))
             
             
+            
+            switch header {
+            case "!":
+                if let s = currentStaff {
+                    staff.append(s)
+                }
+                currentStaff = Staff(phrase)
+                break
+            case "#":
+                currentStaff?.phoneNum = phrase
+                break
+            case "%":
+                currentStaff?.email = phrase
+                break
+            case "^":
+                currentStaff?.department = phrase
+                break
+            case "&":
+                if phrase.count > 0 {
+                    currentStaff?.classIds = phrase.components(separatedBy: ",")
+                }
+                break
+                
+            case "?":
+                if let c = currentClass {
+                    classes.append(c)
+                }
+                currentClass = Class(phrase)
+                break
+            case "*":
+                currentClass?.location = phrase
+                break
+            case "$":
+                currentClass?.id = phrase
+                break
+            case "@":
+                currentClass?.period = phrase
+                break
+                
+            default:
+                break
+            }
         }
+        staff.append(currentStaff!)
+        classes.append(currentClass!)
+        Global.staff = staff
+        Global.classes = classes
     }
 }

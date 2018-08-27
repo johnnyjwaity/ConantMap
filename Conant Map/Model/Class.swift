@@ -9,5 +9,11 @@
 import Foundation
 
 class Class {
-    
+    let name:String
+    var period:String!
+    var location:String!
+    var id:String!
+    init(_ name:String) {
+        self.name = name
+    }
 }

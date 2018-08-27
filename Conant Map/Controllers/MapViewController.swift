@@ -10,7 +10,7 @@ import UIKit
 import QuartzCore
 import SceneKit
 
-class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate {
+class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate {
     
     
     static var main:MapViewController? = nil
@@ -20,7 +20,11 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     var overlayController:OverlayController? = nil
     var bottomAnchor:NSLayoutConstraint? = nil
+    var leftAnchor:NSLayoutConstraint!
     var bottomConstant:CGFloat = -20
+    
+    var routeBar:RouteController!
+    var routeBottomAnchor:NSLayoutConstraint!
     
     var floorSelect:FloorSelectController!
     
@@ -42,6 +46,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         initRooms()
         initStructures()
         initStairs()
+        initStaff()
         setUpView()
         
     }
@@ -71,13 +76,25 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         overlayController?.delegate = self
         let overlay:UIView = (overlayController?.view)!
         gameView.addSubview(overlay)
-        overlay.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 20).isActive = true
+        leftAnchor = overlay.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 20)
+        leftAnchor.isActive = true
         overlay.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 20).isActive = true
         bottomAnchor = overlay.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: bottomConstant)
         bottomAnchor?.isActive = true
         overlay.widthAnchor.constraint(equalToConstant: 300).isActive = true
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
         overlayController?.dragBar.addGestureRecognizer(pan)
+        
+        routeBar = RouteController()
+        routeBar.delegate = self
+        self.addChildViewController(routeBar)
+        gameView.addSubview(routeBar.view)
+        routeBottomAnchor = routeBar.view.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: 100)
+        routeBottomAnchor.isActive = true
+        routeBar.view.widthAnchor.constraint(equalTo: gameView.widthAnchor, multiplier: 0.6).isActive = true
+        routeBar.view.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        routeBar.view.centerXAnchor.constraint(equalTo: gameView.centerXAnchor).isActive = true
+        routeBar.setupView(NavigationSession(start: "180", end: "280", usesElevators: false))
         
         floorSelect = FloorSelectController()
         floorSelect.delegate = self
@@ -257,6 +274,17 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         Global.stairs = validStairs
     }
     
+    func initStaff(){
+        StaffParser.parseStaff("staff")
+        for s in Global.staff {
+            for c in Global.classes {
+                if s.classIds.contains(c.id){
+                    s.classes.append(c)
+                }
+            }
+        }
+    }
+    
     func resizeOverlay(_ size: OverlaySize) {
         var newBottomConstant = bottomConstant
         switch size {
@@ -320,6 +348,36 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         camera?.showWholeMap()
         
+        
+        overlayController?.reset()
+        routeBar.changeRooms(session)
+        routeBottomAnchor.constant = -15
+        leftAnchor.constant = -300
+        UIView.animate(withDuration: 0.5) {
+            self.gameView.layoutIfNeeded()
+        }
+        
+    }
+    
+    func endRoute(){
+        leftAnchor.constant = 20
+        routeBottomAnchor.constant = 100
+        UIView.animate(withDuration: 0.5) {
+            self.gameView.layoutIfNeeded()
+        }
+        removeHighlights()
+        if let line = currentNavSession?.lines[1] {
+            for n in line {
+                n.removeFromParentNode()
+            }
+        }
+        if let line = currentNavSession?.lines[2] {
+            for n in line {
+                n.removeFromParentNode()
+            }
+        }
+        resizeOverlay(.Large)
+        currentNavSession = nil
     }
     func switchVisiblePath(_ floor:Int){
         if let session = currentNavSession {
