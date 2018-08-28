@@ -15,6 +15,7 @@ protocol OverlayDelegate {
 
 enum OverlaySize{
     case Large
+    case xMedium
     case Medium
     case Small
 }

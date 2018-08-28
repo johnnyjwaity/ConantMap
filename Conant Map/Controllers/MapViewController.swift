@@ -280,6 +280,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             for c in Global.classes {
                 if s.classIds.contains(c.id){
                     s.classes.append(c)
+                    c.staff = s
                 }
             }
         }
@@ -290,6 +291,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         switch size {
         case .Large:
             newBottomConstant = -20
+            break
+        case .xMedium:
+            newBottomConstant = -200
             break
         case .Medium:
             newBottomConstant = -496.5

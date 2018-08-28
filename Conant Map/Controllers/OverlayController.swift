@@ -8,9 +8,7 @@
 
 import UIKit
 
-class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegate {
-    
-    
+class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegate, SearchNavigationDelegate {
     
     var currentController:UIViewController!
     var controllers:[String:UIViewController] = [:]
@@ -64,7 +62,7 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         view.layer.cornerRadius = 8
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
-        
+        view.clipsToBounds = true
         
         
         view.addSubview(dragBar)
@@ -90,6 +88,7 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         let rms = RoomSearchController()
         rms.delegate = self
         currentController = rms
+        controllers["RoomController"] = rms
         pageView.setViewControllers([rms], direction: .forward, animated: false, completion: nil)
         
     }
@@ -125,19 +124,15 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
     }
     
     func showRoomInfo(controller: RoomSearchController, room: String) {
-        if let i = controllers["RoomInfoController"]{
-            let infoController = i as! RoomInfoController
-            infoController.setRoom(room)
-            changePage(infoController, direction: .forward)
-            delegate.resizeOverlay(.Medium)
-        }
-        else{
-            let infoController = RoomInfoController()
-            infoController.setRoom(room)
-            controllers["RoomInfoController"] = infoController
-            changePage(infoController, direction: .forward)
-            delegate.resizeOverlay(.Medium)
-        }
+        print(room)
+        let infoController = RoomInfoController(room: room)
+        let placeHolder = UIViewController()
+        placeHolder.title = "Search"
+        let navController = SearchNavigationController(rootViewController: placeHolder)
+        navController.searchDelegate = self
+        navController.pushViewController(infoController, animated: false)
+        changePage(navController, direction: .forward)
+        delegate.resizeOverlay(.xMedium)
     }
     
     func resetRoute() {
@@ -151,6 +146,13 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         currentController = rms
         pageView.setViewControllers([rms], direction: .reverse, animated: true, completion: nil)
         delegate.resizeOverlay(.Large)
+    }
+    
+    func returnToSearch() {
+        if let r = controllers["RoomController"] {
+            let rms = r as! RoomSearchController
+            changePage(rms, direction: .reverse)
+        }
     }
     
     func changePage(_ controller:UIViewController, direction:UIPageViewControllerNavigationDirection){

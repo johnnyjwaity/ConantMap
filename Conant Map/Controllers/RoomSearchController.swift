@@ -104,10 +104,10 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var pcell = tableView.dequeueReusableCell(withIdentifier: "room")
-        if(pcell == nil){
-            pcell = RoomCell()
-        }
+        var pcell = RoomCell()//tableView.dequeueReusableCell(withIdentifier: "room")
+//        if(pcell == nil){
+//            pcell = RoomCell()
+//        }
         let cell = pcell as! RoomCell
         cell.setUpCell(room: sortedRooms[indexPath.item])
         cell.toButton.tag = indexPath.row
