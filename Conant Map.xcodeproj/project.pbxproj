@@ -37,7 +37,10 @@
 		3D7D535C212B4161004378E4 /* StaffParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7D535B212B4161004378E4 /* StaffParser.swift */; };
 		3D7D535E212B41B1004378E4 /* Staff.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7D535D212B41B1004378E4 /* Staff.swift */; };
 		3D7D5360212B41BE004378E4 /* Class.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7D535F212B41BE004378E4 /* Class.swift */; };
+		3D8136762136F8CA006761CB /* StaffInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D8136752136F8CA006761CB /* StaffInfoController.swift */; };
 		3D81F0ED20D591A6002002D5 /* Pathfinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D81F0EC20D591A6002002D5 /* Pathfinder.swift */; };
+		3D88F1872155FAB2002F1EBF /* InfinteCampusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D88F1862155FAB2002F1EBF /* InfinteCampusController.swift */; };
+		3D88F189215C91FD002F1EBF /* IC.js in Resources */ = {isa = PBXBuildFile; fileRef = 3D88F188215C91FD002F1EBF /* IC.js */; };
 		3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */; };
 		3D996A7F20E34A3500604AA1 /* Stair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A7E20E34A3500604AA1 /* Stair.swift */; };
 		3D996A8120E34ADE00604AA1 /* StairParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8020E34ADE00604AA1 /* StairParser.swift */; };
@@ -80,7 +83,10 @@
 		3D7D535B212B4161004378E4 /* StaffParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffParser.swift; sourceTree = "<group>"; };
 		3D7D535D212B41B1004378E4 /* Staff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Staff.swift; sourceTree = "<group>"; };
 		3D7D535F212B41BE004378E4 /* Class.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Class.swift; sourceTree = "<group>"; };
+		3D8136752136F8CA006761CB /* StaffInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffInfoController.swift; sourceTree = "<group>"; };
 		3D81F0EC20D591A6002002D5 /* Pathfinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pathfinder.swift; sourceTree = "<group>"; };
+		3D88F1862155FAB2002F1EBF /* InfinteCampusController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfinteCampusController.swift; sourceTree = "<group>"; };
+		3D88F188215C91FD002F1EBF /* IC.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = IC.js; sourceTree = "<group>"; };
 		3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
 		3D996A7E20E34A3500604AA1 /* Stair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stair.swift; sourceTree = "<group>"; };
 		3D996A8020E34ADE00604AA1 /* StairParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StairParser.swift; sourceTree = "<group>"; };
@@ -182,6 +188,7 @@
 				3D996A8020E34ADE00604AA1 /* StairParser.swift */,
 				3D996A8220E34E9500604AA1 /* StructureParser.swift */,
 				3D7D535B212B4161004378E4 /* StaffParser.swift */,
+				3D88F188215C91FD002F1EBF /* IC.js */,
 			);
 			path = Logic;
 			sourceTree = "<group>";
@@ -195,8 +202,10 @@
 				3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */,
 				3D3CAE4220EDCC7100735610 /* FloorSelectController.swift */,
 				3D188EEC212C073A002076DB /* RouteController.swift */,
-				3D7D53592127C195004378E4 /* RoomInfoController.swift */,
 				3D188EFC2134CA87002076DB /* SearchNavigationController.swift */,
+				3D7D53592127C195004378E4 /* RoomInfoController.swift */,
+				3D8136752136F8CA006761CB /* StaffInfoController.swift */,
+				3D88F1862155FAB2002F1EBF /* InfinteCampusController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -283,6 +292,7 @@
 				3D1F2FE320E2D4B00078D044 /* colors.dat in Resources */,
 				3D17EFC820C5F599002AEBE2 /* LaunchScreen.storyboard in Resources */,
 				3D188EF1212E1E9F002076DB /* staff.dat in Resources */,
+				3D88F189215C91FD002F1EBF /* IC.js in Resources */,
 				3D17EFC520C5F599002AEBE2 /* Assets.xcassets in Resources */,
 				3D1F2FE020E2D4A30078D044 /* stairs.dat in Resources */,
 			);
@@ -319,10 +329,12 @@
 				3D996A8520E34EA300604AA1 /* Structure.swift in Sources */,
 				3D3CAE4120EC19D500735610 /* OverlayDelegate.swift in Sources */,
 				3D17EFD420C75156002AEBE2 /* Extensions.swift in Sources */,
+				3D8136762136F8CA006761CB /* StaffInfoController.swift in Sources */,
 				3D7D5360212B41BE004378E4 /* Class.swift in Sources */,
 				3D996A8120E34ADE00604AA1 /* StairParser.swift in Sources */,
 				3D7D535C212B4161004378E4 /* StaffParser.swift in Sources */,
 				3D188EFF2134CCC2002076DB /* SearchNavigationDelegate.swift in Sources */,
+				3D88F1872155FAB2002F1EBF /* InfinteCampusController.swift in Sources */,
 				3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */,
 				3D7D535E212B41B1004378E4 /* Staff.swift in Sources */,
 				3D996A8320E34E9500604AA1 /* StructureParser.swift in Sources */,

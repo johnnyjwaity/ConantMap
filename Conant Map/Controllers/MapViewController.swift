@@ -49,6 +49,22 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         initStaff()
         setUpView()
         
+        
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        var dateComponents = DateComponents()
+        dateComponents.year = 2001
+        dateComponents.day = 19
+        dateComponents.month = 11
+        let date = Calendar.current.date(from: dateComponents)!
+        let cont = InfinteCampusController(firstName: "John", lastName: "Waity", birthday: date, id: "000798848") { (res) in
+            print(res)
+        }
+        present(cont, animated: true, completion: nil)
+        
     }
     
     

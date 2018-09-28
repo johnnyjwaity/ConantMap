@@ -17,6 +17,8 @@ class RoomInfoController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+    var staffButtons:[UIButton:Class] = [:]
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("Not Supported")
     }
@@ -92,13 +94,24 @@ class RoomInfoController: UIViewController {
         
         let scroll = view as! UIScrollView
         scroll.contentSize = CGSize(width: view.bounds.width, height: CGFloat(50 * fullySorted.count + 200))
+        
+        let infoPicker = UISegmentedControl(items: ["Staff", "Class"])
+        infoPicker.translatesAutoresizingMaskIntoConstraints = false
+        infoPicker.selectedSegmentIndex = 0
+        view.addSubview(infoPicker)
+        infoPicker.topAnchor.constraint(equalTo: view.topAnchor, constant: 75).isActive = true
+        infoPicker.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+        infoPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        infoPicker.addTarget(self, action: #selector(changeTableDisplay(sender:)), for: .valueChanged)
+        
+        
         let scheduleBackground = UIView()
         scheduleBackground.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 239/255)
         scheduleBackground.translatesAutoresizingMaskIntoConstraints = false
         scheduleBackground.layer.cornerRadius = 8
         scheduleBackground.clipsToBounds = true
         view.addSubview(scheduleBackground)
-        scheduleBackground.topAnchor.constraint(equalTo: view.topAnchor, constant: 75).isActive = true
+        scheduleBackground.topAnchor.constraint(equalTo: infoPicker.bottomAnchor, constant: 10).isActive = true
         scheduleBackground.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
         scheduleBackground.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         scheduleBackground.heightAnchor.constraint(equalToConstant: CGFloat(50 * fullySorted.count)).isActive = true
@@ -134,11 +147,15 @@ class RoomInfoController: UIViewController {
             teacherButton.setTitle(c.staff.name, for: .normal)
             teacherButton.translatesAutoresizingMaskIntoConstraints = false
             teacherButton.titleLabel?.adjustsFontSizeToFitWidth = true
-
+            staffButtons[teacherButton] = c
             listingContainer.addSubview(teacherButton)
             teacherButton.leftAnchor.constraint(equalTo: periodLabel.rightAnchor, constant: 5).isActive = true
             teacherButton.rightAnchor.constraint(equalTo: listingContainer.rightAnchor, constant: -5).isActive = true
             teacherButton.centerYAnchor.constraint(equalTo: listingContainer.centerYAnchor).isActive = true
+            let data = DataHolder()
+            data.data["Teacher"] = c.staff.name;
+            teacherButton.addSubview(data)
+            teacherButton.addTarget(self, action: #selector(teacherButtonClick(sender:)), for: .touchUpInside)
             
             if fullySorted.last?.id != c.id {
                 let seperator = UIView()
@@ -163,6 +180,35 @@ class RoomInfoController: UIViewController {
             
         }
         
+    }
+    
+    @objc
+    func teacherButtonClick(sender:UIButton){
+        var teacherName:String = ""
+        for sub in sender.subviews {
+            if let dataHolder = sub as? DataHolder {
+                if let teacher = dataHolder.data["Teacher"] as? String {
+                    teacherName = teacher
+                    break
+                }
+            }
+        }
+        let staffCont = StaffInfoController(name: teacherName)
+        navigationController?.pushViewController(staffCont, animated: true)
+    }
+    
+    @objc
+    func changeTableDisplay(sender:UISegmentedControl){
+        for btn in staffButtons.keys{
+            if let c = staffButtons[btn]{
+                if sender.selectedSegmentIndex == 0{
+                    btn.setTitle(c.staff.name, for: .normal)
+                }
+                else{
+                    btn.setTitle(c.name, for: .normal)
+                }
+            }
+        }
     }
     
     
