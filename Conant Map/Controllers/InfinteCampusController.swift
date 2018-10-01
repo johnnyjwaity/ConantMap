@@ -20,6 +20,10 @@ class InfinteCampusController: UIViewController, WKNavigationDelegate {
     
     init(firstName:String, lastName:String, birthday:Date, id:String, completionHandler: @escaping (_ result:String) -> Void) {
         
+        var usernameEntry = id
+        if usernameEntry.count == 6 {
+            usernameEntry = "000" + usernameEntry
+        }
         
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US")
@@ -29,7 +33,7 @@ class InfinteCampusController: UIViewController, WKNavigationDelegate {
         
         password = "'\(firstName.lowercased().first!)\(lastName.lowercased().first!)" + dateString + "'"
         
-        username = "'\(id)'"
+        username = "'\(usernameEntry)'"
         
         completion = completionHandler
         

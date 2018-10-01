@@ -31,6 +31,9 @@
 		3D3CAE4520EDEDA300735610 /* FloorSelectDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3CAE4420EDEDA300735610 /* FloorSelectDelegate.swift */; };
 		3D3DDCD720D1ED4F00B865CE /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3DDCD620D1ED4F00B865CE /* Node.swift */; };
 		3D3DDCDA20D1EE1100B865CE /* NodeParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3DDCD920D1EE1100B865CE /* NodeParser.swift */; };
+		3D3E9001216073B0005FA9DD /* ScheduleImportController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3E9000216073B0005FA9DD /* ScheduleImportController.swift */; };
+		3D3E900321617FFB005FA9DD /* TextEnterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3E900221617FFB005FA9DD /* TextEnterCell.swift */; };
+		3D3E900521618283005FA9DD /* DateEnterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3E900421618283005FA9DD /* DateEnterCell.swift */; };
 		3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */; };
 		3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */; };
 		3D7D535A2127C195004378E4 /* RoomInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D7D53592127C195004378E4 /* RoomInfoController.swift */; };
@@ -77,6 +80,9 @@
 		3D3CAE4420EDEDA300735610 /* FloorSelectDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloorSelectDelegate.swift; sourceTree = "<group>"; };
 		3D3DDCD620D1ED4F00B865CE /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		3D3DDCD920D1EE1100B865CE /* NodeParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeParser.swift; sourceTree = "<group>"; };
+		3D3E9000216073B0005FA9DD /* ScheduleImportController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleImportController.swift; sourceTree = "<group>"; };
+		3D3E900221617FFB005FA9DD /* TextEnterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEnterCell.swift; sourceTree = "<group>"; };
+		3D3E900421618283005FA9DD /* DateEnterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateEnterCell.swift; sourceTree = "<group>"; };
 		3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavOptionsController.swift; sourceTree = "<group>"; };
 		3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSearchController.swift; sourceTree = "<group>"; };
 		3D7D53592127C195004378E4 /* RoomInfoController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomInfoController.swift; sourceTree = "<group>"; };
@@ -206,6 +212,7 @@
 				3D7D53592127C195004378E4 /* RoomInfoController.swift */,
 				3D8136752136F8CA006761CB /* StaffInfoController.swift */,
 				3D88F1862155FAB2002F1EBF /* InfinteCampusController.swift */,
+				3D3E9000216073B0005FA9DD /* ScheduleImportController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -224,6 +231,8 @@
 			isa = PBXGroup;
 			children = (
 				3D996A8720E55AF100604AA1 /* RoomCell.swift */,
+				3D3E900221617FFB005FA9DD /* TextEnterCell.swift */,
+				3D3E900421618283005FA9DD /* DateEnterCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -318,6 +327,8 @@
 				3D17EFC020C5F599002AEBE2 /* MapViewController.swift in Sources */,
 				3D7D535A2127C195004378E4 /* RoomInfoController.swift in Sources */,
 				3D3DDCDA20D1EE1100B865CE /* NodeParser.swift in Sources */,
+				3D3E9001216073B0005FA9DD /* ScheduleImportController.swift in Sources */,
+				3D3E900521618283005FA9DD /* DateEnterCell.swift in Sources */,
 				3D996A8C20E57BFF00604AA1 /* Global.swift in Sources */,
 				3D1130E720DCAE8E009AD6E4 /* Camera.swift in Sources */,
 				3D3CAE3D20E86E9C00735610 /* DataHolder.swift in Sources */,
@@ -334,6 +345,7 @@
 				3D996A8120E34ADE00604AA1 /* StairParser.swift in Sources */,
 				3D7D535C212B4161004378E4 /* StaffParser.swift in Sources */,
 				3D188EFF2134CCC2002076DB /* SearchNavigationDelegate.swift in Sources */,
+				3D3E900321617FFB005FA9DD /* TextEnterCell.swift in Sources */,
 				3D88F1872155FAB2002F1EBF /* InfinteCampusController.swift in Sources */,
 				3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */,
 				3D7D535E212B41B1004378E4 /* Staff.swift in Sources */,
