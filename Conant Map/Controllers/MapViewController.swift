@@ -55,9 +55,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let scheduleImporter = ScheduleImportController()
-        scheduleImporter.modalPresentationStyle = .formSheet
-        present(scheduleImporter, animated: true, completion: nil)
+//        let cont = UINavigationController(rootViewController: ScheduleController())
+//        cont.modalPresentationStyle = .formSheet
+//        present(cont, animated: true, completion: nil)
         
     }
     

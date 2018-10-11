@@ -123,12 +123,46 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         let id = textFields[2].text!
         let birthday = datePicker.date
         
-//        let effect = UIBlurEffect(style: .dark)
-//        let blurBox = UIVisualEffectView(effect: effect)
-//        blurBox.
         
-        let infiniteCampus = InfinteCampusController(firstName: firstName, lastName: lastName, birthday: birthday, id: id) { (result) in
-            print(result)
+        
+        
+        let alert = UIAlertController(title: "Importing Scedule", message: nil, preferredStyle: .alert)
+        
+        
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+//        loadingIndicator.center = self.view.center;
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.activityIndicatorViewStyle = .gray
+        loadingIndicator.startAnimating();
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        loadingIndicator.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
+        
+        alert.view.addSubview(loadingIndicator)
+        loadingIndicator.centerYAnchor.constraint(equalTo: alert.view.centerYAnchor, constant: 10).isActive = true
+        loadingIndicator.centerXAnchor.constraint(equalTo: alert.view.centerXAnchor).isActive = true
+        loadingIndicator.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        loadingIndicator.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        alert.view.addConstraint(alert.view.heightAnchor.constraint(equalToConstant: 150))
+        
+        present(alert, animated: true, completion: nil)
+        
+        
+        
+        let infiniteCampus = InfinteCampusController(firstName: firstName, lastName: lastName, birthday: birthday, id: id) { (result, error) in
+            if let res = result {
+               print(res)
+                alert.dismiss(animated: true, completion: {
+                    self.dismiss(animated: true, completion: nil)
+                })
+            }else if let err = error {
+                alert.dismiss(animated: true, completion: {
+                    let errAlert = UIAlertController(title: "Error", message: err, preferredStyle: .alert)
+                    let action1 = UIAlertAction(title: "Ok", style: .default)
+                    errAlert.addAction(action1)
+                    self.present(errAlert, animated: true, completion: nil)
+                })
+            }
+            
         }
         view.addSubview(infiniteCampus.view)
         addChildViewController(infiniteCampus)

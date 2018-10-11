@@ -12,12 +12,16 @@ class Class {
     
     
     
-    let name:String
+    var name:String!
     var period:String!
     var location:String!
     var id:String!
     var staff:Staff!
+    var semester:Int!
     init(_ name:String) {
         self.name = name
+    }
+    init(period:String) {
+        self.period = period
     }
 }

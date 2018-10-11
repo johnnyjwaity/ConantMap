@@ -14,11 +14,13 @@ class InfinteCampusController: UIViewController, WKNavigationDelegate {
     let username:String
     let password:String
     
-    let completion:(String) -> Void
+    let completion:(String?, String?) -> Void
     
     var javascriptInject = ""
     
-    init(firstName:String, lastName:String, birthday:Date, id:String, completionHandler: @escaping (_ result:String) -> Void) {
+    var attemptedLogin = false
+    
+    init(firstName:String, lastName:String, birthday:Date, id:String, completionHandler: @escaping (_ result:String?, _ error:String?) -> Void) {
         
         var usernameEntry = id
         if usernameEntry.count == 6 {
@@ -70,6 +72,11 @@ class InfinteCampusController: UIViewController, WKNavigationDelegate {
         
         switch webView.url?.absoluteString {
         case "https://campus.d211.org/campus/portal/township.jsp":
+            if attemptedLogin {
+                self.completion(nil, "Login Failed Check Information Entered")
+                return
+            }
+            self.attemptedLogin = true
             webView.evaluateJavaScript("document.getElementById('username').value = " + username, completionHandler: nil)
             webView.evaluateJavaScript("document.getElementById('password').value = " + password, completionHandler: nil)
             webView.evaluateJavaScript("document.getElementById('signinbtn').click()", completionHandler: nil)
@@ -80,11 +87,16 @@ class InfinteCampusController: UIViewController, WKNavigationDelegate {
                 Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { (timer) in
                     webView.evaluateJavaScript(self.javascriptInject + "getTable();", completionHandler: { (res, error) in
                         if let sch = res as? String {
-                            self.completion(sch)
+                            self.completion(sch, nil)
                         }
                     })
                 }
                 
+            }else if(webView.url?.absoluteString.contains("township.jsp"))!{
+                if attemptedLogin {
+                    self.completion(nil, "Login Failed Check Information Entered")
+                    return
+                }
             }
             break
         }
