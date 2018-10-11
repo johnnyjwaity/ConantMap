@@ -13,12 +13,14 @@ class Staff:
         self.p7 = []
         self.p8 = []
         self.ac = []
+        self.eb = []
         self.classIds = []
         self.email = ""
         self.phone = ""
         self.dep = ""
     def getAllClasses(self):
         c = []
+        c.extend(self.eb)
         c.extend(self.p1)
         c.extend(self.p2)
         c.extend(self.p3)
@@ -28,6 +30,7 @@ class Staff:
         c.extend(self.p7)
         c.extend(self.p8)
         c.extend(self.ac)
+
         return c
 
 
@@ -51,6 +54,8 @@ class Staff:
                 self.p8.append(curclass)
             elif curclass.p == "AC":
                 self.ac.append(curclass)
+            elif curclass.p == "EB":
+                self.eb.append(curclass)
 
 class Class:
     def __init__(self, name, loc, p):
