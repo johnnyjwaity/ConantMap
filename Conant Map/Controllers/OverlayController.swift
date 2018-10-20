@@ -159,7 +159,7 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         }
     }
     
-    func changePage(_ controller:UIViewController, direction:UIPageViewControllerNavigationDirection){
+    func changePage(_ controller:UIViewController, direction:UIPageViewController.NavigationDirection){
         currentController = controller
         pageView.setViewControllers([controller], direction: direction, animated: true, completion: nil)
         if let del = delegate {

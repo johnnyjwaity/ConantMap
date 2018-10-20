@@ -97,7 +97,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         routeBar = RouteController()
         routeBar.delegate = self
-        self.addChildViewController(routeBar)
+        self.addChild(routeBar)
         gameView.addSubview(routeBar.view)
         routeBottomAnchor = routeBar.view.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: 100)
         routeBottomAnchor.isActive = true
@@ -108,7 +108,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         floorSelect = FloorSelectController()
         floorSelect.delegate = self
-        addChildViewController(floorSelect)
+        addChild(floorSelect)
         gameView.addSubview(floorSelect.view)
         floorSelect.view.rightAnchor.constraint(equalTo: gameView.rightAnchor, constant: -20).isActive = true
         floorSelect.view.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 20).isActive = true

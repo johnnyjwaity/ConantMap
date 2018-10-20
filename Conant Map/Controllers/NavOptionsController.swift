@@ -17,7 +17,7 @@ class NavOptionsController: UIViewController {
     
     let elevatorSwitch = UISwitch()
 
-    let routeButton = UIButton(type: UIButtonType.system)
+    let routeButton = UIButton(type: UIButton.ButtonType.system)
     
     var delegate:NavOptionsDelegate!
     

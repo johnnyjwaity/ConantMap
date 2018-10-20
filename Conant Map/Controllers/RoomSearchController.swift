@@ -104,7 +104,7 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = RoomCell()
+        let cell = RoomCell()
         cell.setUpCell(room: sortedRooms[indexPath.item])
         cell.toButton.tag = indexPath.row
         cell.toButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)

@@ -131,10 +131,10 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         let alert = UIAlertController(title: "Importing Scedule", message: nil, preferredStyle: .alert)
         
         
-        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .gray)
+        let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)
 //        loadingIndicator.center = self.view.center;
         loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.activityIndicatorViewStyle = .gray
+        loadingIndicator.style = .gray
         loadingIndicator.startAnimating();
         loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
         loadingIndicator.transform = CGAffineTransform(scaleX: 1.5, y: 1.5)
@@ -170,7 +170,7 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
             
         }
         view.addSubview(infiniteCampus.view)
-        addChildViewController(infiniteCampus)
+        addChild(infiniteCampus)
     }
     
 

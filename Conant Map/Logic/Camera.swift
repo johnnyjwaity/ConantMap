@@ -31,7 +31,7 @@ class Camera {
         self.gameScene = gameScene
     }
     
-    func move(_ translation:CGPoint, state:UIGestureRecognizerState, numOfTouches:Int) {
+    func move(_ translation:CGPoint, state:UIGestureRecognizer.State, numOfTouches:Int) {
         if numOfTouches == 1 {
             switch state {
             case .changed:
@@ -126,7 +126,7 @@ class Camera {
         
     }
     
-    func zoom(_ scale:CGFloat, state:UIGestureRecognizerState){
+    func zoom(_ scale:CGFloat, state:UIGestureRecognizer.State){
         var moveAmount = -1 * Double(scale)
         if moveAmount < 0 {
             moveAmount /= 10
@@ -144,7 +144,7 @@ class Camera {
         }
     }
     
-    func rotate(_ rotation:Float, state:UIGestureRecognizerState){
+    func rotate(_ rotation:Float, state:UIGestureRecognizer.State){
         switch state {
         case .began:
             startRotation = camRig.eulerAngles.y

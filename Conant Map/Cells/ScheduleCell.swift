@@ -15,7 +15,7 @@ class ScheduleCell: UITableViewCell {
     var teacherButton:UIButton!
     var roomButton:UIButton!
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 //        print("Hello")
         backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 239/255)

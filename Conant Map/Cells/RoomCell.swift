@@ -31,7 +31,7 @@ class RoomCell: UITableViewCell {
         toButton.setTitle("To Here", for: .normal)
         toButton.translatesAutoresizingMaskIntoConstraints = false
         toButton.layer.cornerRadius = 8
-        toButton.setBackgroundImage(UIView().tintColor.toImage(), for: UIControlState.normal)
+        toButton.setBackgroundImage(UIView().tintColor.toImage(), for: UIControl.State.normal)
         toButton.setTitleColor(UIColor.white, for: .normal)
         toButton.clipsToBounds = true
         toButton.alpha = 0
@@ -116,7 +116,7 @@ class RoomCell: UITableViewCell {
         dropDown.widthAnchor.constraint(equalTo: widthAnchor).isActive = true
         dropDown.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         dropDown.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        sendSubview(toBack: dropDown)
+        sendSubviewToBack(dropDown)
         populationArray.append(dropDown)
         
         addSubview(toButton)
