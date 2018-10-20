@@ -10,7 +10,7 @@ import UIKit
 
 class SearchNavigationController: UINavigationController {
     
-    var searchDelegate:SearchNavigationDelegate!
+    var searchDelegate:SearchNavigationDelegate?
     
 
     override func viewDidLoad() {
@@ -23,7 +23,11 @@ class SearchNavigationController: UINavigationController {
         print(viewControllers.count)
         if viewControllers.count <= 2 {
             print("Ran")
-            searchDelegate.returnToSearch()
+            if let d = searchDelegate {
+                d.returnToSearch()
+            }else {
+                dismiss(animated: true, completion: nil)
+            }
             setViewControllers([], animated: false)
             
         }

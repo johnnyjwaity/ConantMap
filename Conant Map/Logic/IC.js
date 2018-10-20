@@ -43,6 +43,15 @@ function getInformation(sem){
         var parser = new DOMParser;
         var dom = parser.parseFromString('<!doctype html><body>' + name, 'text/html');
         name = dom.body.textContent;
+        
+        var teacherName = info.children[2].innerText
+        
+        var parser2 = new DOMParser;
+        var dom2 = parser2.parseFromString('<!doctype html><body>' + teacherName, 'text/html');
+        teacherName = dom2.body.textContent;
+        teacherName = teacherName.substring(1)
+        var teacherParts = teacherName.split(',')
+        teacherName = teacherParts[0]
 
         var room = info.innerHTML;
         var startIndex = room.indexOf('Rm:');
@@ -57,11 +66,11 @@ function getInformation(sem){
         }
         room = room.substring(startIndex, endIndex);
         room = room.substring(4);
-
-        return name + ',' + room + ','
+//        return teacherName + ','
+        return name + ',' + room + ',' + teacherName + ','
     }else if(sem.children.length === 0){
         if(sem.innerHTML.indexOf('EMPTY') !== -1){
-            return 'EMPTY,None,'
+            return 'EMPTY,None,No Teacher,'
         }
     }
 }

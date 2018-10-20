@@ -17,6 +17,8 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
     var dateLabel:UILabel!
     
     var tableViewHeightConstraint:NSLayoutConstraint!
+    
+    var delegate:ScheduleImportDelegate!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,7 +86,7 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         if let rowSelected = tableView.indexPathForSelectedRow {
             if rowSelected.row == 3 && indexPath.row == 3 {
                 tableViewHeightConstraint.constant = (4 * 55) + 216
-                UIView.animate(withDuration: 0.3) {
+                UIView.animate(withDuration: 0.15) {
                     self.view.layoutIfNeeded()
                 }
                 return 216 + 55
@@ -152,6 +154,9 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
             if let res = result {
                print(res)
                 alert.dismiss(animated: true, completion: {
+                    let schedule = Schedule(res)
+                    schedule.save()
+                    self.delegate.displayScheudle(schedule)
                     self.dismiss(animated: true, completion: nil)
                 })
             }else if let err = error {

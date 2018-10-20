@@ -31,6 +31,32 @@ class RoomInfoController: UIViewController {
         
         setupView()
     }
+    
+    let fromButton:UIButton = {
+        let fromButton = UIButton(type: .system)
+        fromButton.setTitle("From Here", for: .normal)
+        fromButton.translatesAutoresizingMaskIntoConstraints = false
+        fromButton.layer.cornerRadius = 8
+        fromButton.setBackgroundImage(UIView().tintColor.toImage(), for: .normal)
+        fromButton.setTitleColor(UIColor.white, for: .normal)
+        fromButton.clipsToBounds = true
+        fromButton.alpha = 1
+        fromButton.tag = 0
+        return fromButton
+    }()
+    
+    let toButton:UIButton = {
+        let toButton = UIButton(type: .system)
+        toButton.setTitle("To Here", for: .normal)
+        toButton.translatesAutoresizingMaskIntoConstraints = false
+        toButton.layer.cornerRadius = 8
+        toButton.setBackgroundImage(UIView().tintColor.toImage(), for: UIControlState.normal)
+        toButton.setTitleColor(UIColor.white, for: .normal)
+        toButton.clipsToBounds = true
+        toButton.alpha = 1
+        toButton.tag = 1
+        return toButton
+    }()
 
     func setupView(){
         view.backgroundColor = UIColor.white
@@ -95,11 +121,25 @@ class RoomInfoController: UIViewController {
         let scroll = view as! UIScrollView
         scroll.contentSize = CGSize(width: view.bounds.width, height: CGFloat(50 * fullySorted.count + 200))
         
+        view.addSubview(fromButton)
+        fromButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 35).isActive = true
+        fromButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
+        fromButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        fromButton.rightAnchor.constraint(equalTo: view.centerXAnchor, constant: -25/2).isActive = true
+        fromButton.addTarget(self, action: #selector(navigateButton(_:)), for: .touchUpInside)
+        
+        view.addSubview(toButton)
+        toButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 35).isActive = true
+        toButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
+        toButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        toButton.leftAnchor.constraint(equalTo: view.centerXAnchor, constant: 25/2).isActive = true
+        toButton.addTarget(self, action: #selector(navigateButton(_:)), for: .touchUpInside)
+        
         let infoPicker = UISegmentedControl(items: ["Staff", "Class"])
         infoPicker.translatesAutoresizingMaskIntoConstraints = false
         infoPicker.selectedSegmentIndex = 0
         view.addSubview(infoPicker)
-        infoPicker.topAnchor.constraint(equalTo: view.topAnchor, constant: 75).isActive = true
+        infoPicker.topAnchor.constraint(equalTo: toButton.bottomAnchor, constant: 20).isActive = true
         infoPicker.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
         infoPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         infoPicker.addTarget(self, action: #selector(changeTableDisplay(sender:)), for: .valueChanged)
@@ -133,15 +173,6 @@ class RoomInfoController: UIViewController {
             periodLabel.leftAnchor.constraint(equalTo: listingContainer.leftAnchor, constant: 5).isActive = true
             periodLabel.centerYAnchor.constraint(equalTo: listingContainer.centerYAnchor).isActive = true
             periodLabel.widthAnchor.constraint(equalTo: listingContainer.widthAnchor, multiplier: 0.4).isActive = true
-            
-//            let nameLabel = UILabel()
-//            nameLabel.text = c.name
-//            nameLabel.translatesAutoresizingMaskIntoConstraints = false
-//            nameLabel.adjustsFontSizeToFitWidth = true
-//            listingContainer.addSubview(nameLabel)
-//            nameLabel.leftAnchor.constraint(equalTo: periodLabel.rightAnchor, constant: 5).isActive = true
-//            nameLabel.centerYAnchor.constraint(equalTo: listingContainer.centerYAnchor).isActive = true
-//            nameLabel.widthAnchor.constraint(equalTo: listingContainer.widthAnchor, multiplier: 0.49).isActive = true
 
             let teacherButton = UIButton(type: .system)
             teacherButton.setTitle(c.staff.name, for: .normal)
@@ -211,6 +242,25 @@ class RoomInfoController: UIViewController {
         }
     }
     
-    
+    @objc
+    func navigateButton(_ sender:UIButton){
+        switch sender.tag {
+        case 0:
+            //From
+            OverlayController.sharedInstance.roomSelected(name: title!, pos: .From)
+            break
+        case 1:
+            //To
+            OverlayController.sharedInstance.roomSelected(name: title!, pos: .To)
+            break
+        default:
+            break
+        }
+        
+        if let s = ScheduleController.sharedInstance {
+            s.dismiss(animated: true, completion: nil)
+            s.dismiss(animated: true, completion: nil)
+        }
+    }
 
 }

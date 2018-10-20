@@ -55,9 +55,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        let cont = UINavigationController(rootViewController: ScheduleController())
-//        cont.modalPresentationStyle = .formSheet
-//        present(cont, animated: true, completion: nil)
+        let cont = UINavigationController(rootViewController: ScheduleController())
+        cont.modalPresentationStyle = .formSheet
+        present(cont, animated: true, completion: nil)
         
     }
     
@@ -487,7 +487,7 @@ class   CylinderLine: SCNNode
         
         //Align Z axis
         let zAlign = SCNNode()
-        zAlign.eulerAngles.x = Float(M_PI_2)
+        zAlign.eulerAngles.x = Float(Double.pi / 2)
         
         //create our cylinder
         let cyl = SCNCylinder(radius: radius, height: CGFloat(height))

@@ -11,7 +11,7 @@ import UIKit
 class ScheduleCell: UITableViewCell {
     
     var periodLabel:UILabel!
-    var classButton:UIButton!
+    var classLabel:UILabel!
     var teacherButton:UIButton!
     var roomButton:UIButton!
     
@@ -22,11 +22,15 @@ class ScheduleCell: UITableViewCell {
         periodLabel = UILabel()
         periodLabel.translatesAutoresizingMaskIntoConstraints = false
         periodLabel.adjustsFontSizeToFitWidth = true
+        periodLabel.textAlignment = .center
+        periodLabel.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
         addSubview(periodLabel)
         periodLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         periodLabel.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         periodLabel.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.1).isActive = true
         periodLabel.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
+        
+        
         
         
         
@@ -37,20 +41,24 @@ class ScheduleCell: UITableViewCell {
         div.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         div.widthAnchor.constraint(equalToConstant: 0.5).isActive = true
         
-        classButton = UIButton(type: .system)
+        classLabel = UILabel()
 //        classButton.backgroundColor = UIColor.blue
-        classButton.translatesAutoresizingMaskIntoConstraints = false
-        classButton.titleLabel?.adjustsFontSizeToFitWidth = true
-        addSubview(classButton)
-        classButton.leftAnchor.constraint(equalTo: periodLabel.rightAnchor).isActive = true
-        classButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        classButton.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.3).isActive = true
-        classButton.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
+        classLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
+        classLabel.translatesAutoresizingMaskIntoConstraints = false
+        classLabel.lineBreakMode = .byWordWrapping
+        classLabel.numberOfLines = 0
+        classLabel.textAlignment = .center
+        
+        addSubview(classLabel)
+        classLabel.leftAnchor.constraint(equalTo: periodLabel.rightAnchor).isActive = true
+        classLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        classLabel.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.3).isActive = true
+        classLabel.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
         let div2 = createDivider()
         addSubview(div2)
         div2.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        div2.leftAnchor.constraint(equalTo: classButton.rightAnchor).isActive = true
+        div2.leftAnchor.constraint(equalTo: classLabel.rightAnchor).isActive = true
         div2.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         div2.widthAnchor.constraint(equalToConstant: 0.5).isActive = true
         
@@ -58,8 +66,9 @@ class ScheduleCell: UITableViewCell {
 //        teacherButton.backgroundColor = UIColor.yellow
         teacherButton.translatesAutoresizingMaskIntoConstraints = false
         teacherButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        teacherButton.tag = 0
         addSubview(teacherButton)
-        teacherButton.leftAnchor.constraint(equalTo: classButton.rightAnchor).isActive = true
+        teacherButton.leftAnchor.constraint(equalTo: classLabel.rightAnchor).isActive = true
         teacherButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         teacherButton.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 0.3).isActive = true
         teacherButton.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
@@ -75,6 +84,7 @@ class ScheduleCell: UITableViewCell {
 //        roomButton.backgroundColor = UIColor.green
         roomButton.translatesAutoresizingMaskIntoConstraints = false
         roomButton.titleLabel?.adjustsFontSizeToFitWidth = true
+        roomButton.tag = 1
         addSubview(roomButton)
         roomButton.leftAnchor.constraint(equalTo: teacherButton.rightAnchor).isActive = true
         roomButton.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
@@ -84,6 +94,13 @@ class ScheduleCell: UITableViewCell {
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("Not SUpported")
+    }
+    
+    func setInfo(_ period:Class){
+        periodLabel.text = period.period
+        classLabel.text = period.name
+        teacherButton.setTitle(period.potentialStaff?.name, for: .normal)
+        roomButton.setTitle(period.location, for: .normal)
     }
 
     

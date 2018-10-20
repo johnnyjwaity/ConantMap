@@ -104,11 +104,7 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var pcell = RoomCell()//tableView.dequeueReusableCell(withIdentifier: "room")
-//        if(pcell == nil){
-//            pcell = RoomCell()
-//        }
-        let cell = pcell as! RoomCell
+        var cell = RoomCell()
         cell.setUpCell(room: sortedRooms[indexPath.item])
         cell.toButton.tag = indexPath.row
         cell.toButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)
@@ -135,7 +131,7 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         sendHighlightRequest(room: cell.roomName)
         
         if searchingFor != .Undetermined {
-            delegate.roomSelected(controller: self, name: cell.roomName, pos: searchingFor)
+            delegate.roomSelected(name: cell.roomName, pos: searchingFor)
             tableView.deselectRow(at: indexPath, animated: true)
             return
         }
@@ -199,12 +195,18 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     
     @objc
     func navButtonClicked(sender:UIButton) {
+        if let c = selectedCell {
+            (tableView.cellForRow(at: c) as! RoomCell).deselected()
+            selectedCell = nil
+            tableView.beginUpdates()
+            tableView.endUpdates()
+        }
         for child in sender.subviews {
             if let d = child as? DataHolder {
                 print(d.data["room"] as! String)
                 let room:String = d.data["room"] as! String
                 let direction = NavPosition.To.toNavPosition(direction: (sender.titleLabel?.text)!)
-                delegate.roomSelected(controller: self, name: room, pos: direction)
+                delegate.roomSelected(name: room, pos: direction)
             }
         }
     }

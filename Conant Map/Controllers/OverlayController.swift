@@ -10,6 +10,9 @@ import UIKit
 
 class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegate, SearchNavigationDelegate {
     
+    
+    static var sharedInstance:OverlayController!
+    
     var currentController:UIViewController!
     var controllers:[String:UIViewController] = [:]
     
@@ -54,6 +57,7 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        OverlayController.sharedInstance = self
         setupView()
         
     }
@@ -93,7 +97,7 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         
     }
     
-    func roomSelected(controller: RoomSearchController, name: String, pos: NavPosition) {
+    func roomSelected(name: String, pos: NavPosition) {
         print(name)
         if let navOptionsController = controllers["NavOptions"] {
             let navOptions = navOptionsController as! NavOptionsController

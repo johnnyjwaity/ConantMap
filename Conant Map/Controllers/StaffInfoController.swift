@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import MessageUI
 
-class StaffInfoController: UIViewController {
+class StaffInfoController: UIViewController, MFMailComposeViewControllerDelegate {
     
     let name:String
     
@@ -32,11 +33,6 @@ class StaffInfoController: UIViewController {
     }
     
     func setupView(){
-        
-        
-        
-        
-        
         var staff:Staff!
         for s in Global.staff {
             if s.name.lowercased() == name.lowercased() {
@@ -55,7 +51,7 @@ class StaffInfoController: UIViewController {
             if let pList = sorted[c.period]{
                 var isDuplicate = false
                 for c1 in pList{
-                    if(c.period == c1.period && c.staff.name == c1.staff.name){
+                    if(c.period == c1.period && c.staff.name == c1.staff.name && c.period != "AC"){
                         //Duplicate
                         isDuplicate = true
                     }
@@ -70,6 +66,9 @@ class StaffInfoController: UIViewController {
             }
         }
         var fullySorted:[Class] = []
+        if let eb = sorted["EB"]{
+            fullySorted.append(contentsOf: eb)
+        }
         if let p1 = sorted["1"]{
             fullySorted.append(contentsOf: p1)
         }
@@ -99,6 +98,7 @@ class StaffInfoController: UIViewController {
         }
         
         let scroll = view as! UIScrollView
+        scroll.backgroundColor = UIColor.white
         scroll.contentSize = CGSize(width: view.bounds.width, height: CGFloat(50 * fullySorted.count + 300))
         
         let infoBackground = UIView()
@@ -150,6 +150,7 @@ class StaffInfoController: UIViewController {
         emailAddress.rightAnchor.constraint(equalTo: infoBackground.rightAnchor, constant: -8).isActive = true
         emailAddress.bottomAnchor.constraint(equalTo: divider.bottomAnchor).isActive = true
         emailAddress.topAnchor.constraint(equalTo: infoBackground.topAnchor).isActive = true
+        emailAddress.addTarget(self, action: #selector(sendEmail(_:)), for: .touchUpInside)
         
         let phoneNumber = UIButton(type: .system)
         phoneNumber.setTitle(staff.phoneNum, for: .normal)
@@ -262,6 +263,18 @@ class StaffInfoController: UIViewController {
                 }
             }
         }
+    }
+    
+    @objc
+    func sendEmail(_ sender:UIButton){
+        let eCont = MFMailComposeViewController()
+        eCont.mailComposeDelegate = self
+        eCont.setToRecipients([(sender.titleLabel?.text)!])
+        present(eCont, animated: true, completion: nil)
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
 
 }

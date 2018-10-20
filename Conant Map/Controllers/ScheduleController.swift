@@ -8,40 +8,64 @@
 
 import UIKit
 
-class ScheduleController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ScheduleController: UIViewController, UITableViewDelegate, UITableViewDataSource, ScheduleImportDelegate {
     
     
+    static var sharedInstance:ScheduleController?
     
-    var schedule:Schedule!
     
+    var schedule:Schedule?
+    var tableView:UITableView!
+    var tableHeightConstriant:NSLayoutConstraint!
+    var semesterControl:UISegmentedControl!
+    var importButton:UIButton!
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        ScheduleController.sharedInstance = self
         setup()
 
         // Do any additional setup after loading the view.
     }
     
     func setup(){
-        let scheduleStr = "EB,EMPTY,None,01,Spanish 3,228,02,AP Language and Composition,120,03,Trigonometry Calculus A,243,04,PE 3 & 4,GYM,05,Advanced Placement Physics,285,06,Advanced Placement Physics,285,07,Mobile Application Development,221,08,AP United States History,237,S2,EB,EMPTY,None,01,Spanish 3,228,02,AP Language and Composition,120,03,Trigonometry Calculus A,243,04,PE 3 & 4,GYM,05,Advanced Placement Physics,285,06,Advanced Placement Physics,285,07,Mobile Application Development,221,08,AP United States History,237,"
         
-        
-        schedule = Schedule(scheduleStr)
-        navigationController?.title = "Schedule"
-        
-        let semesterControl = UISegmentedControl(items: ["Semester 1", "Semester 2"])
-        semesterControl.translatesAutoresizingMaskIntoConstraints = false
-        semesterControl.selectedSegmentIndex = 0
-        view.addSubview(semesterControl)
-        semesterControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        semesterControl.topAnchor.constraint(equalTo: view.topAnchor, constant: 70).isActive = true
-        semesterControl.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+        if let data = UserDefaults.standard.data(forKey: "schedule") {
+            let decodeData = try? JSONDecoder().decode(Schedule.SimpleSchedule.self, from: data)
+            if let simpleSchedule = decodeData {
+                schedule = Schedule(simpleSchedule)
+            }
+        }
         
         
         
+        title = "Schedule"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteSchedule))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissSchedule))
         
-        let tableView = UITableView()
+        importButton = UIButton(type: .system)
+        importButton.setTitle("Import Schedule", for: .normal)
+        importButton.translatesAutoresizingMaskIntoConstraints = false
+        importButton.backgroundColor = UIView().tintColor
+        importButton.setTitleColor(UIColor.white, for: .normal)
+        importButton.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .semibold)
+        importButton.layer.cornerRadius = 8
+        view.addSubview(importButton)
+        importButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 80).isActive = true
+        importButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        importButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        importButton.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        if schedule != nil {
+            importButton.alpha = 0
+            importButton.isEnabled = false
+        }
+        importButton.addTarget(self, action: #selector(startImport), for: .touchUpInside)
+        
+        
+        
+        
+        tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.delegate = self
         tableView.dataSource = self
@@ -49,14 +73,41 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         tableView.layer.cornerRadius = 8
         tableView.layer.borderWidth = 0.5
         tableView.layer.borderColor = UIColor.lightGray.cgColor
-        
         view.addSubview(tableView)
-        tableView.topAnchor.constraint(equalTo: semesterControl.bottomAnchor, constant: 10).isActive = true
+        
+        semesterControl = UISegmentedControl(items: ["Semester 1", "Semester 2"])
+        semesterControl.translatesAutoresizingMaskIntoConstraints = false
+        semesterControl.selectedSegmentIndex = 0
+        if schedule == nil {
+            semesterControl.alpha = 0
+        }
+        view.addSubview(semesterControl)
+        semesterControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        semesterControl.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: -20).isActive = true
+        semesterControl.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+        semesterControl.addTarget(self, action: #selector(changeSemester), for: .valueChanged)
+        
+        
+        
+        
+        
+        
+        
+//        tableView.topAnchor.constraint(equalTo: semesterControl.bottomAnchor, constant: 10).isActive = true
+        var numOfRows = 0
+        if let s = schedule {
+            numOfRows = s.semClasses[semesterControl.selectedSegmentIndex].count
+        }
         tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         tableView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20).isActive = true
+        tableHeightConstriant = tableView.heightAnchor.constraint(equalToConstant: CGFloat(50 * numOfRows))
+        tableHeightConstriant.isActive = true
         view.backgroundColor = UIColor.white
         
+        tableView.register(ScheduleCell.self, forCellReuseIdentifier: "cell")
+        
+
         
     }
     
@@ -66,12 +117,104 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 9
+        if let s = schedule {
+            return s.semClasses[semesterControl.selectedSegmentIndex].count
+        }
+        return 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return ScheduleCell()
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! ScheduleCell
+        cell.setInfo(schedule!.classes[indexPath.row])
+        
+        cell.teacherButton.removeTarget(nil, action: nil, for: .allEvents)
+        cell.roomButton.removeTarget(nil, action: nil, for: .allEvents)
+        
+        cell.teacherButton.addTarget(self, action: #selector(startSearch(_:)), for: .touchUpInside)
+        cell.roomButton.addTarget(self, action: #selector(startSearch(_:)), for: .touchUpInside)
+        return cell
+        
     }
+    
+    func displayScheudle(_ schedule: Schedule?) {
+        self.schedule = schedule
+        updateTableHeight()
+        tableView.reloadData()
+    }
+    
+    @objc
+    func changeSemester(){
+        updateTableHeight()
+        tableView.reloadData()
+    }
+    
+    func updateTableHeight(){
+        var newHeight:CGFloat = 0
+        if let s = schedule {
+            newHeight = CGFloat(50 * s.semClasses[semesterControl.selectedSegmentIndex].count)
+            semesterControl.alpha = 1
+            importButton.alpha = 0
+            importButton.isEnabled = false
+        }else{
+            semesterControl.alpha = 0
+            importButton.alpha = 1
+            importButton.isEnabled = true
+        }
+        tableHeightConstriant.constant = newHeight
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    @objc
+    func startImport(){
+        let importController = ScheduleImportController()
+        importController.delegate = self
+        importController.modalPresentationStyle = .currentContext
+        present(importController, animated: true, completion: nil)
+    }
+    
+    @objc
+    func deleteSchedule(){
+        let actionSheet = UIAlertController(title: "Delete Schedule", message: "Are You Sure?", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (action) in
+            UserDefaults.standard.removeObject(forKey: "schedule")
+            self.displayScheudle(nil)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(actionSheet, animated: true, completion: nil)
+    }
+    @objc
+    func dismissSchedule(){
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc
+    func startSearch(_ button:UIButton) {
+        var viewCont:UIViewController?
+        switch button.tag {
+        case 0:
+            //Teacher
+            viewCont = StaffInfoController(name: (button.titleLabel?.text)!)
+            break
+        case 1:
+            //Room
+            viewCont = RoomInfoController(room: (button.titleLabel?.text)!)
+            break
+        default:
+            break
+        }
+        if viewCont == nil {
+            return
+        }
+        let placeHolder = UIViewController()
+        placeHolder.title = "Schedule"
+        let search = SearchNavigationController(rootViewController: placeHolder)
+        search.modalPresentationStyle = .currentContext
+        search.pushViewController(viewCont!, animated: false)
+        present(search, animated: true, completion: nil)
+    }
+    
     
 
 }

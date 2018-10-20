@@ -17,6 +17,7 @@ class Class {
     var location:String!
     var id:String!
     var staff:Staff!
+    var potentialStaff:Staff?
     var semester:Int!
     init(_ name:String) {
         self.name = name
