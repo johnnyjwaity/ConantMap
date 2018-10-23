@@ -51,6 +51,16 @@ func normalizeVector(_ iv: SCNVector3) -> SCNVector3 {
 
 
 extension SCNNode {
+    func getPositionFromGeometry() -> SCNVector3 {
+        let min = self.geometry?.boundingBox.min
+        let max = self.geometry?.boundingBox.max
+        let mid = min?.midpoint(max!)
+        let marker = SCNNode()
+        self.addChildNode(marker)
+        marker.position = mid!
+        return marker.worldPosition
+    }
+    
     func getZForward() -> SCNVector3 {
         return SCNVector3(worldTransform.m31, worldTransform.m32, worldTransform.m33)
     }
@@ -219,5 +229,6 @@ extension UIColor {
         return img!
     }
 }
+
 
 

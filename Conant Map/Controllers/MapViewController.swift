@@ -36,6 +36,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     var currentNavSession:NavigationSession? = nil
     
     var highlightedRooms:[Structure] = []
+    var roomLabels:[[SCNNode]]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,7 +50,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         initStaff()
         setUpView()
         
-        
+        displayLabels()
         
     }
     
@@ -187,13 +188,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         //Iterates over each node to determine which floor it is on
         for n in allNodes {
             if let sn1:SCNNode = schoolNode.childNode(withName: "Floor1", recursively: false)?.childNode(withName: "Nodes1", recursively: false)?.childNode(withName: n.name, recursively: false){
-                let min = sn1.geometry?.boundingBox.min
-                let max = sn1.geometry?.boundingBox.max
-                let mid = min?.midpoint(max!)
-                let marker = SCNNode()
-                sn1.addChildNode(marker)
-                marker.position = mid!
-                n.position = marker.worldPosition
+                n.position = sn1.getPositionFromGeometry()//marker.worldPosition
                 
                 //print(sn1.position)
                 n.floor = 1
@@ -203,13 +198,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 floor1Nodes.append(n)
             }
             else if let sn2:SCNNode = schoolNode.childNode(withName: "Floor2", recursively: false)?.childNode(withName: "Nodes2", recursively: false)?.childNode(withName: n.name, recursively: false){
-                let min = sn2.geometry?.boundingBox.min
-                let max = sn2.geometry?.boundingBox.max
-                let mid = min?.midpoint(max!)
-                let marker = SCNNode()
-                sn2.addChildNode(marker)
-                marker.position = mid!
-                n.position = marker.worldPosition
+                n.position = sn2.getPositionFromGeometry()
                 n.floor = 2
                 n.sceneNode = sn2
                 //Changes Node Color To Clear
@@ -332,6 +321,13 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             floor2Node.isHidden = false
         default:
             break
+        }
+        
+        for label in roomLabels[floor - 1] {
+            label.isHidden = false
+        }
+        for label in roomLabels[(floor == 1) ? 1 : 0] {
+            label.isHidden = true
         }
     }
     
@@ -456,6 +452,73 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         highlightedRooms = []
     }
     
+    func displayLabels(){
+        var allLocations:[String:LabelLocation] = [:]
+        for room in rooms {
+            if room == "Bathroom" {
+                continue
+            }
+            if let s = Global.structures.searchForStructure(room) {
+                let labelLocation = LabelLocation(rooms: s.name, isStructure: true, structure: s, node: nil)
+                
+                if !allLocations.values.contains(labelLocation) {
+                    allLocations[room] = labelLocation
+                }
+                else{
+                    print("Duplicate(Structure) \(s.name)")
+                }
+                
+                
+            }else if let n = Global.nodes.searchForByRoom(room){
+                let labelLocation = LabelLocation(rooms: n.rooms,isStructure: false, structure: nil, node: n)
+                
+                if !allLocations.values.contains(labelLocation) {
+                    allLocations[room] = labelLocation
+                }else{
+                    print("Duplicate(Node) \(n.rooms)")
+                }
+                
+            }else{
+                print("No Node or Structure For \(room)")
+            }
+        }
+        var labels:[[SCNNode]] = [[], []]
+        for location in allLocations.values {
+            var room = location.rooms[0]
+            for r in location.rooms {
+                if r.count > room.count {
+                    room = r
+                }
+            }
+            
+            let text = SCNText(string: room, extrusionDepth: 0)
+            text.font = UIFont.boldSystemFont(ofSize: 0.25)
+            text.firstMaterial?.diffuse.contents = UIColor.black
+            
+            
+            let node = SCNNode(geometry: text)
+            node.constraints = [SCNBillboardConstraint()]
+            
+            let (min, max) = node.boundingBox
+            node.pivot = SCNMatrix4MakeTranslation((max.x - min.x) / 2 + min.x, (max.y - min.y) / 2 + min.y, 0)
+            
+            
+            
+            gameScene.rootNode.addChildNode(node)
+            node.position = location.getLocation()
+            node.position.y = (location.getFloor() == 1) ? 0 : 0.7
+            
+            if room.count > 12 {
+                node.position.z += 0.3
+            }
+            
+            
+            node.isHidden = (location.getFloor() == 1) ? false : true
+            labels[location.getFloor() - 1].append(node)
+        }
+        roomLabels = labels
+    }
+    
 
 }
 class   CylinderLine: SCNNode
@@ -525,6 +588,45 @@ private extension SCNVector3{
             return (distance * -1)
         } else {
             return (distance)
+        }
+    }
+}
+
+struct LabelLocation:Equatable {
+    
+    static func == (lhs: LabelLocation, rhs: LabelLocation) -> Bool {
+        if lhs.isStructure != rhs.isStructure {
+            return false
+        }
+        for lRoom in lhs.rooms {
+            if lRoom == "Bathroom" {
+                continue
+            }
+            for rRoom in rhs.rooms {
+                if lRoom == rRoom {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+    let rooms:[String]
+    let isStructure:Bool
+    let structure:Structure?
+    let node:Node?
+    
+    func getLocation() -> SCNVector3 {
+        if isStructure {
+            return (structure?.node.getPositionFromGeometry())!
+        }else{
+            return (node?.position)!
+        }
+    }
+    func getFloor() -> Int {
+        if isStructure {
+            return (structure?.floor)!
+        }else{
+            return (node?.floor)!
         }
     }
 }
