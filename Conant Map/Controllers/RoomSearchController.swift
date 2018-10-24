@@ -20,6 +20,8 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     
     var searchingFor:NavPosition
     
+    var quickButtonMap:[Int:String] = [:]
+    
     init() {
         searchingFor = .Undetermined
         super.init(nibName: nil, bundle: nil)
@@ -91,6 +93,9 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.row == 0 {
+            return 100
+        }
         if let cell = selectedCell {
             if indexPath.item == cell.item {
                 return 125
@@ -100,16 +105,29 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sortedRooms.count
+        return sortedRooms.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.row == 0 {
+            let cell = QuickSelectCell()
+            quickButtonMap = [:]
+            var index = 0
+            for btn in cell.quickButtons {
+                btn.icon.tag = index
+                btn.icon.addTarget(self, action: #selector(quickSelectButtonCliked(_:)), for: .touchUpInside)
+                quickButtonMap[index] = btn.name
+                index += 1
+            }
+            return cell
+        }
+        
         let cell = RoomCell()
-        cell.setUpCell(room: sortedRooms[indexPath.item])
-        cell.toButton.tag = indexPath.row
+        cell.setUpCell(room: sortedRooms[indexPath.item - 1])
+        cell.toButton.tag = indexPath.row - 1
         cell.toButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)
         
-        cell.fromButton.tag = indexPath.row
+        cell.fromButton.tag = indexPath.row - 1
         cell.fromButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)
         
         cell.infoButton.addTarget(self, action: #selector(roomInfoClicked(sender:)), for: .touchUpInside)
@@ -127,6 +145,10 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == 0 {
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
         let cell = tableView.cellForRow(at: indexPath) as! RoomCell
         sendHighlightRequest(room: cell.roomName)
         
@@ -209,6 +231,16 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
                 delegate.roomSelected(name: room, pos: direction)
             }
         }
+    }
+    @objc
+    func quickSelectButtonCliked(_ sender:UIButton) {
+        if let c = selectedCell {
+            (tableView.cellForRow(at: c) as! RoomCell).deselected()
+            selectedCell = nil
+            tableView.beginUpdates()
+            tableView.endUpdates()
+        }
+        delegate.roomSelected(name: quickButtonMap[sender.tag]!, pos: (searchingFor == .Undetermined) ? .To : searchingFor)
     }
     @objc
     func roomInfoClicked(sender:UIButton){

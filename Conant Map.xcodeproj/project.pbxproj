@@ -55,6 +55,9 @@
 		3D996A8520E34EA300604AA1 /* Structure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8420E34EA300604AA1 /* Structure.swift */; };
 		3D996A8820E55AF100604AA1 /* RoomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8720E55AF100604AA1 /* RoomCell.swift */; };
 		3D996A8C20E57BFF00604AA1 /* Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8B20E57BFF00604AA1 /* Global.swift */; };
+		3DC37917217F9EC4005790CB /* OptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC37916217F9EC4005790CB /* OptionsController.swift */; };
+		3DC37919217FE8FD005790CB /* OptionsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC37918217FE8FD005790CB /* OptionsDelegate.swift */; };
+		3DC3791B2180182D005790CB /* QuickSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC3791A2180182D005790CB /* QuickSelectCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +111,9 @@
 		3D996A8420E34EA300604AA1 /* Structure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structure.swift; sourceTree = "<group>"; };
 		3D996A8720E55AF100604AA1 /* RoomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomCell.swift; sourceTree = "<group>"; };
 		3D996A8B20E57BFF00604AA1 /* Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Global.swift; sourceTree = "<group>"; };
+		3DC37916217F9EC4005790CB /* OptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsController.swift; sourceTree = "<group>"; };
+		3DC37918217FE8FD005790CB /* OptionsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsDelegate.swift; sourceTree = "<group>"; };
+		3DC3791A2180182D005790CB /* QuickSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSelectCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -166,6 +172,7 @@
 				3D3CAE4420EDEDA300735610 /* FloorSelectDelegate.swift */,
 				3D188EFE2134CCC2002076DB /* SearchNavigationDelegate.swift */,
 				3D4610922171BB8000433E5B /* ScheduleImportDelegate.swift */,
+				3DC37918217FE8FD005790CB /* OptionsDelegate.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -224,6 +231,7 @@
 				3D88F1862155FAB2002F1EBF /* InfinteCampusController.swift */,
 				3D3E9000216073B0005FA9DD /* ScheduleImportController.swift */,
 				3D3E9006216D8C67005FA9DD /* ScheduleController.swift */,
+				3DC37916217F9EC4005790CB /* OptionsController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -245,6 +253,7 @@
 				3D3E900221617FFB005FA9DD /* TextEnterCell.swift */,
 				3D3E900421618283005FA9DD /* DateEnterCell.swift */,
 				3D3E900A216EC607005FA9DD /* ScheduleCell.swift */,
+				3DC3791A2180182D005790CB /* QuickSelectCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -340,7 +349,9 @@
 				3D17EFC020C5F599002AEBE2 /* MapViewController.swift in Sources */,
 				3D7D535A2127C195004378E4 /* RoomInfoController.swift in Sources */,
 				3D3DDCDA20D1EE1100B865CE /* NodeParser.swift in Sources */,
+				3DC37919217FE8FD005790CB /* OptionsDelegate.swift in Sources */,
 				3D3E9001216073B0005FA9DD /* ScheduleImportController.swift in Sources */,
+				3DC3791B2180182D005790CB /* QuickSelectCell.swift in Sources */,
 				3D3E900521618283005FA9DD /* DateEnterCell.swift in Sources */,
 				3D996A8C20E57BFF00604AA1 /* Global.swift in Sources */,
 				3D3E900B216EC607005FA9DD /* ScheduleCell.swift in Sources */,
@@ -363,6 +374,7 @@
 				3D7D535C212B4161004378E4 /* StaffParser.swift in Sources */,
 				3D188EFF2134CCC2002076DB /* SearchNavigationDelegate.swift in Sources */,
 				3D3E900321617FFB005FA9DD /* TextEnterCell.swift in Sources */,
+				3DC37917217F9EC4005790CB /* OptionsController.swift in Sources */,
 				3D88F1872155FAB2002F1EBF /* InfinteCampusController.swift in Sources */,
 				3D17EFBC20C5F599002AEBE2 /* AppDelegate.swift in Sources */,
 				3D7D535E212B41B1004378E4 /* Staff.swift in Sources */,

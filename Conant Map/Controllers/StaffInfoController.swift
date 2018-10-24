@@ -205,7 +205,7 @@ class StaffInfoController: UIViewController, MFMailComposeViewControllerDelegate
 
             
             let roomButton = UIButton(type: .system)
-            roomButton.setTitle(c.location, for: .normal)
+            roomButton.setTitle((c.location != "") ? c.location : "No Location Available", for: .normal)
             roomButton.translatesAutoresizingMaskIntoConstraints = false
             roomButton.titleLabel?.adjustsFontSizeToFitWidth = true
             
@@ -257,6 +257,9 @@ class StaffInfoController: UIViewController, MFMailComposeViewControllerDelegate
             if let c = classLabels[btn]{
                 if(sender.selectedSegmentIndex == 0){
                     btn.setTitle(c.location, for: .normal)
+                    if c.location == "" {
+                        btn.setTitle("No Location Available", for: .normal)
+                    }
                 }
                 else{
                     btn.setTitle(c.name, for: .normal)

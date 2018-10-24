@@ -72,6 +72,13 @@ class FloorSelectController: UIViewController {
         
     }
     
+    func getFloor() -> Int {
+        if floor1Button.backgroundColor == UIView().tintColor {
+            return 1
+        }
+        return 2
+    }
+    
     func switchButton(_ button:UIButton){
         button.setTitleColor(((button.titleLabel?.textColor == UIColor.white) ? UIView().tintColor : UIColor.white), for: .normal)
         UIView.animate(withDuration: 0.3) {

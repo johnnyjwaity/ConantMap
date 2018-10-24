@@ -27,10 +27,10 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         
         let titleLabel = UILabel()
         titleLabel.text = "Import Schedule"
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 40)
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 30)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(titleLabel)
-        titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 10).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
         titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         
         let tableView = UITableView()
@@ -44,7 +44,7 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         tableView.layer.borderWidth = 1
         view.addSubview(tableView)
         tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20).isActive = true
+        tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 30).isActive = true
         tableViewHeightConstraint = tableView.heightAnchor.constraint(equalToConstant: 55 * 4)
         tableViewHeightConstraint.isActive = true
         tableView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8).isActive=true

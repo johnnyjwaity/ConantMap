@@ -14,6 +14,11 @@ import UIKit
 class Pathfinder {
     
     static func search(start:Node, end:Node, useElevator:Bool) -> [[Node]]? {
+        for room in end.rooms {
+            if start.rooms.contains(room){
+                return [[start]]
+            }
+        }
         if start.floor != end.floor{
             var closestStair:Stair? = nil
             var closestDistance:Float = -1

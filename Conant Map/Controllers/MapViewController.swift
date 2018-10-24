@@ -10,7 +10,9 @@ import UIKit
 import QuartzCore
 import SceneKit
 
-class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate {
+class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate, OptionsDelegate {
+    
+    
     
     
     static var main:MapViewController? = nil
@@ -56,9 +58,6 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let cont = UINavigationController(rootViewController: ScheduleController())
-        cont.modalPresentationStyle = .formSheet
-        present(cont, animated: true, completion: nil)
         
     }
     
@@ -115,6 +114,16 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         floorSelect.view.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 20).isActive = true
         floorSelect.view.widthAnchor.constraint(equalToConstant: 50).isActive = true
         floorSelect.view.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        
+        let optionController = OptionsController()
+        optionController.delegate = self
+        optionController.view.translatesAutoresizingMaskIntoConstraints = false
+        gameView.addSubview(optionController.view)
+        addChild(optionController)
+        optionController.view.topAnchor.constraint(equalTo: floorSelect.view.bottomAnchor, constant: 20).isActive = true
+        optionController.view.centerXAnchor.constraint(equalTo: floorSelect.view.centerXAnchor).isActive = true
+        optionController.view.widthAnchor.constraint(equalTo: floorSelect.view.widthAnchor).isActive = true
+        optionController.view.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         
         let gamePan = UIPanGestureRecognizer(target: self, action: #selector(handleCameraMove(gesture:)))
@@ -517,6 +526,22 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             labels[location.getFloor() - 1].append(node)
         }
         roomLabels = labels
+    }
+    
+    func openSchedule() {
+        let cont = UINavigationController(rootViewController: ScheduleController())
+        cont.modalPresentationStyle = .formSheet
+        present(cont, animated: true, completion: nil)
+    }
+    
+    func toggleLabels(state: Bool) {
+//        var floorIndex = 1
+//        for floor in roomLabels {
+//            for label in floor {
+//                label.isHidden = state && floorSelect.getFloor() == floorIndex
+//            }
+//            floorIndex += 1
+//        }
     }
     
 
