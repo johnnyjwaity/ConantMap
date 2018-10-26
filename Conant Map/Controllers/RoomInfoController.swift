@@ -244,6 +244,26 @@ class RoomInfoController: UIViewController {
     
     @objc
     func navigateButton(_ sender:UIButton){
+        
+        if let s = ScheduleController.sharedInstance {
+            s.dismiss(animated: true, completion: nil)
+            s.dismiss(animated: true) {
+                switch sender.tag {
+                case 0:
+                    //From
+                    OverlayController.sharedInstance.roomSelected(name: self.title!, pos: .From)
+                    break
+                case 1:
+                    //To
+                    OverlayController.sharedInstance.roomSelected(name: self.title!, pos: .To)
+                    break
+                default:
+                    break
+                }
+            }
+            return
+        }
+        
         switch sender.tag {
         case 0:
             //From
@@ -257,10 +277,8 @@ class RoomInfoController: UIViewController {
             break
         }
         
-        if let s = ScheduleController.sharedInstance {
-            s.dismiss(animated: true, completion: nil)
-            s.dismiss(animated: true, completion: nil)
-        }
     }
+    
+    
 
 }

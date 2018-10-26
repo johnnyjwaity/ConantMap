@@ -16,6 +16,7 @@ class Schedule{
     var semClasses:[[Class]] = [[],[]]
     
     init(_ schedule:String) {
+        print(schedule)
         self.classes = parseSchedule(schedule)
     }
     init(_ schedule:SimpleSchedule) {
@@ -131,7 +132,11 @@ class Schedule{
     func convertToSimpleSchedule() -> SimpleSchedule {
         var simpleClasses:[SimpleClass] = []
         for c in classes {
-            simpleClasses.append(SimpleClass(name: c.name, location: c.location, period: c.period, semester: c.semester, staff: SimpleStaff(name: (c.potentialStaff?.name)!)))
+            var staffName = ""
+            if let staff = c.potentialStaff {
+                staffName = staff.name
+            }
+            simpleClasses.append(SimpleClass(name: c.name, location: c.location, period: c.period, semester: c.semester, staff: SimpleStaff(name: staffName)))
             
         }
         return SimpleSchedule(classes: simpleClasses)

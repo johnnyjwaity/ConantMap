@@ -40,6 +40,16 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     override func viewDidLoad() {
         super.viewDidLoad()
         rooms = Global.rooms
+        while(rooms.contains("Bathroom")){
+            var index = 0;
+            for room in rooms {
+                if room == "Bathroom"{
+                    rooms.remove(at: index)
+                    break
+                }
+                index += 1
+            }
+        }
         sortedRooms = rooms
         setupView()
     }

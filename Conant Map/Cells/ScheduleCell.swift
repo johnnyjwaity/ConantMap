@@ -99,7 +99,13 @@ class ScheduleCell: UITableViewCell {
     func setInfo(_ period:Class){
         periodLabel.text = period.period
         classLabel.text = period.name
-        teacherButton.setTitle(period.potentialStaff?.name, for: .normal)
+        var staffName = "No Teacher"
+        teacherButton.isEnabled = false
+        if let staff = period.potentialStaff {
+            staffName = staff.name
+            teacherButton.isEnabled = true
+        }
+        teacherButton.setTitle(staffName, for: .normal)
         roomButton.setTitle(period.location, for: .normal)
     }
 

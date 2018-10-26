@@ -353,18 +353,25 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             makeVisible = false
         }
         removeHighlights()
-        for room in (currentNavSession?.start.rooms)! {
-            if let s = Global.structures.searchForStructure(room){
-                highlight(room: s)
-                break
-            }
+        if let s = Global.structures.searchForStructure((currentNavSession?.startStr)!){
+            highlight(room: s)
         }
-        for room in (currentNavSession?.end.rooms)! {
-            if let s = Global.structures.searchForStructure(room){
-                highlight(room: s)
-                break
-            }
+        if let s = Global.structures.searchForStructure((currentNavSession?.endStr)!){
+            highlight(room: s)
         }
+//        if currentNavSession?.startStr
+//        for room in (currentNavSession?.start.rooms)! {
+//            if let s = Global.structures.searchForStructure(room){
+//                highlight(room: s)
+//                break
+//            }
+//        }
+//        for room in (currentNavSession?.end.rooms)! {
+//            if let s = Global.structures.searchForStructure(room){
+//                highlight(room: s)
+//                break
+//            }
+//        }
         camera?.showWholeMap()
         
         

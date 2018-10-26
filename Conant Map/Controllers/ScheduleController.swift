@@ -136,6 +136,10 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
     func displayScheudle(_ schedule: Schedule?) {
         self.schedule = schedule
         updateTableHeight()
