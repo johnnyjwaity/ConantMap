@@ -132,8 +132,8 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
             return cell
         }
         
-        let cell = RoomCell()
-        cell.setUpCell(room: sortedRooms[indexPath.item - 1])
+        let cell = tableView.dequeueReusableCell(withIdentifier: "room") as! RoomCell
+        cell.changeInfo(room: sortedRooms[indexPath.item - 1])
         cell.toButton.tag = indexPath.row - 1
         cell.toButton.addTarget(self, action: #selector(navButtonClicked), for: .touchUpInside)
         
@@ -235,7 +235,7 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         }
         for child in sender.subviews {
             if let d = child as? DataHolder {
-                print(d.data["room"] as! String)
+//                print(d.data["room"] as! String)
                 let room:String = d.data["room"] as! String
                 let direction = NavPosition.To.toNavPosition(direction: (sender.titleLabel?.text)!)
                 delegate.roomSelected(name: room, pos: direction)

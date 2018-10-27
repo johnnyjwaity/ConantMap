@@ -78,6 +78,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         gameView.scene = gameScene
         gameView.isPlaying = true;
+//        gameView.allowsCameraControl = true
         camera = Camera(gameScene)
     }
     

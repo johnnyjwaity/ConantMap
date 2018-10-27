@@ -24,6 +24,7 @@ class SearchNavigationController: UINavigationController {
         if viewControllers.count <= 2 {
             print("Ran")
             if let d = searchDelegate {
+                print("Returned To Search")
                 d.returnToSearch()
             }else {
                 dismiss(animated: true, completion: nil)

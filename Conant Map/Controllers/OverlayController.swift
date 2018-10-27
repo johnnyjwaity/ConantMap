@@ -146,6 +146,7 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
     func reset(){
         controllers = [:]
         let rms = RoomSearchController()
+        controllers["RoomController"] = rms
         rms.delegate = self
         currentController = rms
         pageView.setViewControllers([rms], direction: .reverse, animated: true, completion: nil)

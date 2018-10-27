@@ -47,7 +47,7 @@ class Camera {
             case .changed:
                 //print(cam.eulerAngles.x)
                 cam.eulerAngles.x += (-Float(translation.y) * angleSpeed)
-                
+
                 if cam.eulerAngles.x > 0 {
                     cam.eulerAngles.x = 0
                 }
@@ -64,7 +64,7 @@ class Camera {
     
     func panToPosition(_ positionR:SCNVector3, type:PanType, room:Structure?, floor:Int){
         var position = positionR
-        print(positionR)
+//        print(positionR)
         if type == .Room{
             let testNode = SCNNode()
             if room == nil {
@@ -84,7 +84,7 @@ class Camera {
         position.y += (floor == 1) ? 4.5 : 5
         position.x -= (floor == 1) ? 1 : 0
         position.z += (floor == 1) ? 6 : 6
-        print(positionR)
+//        print(positionR)
         
         let panAnimation = CABasicAnimation(keyPath: "position")
         panAnimation.fromValue = NSValue(scnVector3: camRig.position)
@@ -128,6 +128,7 @@ class Camera {
     
     func zoom(_ scale:CGFloat, state:UIGestureRecognizer.State){
         var moveAmount = -1 * Double(scale)
+        
         if moveAmount < 0 {
             moveAmount /= 10
         }
@@ -137,7 +138,16 @@ class Camera {
         let forwardVector = cam.getZForward()
         switch state {
         case .changed:
-            camRig.position = camRig.position + (forwardVector * moveAmount)
+            let translation = forwardVector * moveAmount
+//            let prevPosition = SCNVector3(camRig.position.x, camRig.position.y, camRig.position.z);
+//            print("Translation: \(translation)")
+            camRig.position = camRig.position + translation
+//            if translation.x != Float.nan && translation.y != Float.nan && translation.z != Float.nan {
+//
+//            }
+//            print(camRig.position)
+            
+            
             break
         default:
             break

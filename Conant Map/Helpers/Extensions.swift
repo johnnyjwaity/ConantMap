@@ -189,9 +189,14 @@ extension SCNVector3 {
     
     static func * (lhs:SCNVector3, rhs:Double) -> SCNVector3 {
         var vec = lhs
-        vec.x *= Float(rhs)
-        vec.y *= Float(rhs)
-        vec.z *= Float(rhs)
+        let scalar = Float(rhs)
+        if scalar.isNaN || scalar.isInfinite {
+            print("Found Nan Vector, Mitigating")
+            return vec
+        }
+        vec.x *= scalar
+        vec.y *= scalar
+        vec.z *= scalar
         return vec
     }
     
