@@ -12,9 +12,6 @@ import SceneKit
 
 class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate, OptionsDelegate {
     
-    
-    
-    
     static var main:MapViewController? = nil
     var gameView:SCNView!
     var gameScene:SCNScene!
@@ -30,8 +27,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     var floorSelect:FloorSelectController!
     
-    var nodes:[[Node]] = []
-    var rooms:[String] = []
+//    var nodes:[[Node]] = []
+//    var rooms:[String] = []
     
     var camera:Camera? = nil
     
@@ -54,11 +51,15 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         displayLabels()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLabelDisplay), name: Notification.Name("ChangeRoomLabelDispaly"), object: nil)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+        let cont = UINavigationController(rootViewController: SettingsController())
+        cont.modalPresentationStyle = .formSheet
+        present(cont, animated: true, completion: nil)
     }
     
     
@@ -219,14 +220,13 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             }
         }
         //Sets Nodes variable with both arrays
-        nodes = [floor1Nodes, floor2Nodes]
-        Global.nodes = nodes
+        Global.nodes = [floor1Nodes, floor2Nodes]
     }
     
     /*Gets All Rooms from nodes */
     func initRooms(){
-        rooms = []
-        for floorArray:[Node] in nodes {
+        var rooms:[String] = []
+        for floorArray:[Node] in Global.nodes {
             for node:Node in floorArray {
                 for room in node.rooms {
                     rooms.append(room)
@@ -471,7 +471,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     func displayLabels(){
         var allLocations:[String:LabelLocation] = [:]
-        for room in rooms {
+        for room in Global.rooms {
             if room == "Bathroom" {
                 continue
             }
@@ -534,6 +534,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             labels[location.getFloor() - 1].append(node)
         }
         roomLabels = labels
+        updateLabelDisplay()
+        
     }
     
     func openSchedule() {
@@ -542,16 +544,16 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         present(cont, animated: true, completion: nil)
     }
     
-    func toggleLabels(state: Bool) {
-//        var floorIndex = 1
-//        for floor in roomLabels {
-//            for label in floor {
-//                label.isHidden = state && floorSelect.getFloor() == floorIndex
-//            }
-//            floorIndex += 1
-//        }
+    @objc
+    func updateLabelDisplay() {
+        let shouldDisplay:Bool = UserDefaults.standard.bool(forKey: "displayRoomLabels")
+        for floor in roomLabels {
+            for label in floor {
+                label.geometry?.firstMaterial?.diffuse.contents = shouldDisplay ? UIColor.black : UIColor.clear
+            }
+        }
     }
-    
+
 
 }
 class   CylinderLine: SCNNode

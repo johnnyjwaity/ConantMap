@@ -10,5 +10,4 @@ import Foundation
 
 protocol OptionsDelegate {
     func openSchedule();
-    func toggleLabels(state:Bool);
 }

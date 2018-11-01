@@ -51,11 +51,7 @@ class OptionsController: UIViewController {
         }
     }
     
-    @objc
-    func toggleLabels(_ sender:UIButton){
-        sender.backgroundColor = (sender.backgroundColor == UIColor.white) ? UIView().tintColor : UIColor.white
-        delegate.toggleLabels(state: (sender.backgroundColor == UIColor.white) ? false : true)
-    }
+    
     @objc
     func openSchedule(){
         delegate.openSchedule()
