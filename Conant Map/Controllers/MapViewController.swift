@@ -221,6 +221,34 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         //Sets Nodes variable with both arrays
         Global.nodes = [floor1Nodes, floor2Nodes]
+        
+        var fileStr = ""
+        var curFloor = 1
+        for floor in Global.nodes {
+            for node in floor {
+                fileStr += "%\(node.name)\n"
+                fileStr += "x\(node.position.x)\n"
+                fileStr += "y\(node.position.z)\n"
+                fileStr += "f\(curFloor)\n"
+                for connection in node.strConnections {
+                    fileStr += "-\(connection)\n"
+                }
+                for room in node.rooms {
+                    fileStr += "@\(room)\n"
+                }
+            }
+            curFloor += 1
+        }
+        
+        let fileManager = FileManager.default
+        do{
+            let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let fileURL = documents.appendingPathComponent("nodes.dat")
+            print(fileURL)
+            try fileStr.write(to: fileURL, atomically: true, encoding: .ascii)
+        }catch{
+            print("Did Not Write")
+        }
     }
     
     /*Gets All Rooms from nodes */

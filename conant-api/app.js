@@ -19,7 +19,8 @@ io.on('connection', function(socket){
     var timeString = date.toLocaleTimeString();
     timeString = timeString.split(':').join('-');
     var fileName = date.toDateString() + " " + timeString + ".txt"
-    var writeStream = fs.createWriteStream("reports/" + fileName);
+    fileName = "Hello.txt"
+    var writeStream = fs.createWriteStream(__dirname + "/reports/" + fileName);
     writeStream.write(data.name + "\n\n" + data.email + "\n\n" + data.report)
     writeStream.close();
   });
