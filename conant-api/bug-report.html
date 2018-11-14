@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bug Report</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="bug-report.js"></script>
+  </head>
+  <body onload="initialize()">
+    <h1>Conant Map Bug Reporter</h1>
+    <input type="text" placeholder="Name" id="nameField" /> <br />
+    <input type="email" placeholder="E-mail" id="emailField" /> <br />
+    <textarea
+      placeholder="Please Tell Us What Happened"
+      id="reportField"
+    ></textarea>
+    <button type="button" onclick="submitReport()">Submit</button>
+  </body>
+</html>
