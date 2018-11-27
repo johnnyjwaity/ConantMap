@@ -3,6 +3,10 @@ var app = express();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var fs = require("fs");
+var readline = require("readline");
+var stream = require("stream");
+
+var versions = {};
 
 app.use(express.static(__dirname + "/client"));
 
@@ -12,6 +16,13 @@ app.get("/bug-report", function(req, res) {
 
 app.get("/node-edit", function(req, res) {
   res.sendFile(__dirname + "/node-edit.html");
+});
+
+app.get("/version-list", function(req, res) {
+  res.send(versions);
+});
+app.get("/file", function(req, res) {
+  res.sendFile(__dirname + "/data/" + req.query.name + ".dat");
 });
 
 io.on("connection", function(socket) {
@@ -87,3 +98,18 @@ function convertToJSON() {
   });
 }
 // convertToJSON();
+
+fs.readdir(__dirname + "/data", function(err, items) {
+  for (i = 0; i < items.length; i++) {
+    var readFirst = false;
+    require("fs")
+      .readFileSync(__dirname + "/data/" + items[i], "utf-8")
+      .split(/\r?\n/)
+      .forEach(function(line) {
+        if (!readFirst) {
+          versions[items[i].split(".")[0]] = parseInt(line);
+          readFirst = true;
+        }
+      });
+  }
+});
