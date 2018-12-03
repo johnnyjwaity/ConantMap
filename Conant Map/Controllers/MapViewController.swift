@@ -9,8 +9,9 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import CoreLocation
 
-class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate, OptionsDelegate {
+class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate, OptionsDelegate, CLLocationManagerDelegate {
     
     static var main:MapViewController? = nil
     var gameView:SCNView!
@@ -37,6 +38,12 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     var highlightedRooms:[Structure] = []
     var roomLabels:[[SCNNode]]!
     
+    let locationManager = CLLocationManager()
+    
+    var gpsPoints:[SCNNode] = []
+    let gpsCoordinates = [[42.035705, -88.064329], [42.036693, -88.061544], [42.037123, -88.062951]]
+    var scale:[Double]!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         MapViewController.main = self
@@ -53,6 +60,130 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateLabelDisplay), name: Notification.Name("ChangeRoomLabelDispaly"), object: nil)
         
+        locationManager.requestWhenInUseAuthorization()
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.delegate = self
+            locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.startUpdatingLocation()
+            
+        }
+        
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if gpsPoints.count == 0{
+            if let gp1 = gameScene.rootNode.childNode(withName: "GPS_1", recursively: false){
+                if let gp2 = gameScene.rootNode.childNode(withName: "GPS_2", recursively: false) {
+                    if let gp3 = gameScene.rootNode.childNode(withName: "GPS_3", recursively: false){
+                        gpsPoints.append(gp1)
+                        gpsPoints.append(gp2)
+                        gpsPoints.append(gp3)
+                    }
+                }
+            }
+        }else{
+            let currentLat = 42.036343
+            let currentLong = -88.064081
+            
+            let coordDistance = haversine(x1: gpsCoordinates[0][0], y1: gpsCoordinates[0][1], x2: gpsCoordinates[1][0], y2: gpsCoordinates[1][1])
+            let pixelDisatnce = distance(x1: Double(gpsPoints[0].position.x), y1: Double(gpsPoints[0].position.z), x2: Double(gpsPoints[1].position.x), y2: Double(gpsPoints[1].position.z))
+            
+            let pixelsToCoords = pixelDisatnce / coordDistance
+            print(pixelsToCoords)
+            
+            let d1c = haversine(x1: currentLat, y1: currentLong, x2: gpsCoordinates[0][0], y2: gpsCoordinates[0][1])
+            let d2c = haversine(x1: currentLat, y1: currentLong, x2: gpsCoordinates[1][0], y2: gpsCoordinates[1][1])
+            let d3c = haversine(x1: currentLat, y1: currentLong, x2: gpsCoordinates[2][0], y2: gpsCoordinates[2][1])
+            print("\(d1c / 1000) \(d2c / 1000) \(d3c / 1000)")
+            
+            let d1p = d1c * pixelsToCoords
+            let d2p = d2c * pixelsToCoords
+            let d3p = d3c * pixelsToCoords
+
+            print("\(d1p) \(d2p) \(d3p)")
+//
+            let points = circleIntersection(x1: Double(gpsPoints[0].position.x), y1: Double(gpsPoints[0].position.z), r1: d1p, x2: Double(gpsPoints[1].position.x), y2: Double(gpsPoints[1].position.z), r2: d2p)
+            print(points)
+            
+//            let node1 = SCNNode(geometry: SCNSphere(radius: 1))
+//            node1.position = SCNVector3(points[0], 0, points[1])
+//            node1.geometry?.materials.first?.diffuse.contents = UIColor.blue
+//
+//            let node2 = SCNNode(geometry: SCNSphere(radius: 1))
+//            node2.position = SCNVector3(points[2], 0, points[3])
+//            node2.geometry?.materials.first?.diffuse.contents = UIColor.orange
+//
+//            gameScene.rootNode.addChildNode(node1)
+//            gameScene.rootNode.addChildNode(node2)
+            let p1d = distance(x1: points[0], y1: points[1], x2: Double(gpsPoints[2].position.x), y2: Double(gpsPoints[2].position.z))
+            let p2d = distance(x1: points[2], y1: points[3], x2: Double(gpsPoints[2].position.x), y2: Double(gpsPoints[2].position.z))
+            
+            let difference1 = abs(p1d - d3p)
+            let difference2 = abs(p2d - d3p)
+//
+            var x:Float
+            var y:Float
+            if difference1 <= difference2 {
+                x = Float(points[0])
+                y = Float(points[1])
+            }else{
+                x = Float(points[2])
+                y = Float(points[3])
+            }
+            gameScene.rootNode.childNode(withName: "location", recursively: false)?.position.x = x
+            gameScene.rootNode.childNode(withName: "location", recursively: false)?.position.z = y
+        }
+        
+//        print("\(locations.last?.coordinate.latitude) \(locations.last?.coordinate.longitude)")
+        
+    }
+    func distance(x1:Double, y1:Double, x2:Double, y2:Double) -> Double{
+        return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
+    }
+    func haversine(x1:Double, y1:Double, x2:Double, y2:Double) -> Double{
+        let r = 6371e3
+        let a1 = x1 * (Double.pi / 180)
+        let a2 = x2 * (Double.pi / 180)
+        
+        let latDif = (x2 - x1) * (Double.pi / 180)
+        let longDif = (y2 - y1) * (Double.pi / 180)
+        
+        let a = sin(latDif / 2) * sin(latDif / 2) + cos(a1) * cos(a2) * sin(longDif / 2) * sin(longDif / 2)
+        let c = 2 * atan2(sqrt(a), sqrt(1-a))
+        
+        return r * c
+    }
+    
+    func circleIntersection(x1:Double, y1:Double, r1:Double, x2:Double, y2:Double, r2:Double) -> [Double]{
+        let dx = x2 - x1
+        let dy = y2 - y1
+        
+        let d = sqrt(dy * dy + dx * dx)
+        
+        if d > r1 + r2 {
+            return []
+        }
+        if d < abs(r1 - r2) {
+            return []
+        }
+        
+        let a = (r1 * r1 - r2 * r2 + d * d) / (2 * d)
+        
+        let x = x1 + (dx * a) / d
+        let y = y1 + (dy * a) / d
+        
+        let h = sqrt(r1 * r1 - a * a)
+        
+        let rx = -dy * (h / d)
+        let ry = dx * (h / d)
+        
+        let xi = x + rx
+        let yi = y + ry
+        
+        let xi2 = x - rx
+        let yi2 = y - ry
+        
+        return [xi, yi, xi2, yi2]
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -81,6 +212,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         gameView.isPlaying = true;
 //        gameView.allowsCameraControl = true
         camera = Camera(gameScene)
+        
+        
     }
     
     func setUpView(){
@@ -193,7 +326,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         var floor1Nodes:[Node] = []
         var floor2Nodes:[Node] = []
         //Recieves all Nodes from File
-        let allNodes = NodeParser.parse(file: "nodes")
+        let allNodes = NodeParser.parse(file: UserDefaults.standard.string(forKey: "nodes")!)
         //Gets Node for the school
         let schoolNode:SCNNode = gameScene.rootNode.childNode(withName: "School", recursively: false)!
         //Iterates over each node to determine which floor it is on
@@ -222,33 +355,33 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         //Sets Nodes variable with both arrays
         Global.nodes = [floor1Nodes, floor2Nodes]
         
-        var fileStr = ""
-        var curFloor = 1
-        for floor in Global.nodes {
-            for node in floor {
-                fileStr += "%\(node.name)\n"
-                fileStr += "x\(node.position.x)\n"
-                fileStr += "y\(node.position.z)\n"
-                fileStr += "f\(curFloor)\n"
-                for connection in node.strConnections {
-                    fileStr += "-\(connection)\n"
-                }
-                for room in node.rooms {
-                    fileStr += "@\(room)\n"
-                }
-            }
-            curFloor += 1
-        }
+//        var fileStr = ""
+//        var curFloor = 1
+//        for floor in Global.nodes {
+//            for node in floor {
+//                fileStr += "%\(node.name)\n"
+//                fileStr += "x\(node.position.x)\n"
+//                fileStr += "y\(node.position.z)\n"
+//                fileStr += "f\(curFloor)\n"
+//                for connection in node.strConnections {
+//                    fileStr += "-\(connection)\n"
+//                }
+//                for room in node.rooms {
+//                    fileStr += "@\(room)\n"
+//                }
+//            }
+//            curFloor += 1
+//        }
         
-        let fileManager = FileManager.default
-        do{
-            let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileURL = documents.appendingPathComponent("nodes.dat")
-            print(fileURL)
-            try fileStr.write(to: fileURL, atomically: true, encoding: .ascii)
-        }catch{
-            print("Did Not Write")
-        }
+//        let fileManager = FileManager.default
+//        do{
+//            let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+//            let fileURL = documents.appendingPathComponent("nodes.dat")
+//            print(fileURL)
+//            try fileStr.write(to: fileURL, atomically: true, encoding: .ascii)
+//        }catch{
+//            print("Did Not Write")
+//        }
     }
     
     /*Gets All Rooms from nodes */

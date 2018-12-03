@@ -7,6 +7,7 @@ var readline = require("readline");
 var stream = require("stream");
 
 var versions = {};
+var files = {}
 
 app.use(express.static(__dirname + "/client"));
 
@@ -22,7 +23,7 @@ app.get("/version-list", function(req, res) {
   res.send(versions);
 });
 app.get("/file", function(req, res) {
-  res.sendFile(__dirname + "/data/" + req.query.name + ".dat");
+  res.send(files[req.query.name])
 });
 
 io.on("connection", function(socket) {
@@ -102,14 +103,13 @@ function convertToJSON() {
 fs.readdir(__dirname + "/data", function(err, items) {
   for (i = 0; i < items.length; i++) {
     var readFirst = false;
-    require("fs")
-      .readFileSync(__dirname + "/data/" + items[i], "utf-8")
-      .split(/\r?\n/)
-      .forEach(function(line) {
-        if (!readFirst) {
-          versions[items[i].split(".")[0]] = parseInt(line);
-          readFirst = true;
-        }
-      });
+    var file = require("fs").readFileSync(__dirname + "/data/" + items[i], "ascii")
+    files[items[i].split('.')[0]] = file
+    file.split(/\r?\n/).forEach(function(line) {
+      if (!readFirst) {
+        versions[items[i].split(".")[0]] = parseInt(line);
+        readFirst = true;
+      }
+    });
   }
 });
