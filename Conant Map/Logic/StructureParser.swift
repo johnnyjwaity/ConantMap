@@ -16,16 +16,21 @@ class StructureParser {
         var structures:[Structure] = []
         //Prepare Array For Lines
         var lines:[String] = []
-        do{
-            //Get File Path
-            let path = Bundle.main.path(forResource: file, ofType: "dat")
-            //String from File
-            let rawString = try String(contentsOfFile: path!)
-            //Seperate lines fron String
-            lines = rawString.components(separatedBy: .newlines)
-        }catch{
-            print(error)
+        if file == "fallback"{
+            do{
+                //Get File Path
+                let path = Bundle.main.path(forResource: "colors", ofType: "dat")
+                //String from File
+                let rawString = try String(contentsOfFile: path!)
+                //Seperate lines fron String
+                lines = rawString.components(separatedBy: .newlines)
+            }catch{
+                print(error)
+            }
+        }else{
+            lines = file.components(separatedBy: .newlines)
         }
+        
         var currentStructure:Structure? = nil
         //Iterate Through Each Line Of File
         for line in lines {

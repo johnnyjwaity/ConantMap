@@ -82,8 +82,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 }
             }
         }else{
-            let currentLat = 42.036343
-            let currentLong = -88.064081
+            let currentLat = (locations.last?.coordinate.latitude)!
+            let currentLong = (locations.last?.coordinate.longitude)!
             
             let coordDistance = haversine(x1: gpsCoordinates[0][0], y1: gpsCoordinates[0][1], x2: gpsCoordinates[1][0], y2: gpsCoordinates[1][1])
             let pixelDisatnce = distance(x1: Double(gpsPoints[0].position.x), y1: Double(gpsPoints[0].position.z), x2: Double(gpsPoints[1].position.x), y2: Double(gpsPoints[1].position.z))
@@ -326,7 +326,11 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         var floor1Nodes:[Node] = []
         var floor2Nodes:[Node] = []
         //Recieves all Nodes from File
-        let allNodes = NodeParser.parse(file: UserDefaults.standard.string(forKey: "nodes")!)
+        var file = "fallback"
+        if let f = UserDefaults.standard.object(forKey: "nodes") as? String {
+            file = f
+        }
+        let allNodes = NodeParser.parse(file: file)
         //Gets Node for the school
         let schoolNode:SCNNode = gameScene.rootNode.childNode(withName: "School", recursively: false)!
         //Iterates over each node to determine which floor it is on
@@ -399,11 +403,19 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     func initStructures() {
         let stuctures:[[SCNNode]] = [(gameScene.rootNode.childNode(withName: "Structures1", recursively: true)?.childNodes)!, (gameScene.rootNode.childNode(withName: "Structures2", recursively: true)?.childNodes)!]
-        Global.structures = StructureParser.parseStructures("colors", structureNodes: stuctures)
+        var file = "fallback"
+        if let f = UserDefaults.standard.object(forKey: "colors") as? String {
+            file = f
+        }
+        Global.structures = StructureParser.parseStructures(file, structureNodes: stuctures)
     }
     
     func initStairs(){
-        let stairs = StairParser.parseStairs("stairs")
+        var file = "fallback"
+        if let f = UserDefaults.standard.object(forKey: "stairs") as? String {
+            file = f
+        }
+        let stairs = StairParser.parseStairs(file)
         var validStairs:[Stair] = []
         for stair in stairs{
             var mapCheck = false
@@ -445,7 +457,11 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     }
     
     func initStaff(){
-        StaffParser.parseStaff("staff")
+        var file = "fallback"
+        if let f = UserDefaults.standard.object(forKey: "staff") as? String {
+            file = f
+        }
+        StaffParser.parseStaff(file)
         for s in Global.staff {
             for c in Global.classes {
                 if s.classIds.contains(c.id){

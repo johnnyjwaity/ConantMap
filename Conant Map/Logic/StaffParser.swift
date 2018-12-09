@@ -20,16 +20,21 @@ class StaffParser{
         
         //Prepare Array For Lines
         var lines:[String] = []
-        do{
-            //Get File Path
-            let path = Bundle.main.path(forResource: file, ofType: "dat")
-            //String from File
-            let rawString = try String(contentsOfFile: path!)
-            //Seperate lines fron String
-            lines = rawString.components(separatedBy: .newlines)
-        }catch{
-            print(error)
+        if file == "fallback" {
+            do{
+                //Get File Path
+                let path = Bundle.main.path(forResource: "staff", ofType: "dat")
+                //String from File
+                let rawString = try String(contentsOfFile: path!)
+                //Seperate lines fron String
+                lines = rawString.components(separatedBy: .newlines)
+            }catch{
+                print(error)
+            }
+        }else{
+            lines = file.components(separatedBy: .newlines)
         }
+        
         //Iterate Through Each Line Of File
         for line in lines {
             //If there is no information on current line

@@ -15,17 +15,20 @@ class NodeParser {
         //Prepare Array For Nodes
         var nodes:[Node] = []
         //Prepare Array For Lines in Node File
-        let lines:[String] = file.components(separatedBy: .newlines)
-//        do{
-//            //Get File Path
-//            let path = Bundle.main.path(forResource: file, ofType: "dat")
-//            //String from File
-//            let rawString = try String(contentsOfFile: path!)
-//            //Seperate lines fron String
-//            lines = rawString.components(separatedBy: .newlines)
-//        }catch{
-//            print(error)
-//        }
+        var lines:[String] = file.components(separatedBy: .newlines)
+        if file == "fallback" {
+            do{
+                //Get File Path
+                let path = Bundle.main.path(forResource: "nodes", ofType: "dat")
+                //String from File
+                let rawString = try String(contentsOfFile: path!)
+                //Seperate lines fron String
+                lines = rawString.components(separatedBy: .newlines)
+            }catch{
+                print(error)
+            }
+        }
+//
         //Node Count
         var count = 0
         //Current Node being edited

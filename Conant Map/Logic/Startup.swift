@@ -33,23 +33,23 @@ class Startup {
     }
     
     static func checkVersions(versions:[String: Int]){
-        let myVersions = ["staff": 1, "stairs": 1, "nodes": 0, "colors": 1]
+        var myVersions = ["staff": 0, "stairs": 0, "nodes": 0, "colors": 0]
+        if let v = UserDefaults.standard.dictionary(forKey: "versions") as? [String: Int] {
+            myVersions = v
+        }else {
+            UserDefaults.standard.set(myVersions, forKey: "versions")
+        }
         for key in versions.keys {
             if myVersions[key]! < versions[key]! {
                 print("Need To Update \(key)")
-                switch key {
-                case "nodes":
-                    updateNodes()
-                    break
-                default:
-                    break
-                }
+                fetchFile(key)
             }
         }
         
     }
-    static func updateNodes (){
-        let url = URL(string: "http://mc.johnnywaity.com:3000/file?name=nodes")
+    
+    static func fetchFile(_ name:String){
+        let url = URL(string: "http://mc.johnnywaity.com:3000/file?name=\(name)")
         let session = URLSession.shared
         let request = URLRequest(url: url!)
         let task = session.dataTask(with: request) { (data, response, error) in
@@ -58,12 +58,11 @@ class Startup {
                 return
             }
             let dat = String(data: data!, encoding: String.Encoding.ascii)
-            UserDefaults.standard.set(dat, forKey: "nodes")
+            
+            UserDefaults.standard.set(dat, forKey: name)
             
         }
         task.resume()
     }
-}
-struct NodeData {
     
 }
