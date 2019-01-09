@@ -91,6 +91,7 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         searchBar.heightAnchor.constraint(equalTo: navBar.heightAnchor, constant: -10).isActive = true
         searchBar.delegate = self
         
+        
         tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
         tableView.topAnchor.constraint(equalTo: navBar.bottomAnchor).isActive = true
@@ -223,6 +224,10 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         sortedRooms = contains
         sortedRooms.append(contentsOf: discard)
         tableView.reloadData()
+        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        
+        
+
     }
     
     @objc

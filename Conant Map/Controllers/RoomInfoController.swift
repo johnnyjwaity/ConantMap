@@ -245,7 +245,17 @@ class RoomInfoController: UIViewController {
     @objc
     func navigateButton(_ sender:UIButton){
         
-        if let s = ScheduleController.sharedInstance {
+        var otherController:UIViewController? = nil
+        if let cont = ScheduleController.sharedInstance {
+            otherController = cont
+            print("Found Schedule Controller")
+        }
+        else if let cont = StaffSearchController.sharedInstance {
+            otherController = cont
+            
+        }
+        
+        if let s = otherController {
             s.dismiss(animated: true, completion: nil)
             s.dismiss(animated: true) {
                 switch sender.tag {

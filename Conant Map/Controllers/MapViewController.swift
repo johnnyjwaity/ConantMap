@@ -13,6 +13,8 @@ import CoreLocation
 
 class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate, OptionsDelegate, CLLocationManagerDelegate {
     
+    
+    
     static var main:MapViewController? = nil
     var gameView:SCNView!
     var gameScene:SCNScene!
@@ -188,9 +190,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let cont = UINavigationController(rootViewController: SettingsController())
-        cont.modalPresentationStyle = .formSheet
-        present(cont, animated: true, completion: nil)
+        
     }
     
     
@@ -258,7 +258,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         optionController.view.topAnchor.constraint(equalTo: floorSelect.view.bottomAnchor, constant: 20).isActive = true
         optionController.view.centerXAnchor.constraint(equalTo: floorSelect.view.centerXAnchor).isActive = true
         optionController.view.widthAnchor.constraint(equalTo: floorSelect.view.widthAnchor).isActive = true
-        optionController.view.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        optionController.view.heightAnchor.constraint(equalToConstant: 132.5).isActive = true
         
         
         let gamePan = UIPanGestureRecognizer(target: self, action: #selector(handleCameraMove(gesture:)))
@@ -717,6 +717,17 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     
     func openSchedule() {
         let cont = UINavigationController(rootViewController: ScheduleController())
+        cont.modalPresentationStyle = .formSheet
+        present(cont, animated: true, completion: nil)
+    }
+    func openStaffFinder() {
+        let cont = UINavigationController(rootViewController: StaffSearchController())
+        cont.modalPresentationStyle = .formSheet
+        present(cont, animated: true, completion: nil)
+    }
+    
+    func openSettings() {
+        let cont = UINavigationController(rootViewController: SettingsController())
         cont.modalPresentationStyle = .formSheet
         present(cont, animated: true, completion: nil)
     }

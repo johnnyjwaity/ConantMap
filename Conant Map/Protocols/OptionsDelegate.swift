@@ -10,4 +10,6 @@ import Foundation
 
 protocol OptionsDelegate {
     func openSchedule();
+    func openStaffFinder();
+    func openSettings();
 }

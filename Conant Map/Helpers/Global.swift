@@ -14,4 +14,21 @@ struct Global {
     static var structures:[Structure] = []
     static var staff:[Staff] = []
     static var classes:[Class] = []
+    static let departments:[String:String] = ["Student Services": "Student Services Desk",
+                                              "Math": "Math Office",
+                                              "Physical Education": "Gym",
+                                              "World Language": "World Language Office",
+                                              "Social Studies": "213",
+                                              "English": "English Office",
+                                              "Family and Consumer Sciences": "173",
+                                              "Business Education": "Business Office",
+                                              "Art": "Art Office",
+                                              "English As A Second Language": "English Office",
+                                              "Science": "Science Office",
+                                              "Special Education": "Special Ed Office",
+                                              "English as a Second Language": "English Office",
+                                              "Music": "Music Office",
+                                              "Applied Technology": "Applied Tech Office",
+                                              "Driver Education": "114",
+                                              "Health": "Gym"]
 }

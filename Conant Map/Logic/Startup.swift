@@ -11,13 +11,13 @@ import UIKit
 
 class Startup {
     static func update(){
-        
         let url = URL(string: "http://mc.johnnywaity.com:3000/version-list")
         let session = URLSession.shared
         let request = URLRequest(url: url!)
         let task = session.dataTask(with: request) { (data, response, error) in
             if let e = error {
                 print(e.localizedDescription)
+                return
             }
             do{
                 if let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as? [String: Any] {

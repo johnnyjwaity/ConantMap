@@ -12,7 +12,7 @@ import MessageUI
 class StaffInfoController: UIViewController, MFMailComposeViewControllerDelegate {
     
     let name:String
-    
+    var staff:Staff!
     init(name:String) {
         self.name = name;
         super.init(nibName: nil, bundle: nil)
@@ -33,7 +33,6 @@ class StaffInfoController: UIViewController, MFMailComposeViewControllerDelegate
     }
     
     func setupView(){
-        var staff:Staff!
         for s in Global.staff {
             if s.name.lowercased() == name.lowercased() {
                 staff = s;
@@ -107,7 +106,7 @@ class StaffInfoController: UIViewController, MFMailComposeViewControllerDelegate
         infoBackground.translatesAutoresizingMaskIntoConstraints = false
         infoBackground.clipsToBounds = true
         view.addSubview(infoBackground)
-        infoBackground.topAnchor.constraint(equalTo: view.topAnchor, constant: 50).isActive = true
+        infoBackground.topAnchor.constraint(equalTo: view.topAnchor, constant: 25).isActive = true
         infoBackground.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         infoBackground.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
         infoBackground.heightAnchor.constraint(equalToConstant: 100).isActive = true
@@ -162,11 +161,43 @@ class StaffInfoController: UIViewController, MFMailComposeViewControllerDelegate
         phoneNumber.bottomAnchor.constraint(equalTo: infoBackground.bottomAnchor).isActive = true
         phoneNumber.topAnchor.constraint(equalTo: divider.bottomAnchor).isActive = true
         
+        let departmentBackground = UIView()
+        departmentBackground.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 239/255)
+        departmentBackground.layer.cornerRadius = 8
+        departmentBackground.translatesAutoresizingMaskIntoConstraints = false
+        departmentBackground.clipsToBounds = true
+        view.addSubview(departmentBackground)
+        departmentBackground.topAnchor.constraint(equalTo: infoBackground.bottomAnchor, constant: 20).isActive = true
+        departmentBackground.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        departmentBackground.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+        departmentBackground.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        
+        let departmentLabel = UILabel()
+        departmentLabel.text = "Department:"
+        departmentLabel.translatesAutoresizingMaskIntoConstraints = false
+        departmentLabel.textColor = UIColor.lightGray
+        departmentBackground.addSubview(departmentLabel)
+        departmentLabel.centerYAnchor.constraint(equalTo: departmentBackground.centerYAnchor).isActive = true
+        departmentLabel.heightAnchor.constraint(equalTo: departmentBackground.heightAnchor, multiplier: 0.5).isActive = true
+        departmentLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        departmentLabel.leftAnchor.constraint(equalTo: departmentBackground.leftAnchor, constant: 10).isActive = true
+        
+        let department = UIButton(type: .system)
+        department.setTitle((staff.department.contains("English") ? "English" : staff.department), for: .normal)
+        department.translatesAutoresizingMaskIntoConstraints = false
+        department.titleLabel?.adjustsFontSizeToFitWidth = true
+        departmentBackground.addSubview(department)
+        department.leftAnchor.constraint(equalTo: departmentLabel.rightAnchor).isActive = true
+        department.rightAnchor.constraint(equalTo: departmentBackground.rightAnchor, constant: -8).isActive = true
+        department.bottomAnchor.constraint(equalTo: departmentBackground.bottomAnchor).isActive = true
+        department.centerYAnchor.constraint(equalTo: departmentBackground.centerYAnchor).isActive = true
+        department.addTarget(self, action: #selector(departmentButtonClicked), for: .touchUpInside)
+        
         let infoSelector = UISegmentedControl(items: ["Location", "Class Name"])
         infoSelector.selectedSegmentIndex = 0
         infoSelector.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(infoSelector)
-        infoSelector.topAnchor.constraint(equalTo: infoBackground.bottomAnchor, constant: 20).isActive = true
+        infoSelector.topAnchor.constraint(equalTo: departmentBackground.bottomAnchor, constant: 20).isActive = true
         infoSelector.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
         infoSelector.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         infoSelector.addTarget(self, action: #selector(changeTableDisplay(sender:)), for: .valueChanged)
@@ -243,12 +274,18 @@ class StaffInfoController: UIViewController, MFMailComposeViewControllerDelegate
             
         }
     }
+    
+    @objc
+    func departmentButtonClicked(){
+        changeToRoomPage(Global.departments[staff.department]!)
+    }
 
     @objc
     func roomButtonClicked(sender:UIButton){
-        let roomName:String = (classLabels[sender]?.location)!
-        navigationController?.pushViewController(RoomInfoController(room: roomName), animated: true)
-        
+        changeToRoomPage((classLabels[sender]?.location)!)
+    }
+    func changeToRoomPage(_ name:String){
+        navigationController?.pushViewController(RoomInfoController(room: name), animated: true)
     }
     
     @objc

@@ -39,6 +39,8 @@
 		3D3E9009216DBB44005FA9DD /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3E9008216DBB44005FA9DD /* Schedule.swift */; };
 		3D3E900B216EC607005FA9DD /* ScheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D3E900A216EC607005FA9DD /* ScheduleCell.swift */; };
 		3D4610932171BB8000433E5B /* ScheduleImportDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4610922171BB8000433E5B /* ScheduleImportDelegate.swift */; };
+		3D515A4121D6CBFF00D5BBB2 /* StaffSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D515A4021D6CBFF00D5BBB2 /* StaffSearchController.swift */; };
+		3D515A4321D6D95B00D5BBB2 /* StaffCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D515A4221D6D95B00D5BBB2 /* StaffCell.swift */; };
 		3D55A2CF21B3815500466088 /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D55A2CE21B3815500466088 /* Startup.swift */; };
 		3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */; };
 		3D5B785C20CCD8250048AEE7 /* RoomSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */; };
@@ -98,6 +100,8 @@
 		3D3E9008216DBB44005FA9DD /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		3D3E900A216EC607005FA9DD /* ScheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleCell.swift; sourceTree = "<group>"; };
 		3D4610922171BB8000433E5B /* ScheduleImportDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleImportDelegate.swift; sourceTree = "<group>"; };
+		3D515A4021D6CBFF00D5BBB2 /* StaffSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffSearchController.swift; sourceTree = "<group>"; };
+		3D515A4221D6D95B00D5BBB2 /* StaffCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaffCell.swift; sourceTree = "<group>"; };
 		3D55A2CE21B3815500466088 /* Startup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Startup.swift; sourceTree = "<group>"; };
 		3D5B785920CCD7440048AEE7 /* NavOptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavOptionsController.swift; sourceTree = "<group>"; };
 		3D5B785B20CCD8250048AEE7 /* RoomSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSearchController.swift; sourceTree = "<group>"; };
@@ -240,6 +244,7 @@
 				3D3E9006216D8C67005FA9DD /* ScheduleController.swift */,
 				3DC37916217F9EC4005790CB /* OptionsController.swift */,
 				3D338EB32189EB6200A4368E /* SettingsController.swift */,
+				3D515A4021D6CBFF00D5BBB2 /* StaffSearchController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -262,6 +267,7 @@
 				3D3E900421618283005FA9DD /* DateEnterCell.swift */,
 				3D3E900A216EC607005FA9DD /* ScheduleCell.swift */,
 				3DC3791A2180182D005790CB /* QuickSelectCell.swift */,
+				3D515A4221D6D95B00D5BBB2 /* StaffCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -353,6 +359,7 @@
 				3D81F0ED20D591A6002002D5 /* Pathfinder.swift in Sources */,
 				3D188EFD2134CA87002076DB /* SearchNavigationController.swift in Sources */,
 				3D5B785A20CCD7440048AEE7 /* NavOptionsController.swift in Sources */,
+				3D515A4121D6CBFF00D5BBB2 /* StaffSearchController.swift in Sources */,
 				3D55A2CF21B3815500466088 /* Startup.swift in Sources */,
 				3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */,
 				3D188EFB2134C54E002076DB /* RouteBarDelegate.swift in Sources */,
@@ -374,6 +381,7 @@
 				3D1130E720DCAE8E009AD6E4 /* Camera.swift in Sources */,
 				3D3CAE3D20E86E9C00735610 /* DataHolder.swift in Sources */,
 				3D996A8820E55AF100604AA1 /* RoomCell.swift in Sources */,
+				3D515A4321D6D95B00D5BBB2 /* StaffCell.swift in Sources */,
 				3D3CAE4520EDEDA300735610 /* FloorSelectDelegate.swift in Sources */,
 				3D1130E520DACDAC009AD6E4 /* NavigationSession.swift in Sources */,
 				3D3CAE4320EDCC7100735610 /* FloorSelectController.swift in Sources */,

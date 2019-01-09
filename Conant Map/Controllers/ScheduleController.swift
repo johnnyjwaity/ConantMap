@@ -15,6 +15,7 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
     
     
     var schedule:Schedule?
+    var currentSemester = 0
     var tableView:UITableView!
     var tableHeightConstriant:NSLayoutConstraint!
     var semesterControl:UISegmentedControl!
@@ -30,6 +31,9 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func setup(){
+        
+        let month = Calendar.current.component(.month, from: Date())
+        currentSemester = (month < 6) ? 1 : 0
         
         if let data = UserDefaults.standard.data(forKey: "schedule") {
             let decodeData = try? JSONDecoder().decode(Schedule.SimpleSchedule.self, from: data)
@@ -77,7 +81,7 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         
         semesterControl = UISegmentedControl(items: ["Semester 1", "Semester 2"])
         semesterControl.translatesAutoresizingMaskIntoConstraints = false
-        semesterControl.selectedSegmentIndex = 0
+        semesterControl.selectedSegmentIndex = currentSemester
         if schedule == nil {
             semesterControl.alpha = 0
         }
@@ -85,7 +89,7 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         semesterControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         semesterControl.bottomAnchor.constraint(equalTo: tableView.topAnchor, constant: -20).isActive = true
         semesterControl.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
-        semesterControl.addTarget(self, action: #selector(changeSemester), for: .valueChanged)
+        semesterControl.addTarget(self, action: #selector(changeSemester(_:)), for: .valueChanged)
         
         
         
@@ -125,7 +129,7 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell") as! ScheduleCell
-        cell.setInfo(schedule!.classes[indexPath.row])
+        cell.setInfo(schedule!.semClasses[currentSemester][indexPath.row])
         
         cell.teacherButton.removeTarget(nil, action: nil, for: .allEvents)
         cell.roomButton.removeTarget(nil, action: nil, for: .allEvents)
@@ -147,7 +151,8 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     @objc
-    func changeSemester(){
+    func changeSemester(_ sender:UISegmentedControl){
+        currentSemester = sender.selectedSegmentIndex//(currentSemester == 0) ? 1 : 0
         updateTableHeight()
         tableView.reloadData()
     }
