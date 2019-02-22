@@ -10,45 +10,49 @@ import UIKit
 import QuartzCore
 import SceneKit
 import CoreLocation
+import MapKit
+import SystemConfiguration.CaptiveNetwork
 
 class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate, OptionsDelegate, CLLocationManagerDelegate {
     
     
-    
+    // Scene View Variables
     static var main:MapViewController? = nil
     var gameView:SCNView!
     var gameScene:SCNScene!
     var cameraNode:SCNNode!
+    var camera:Camera? = nil
     
+    // UI Left Overlay Variables
     var overlayController:OverlayController? = nil
     var bottomAnchor:NSLayoutConstraint? = nil
     var leftAnchor:NSLayoutConstraint!
     var bottomConstant:CGFloat = -20
     
+    //Route Bar Variables
     var routeBar:RouteController!
     var routeBottomAnchor:NSLayoutConstraint!
     
+    //Floor Select Varaibles
     var floorSelect:FloorSelectController!
     
-//    var nodes:[[Node]] = []
-//    var rooms:[String] = []
-    
-    var camera:Camera? = nil
-    
+    //Navigation Variables + Map Configuration
     var currentNavSession:NavigationSession? = nil
-    
     var highlightedRooms:[Structure] = []
     var roomLabels:[[SCNNode]]!
     
+    //Location Varaibles
     let locationManager = CLLocationManager()
-    
     var gpsPoints:[SCNNode] = []
     let gpsCoordinates = [[42.035705, -88.064329], [42.036693, -88.061544], [42.037123, -88.062951]]
     var scale:[Double]!
+    var macLabel:UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //Set shared Instance
         MapViewController.main = self
+        // Map Intialization
         initView()
         initScene()
         initNodes()
@@ -56,23 +60,86 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         initStructures()
         initStairs()
         initStaff()
+        initMacAddresses()
+        //UI Intialization
         setUpView()
         
         displayLabels()
         
+        //Create Mac Address Label
+        macLabel = UILabel()
+        macLabel.translatesAutoresizingMaskIntoConstraints = false
+        macLabel.numberOfLines = 3
+        macLabel.backgroundColor  = UIColor.white
+        gameView.addSubview(macLabel)
+        macLabel.bottomAnchor.constraint(equalTo: gameView.bottomAnchor).isActive = true
+        macLabel.rightAnchor.constraint(equalTo: gameView.rightAnchor).isActive = true
+        macLabel.textAlignment = .right
+        
+        //Listen for Settings Updates to reflect in map
+        //Label Listener
         NotificationCenter.default.addObserver(self, selector: #selector(updateLabelDisplay), name: Notification.Name("ChangeRoomLabelDispaly"), object: nil)
         
+        //Set up GPS
         locationManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.headingOrientation = .landscapeLeft
             locationManager.startUpdatingLocation()
-            
+            locationManager.startUpdatingHeading()
+        }
+        //Monitor Mac Address Changes
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
+            let wifiInfo = self.getWIFIInformation()
+            if wifiInfo["SSID"] == "D211-Mobile" {
+                let bssid = String((wifiInfo["BSSID"]!).filter{!":".contains($0)})
+                let macAddress = Global.macAddresses.searchWithAddress(bssid)
+                if let address = macAddress {
+                    DispatchQueue.main.async {
+                        let text = "BSSID: \(MacAddress.readable(bssid))\nMAC Address: \(MacAddress.readable(address.address))\nName: \(address.name)"
+                        self.macLabel.text = text
+                    }
+                }else{
+                    DispatchQueue.main.async {
+                        let text = "BSSID: \(bssid)\nMAC Address: NONE FOUND\nName: NONE FOUND"
+                        self.macLabel.text = text
+                    }
+                }
+                
+            }
         }
         
     }
-    
+    // Uses Captive Network Framework in order to retrieve SSID and BSSID
+    func getWIFIInformation() -> [String:String]{
+        var informationDictionary = [String:String]()
+        let informationArray:NSArray? = CNCopySupportedInterfaces()
+        if let information = informationArray {
+            let dict:NSDictionary? = CNCopyCurrentNetworkInfo(information[0] as! CFString)
+            if let temp = dict {
+                informationDictionary["SSID"] = "\(temp["SSID"]!)"
+                informationDictionary["BSSID"] = "\(temp["BSSID"]!)"
+                return informationDictionary
+            }
+        }
+        
+        return informationDictionary
+    }
+    // Heading Update Implementation from CLLocationManagerDelegate Protocol
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        print("Heading \(Float(newHeading.trueHeading))")
+        print(newHeading.headingAccuracy)
+        //Update rotation based on heading
+        gameScene.rootNode.childNode(withName: "location", recursively: false)?.eulerAngles.y = -(Float(newHeading.trueHeading) * (Float.pi / 180))
+    }
+    // Location update Implementation from CLLocationManagerDelegate Protocol
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        // Init GPS Points Array if is empty
+        /*
+         Three GPS poitns are on the scene view in these points are used to translate coordinates into pixel position with
+         triangualrization
+         */
         if gpsPoints.count == 0{
             if let gp1 = gameScene.rootNode.childNode(withName: "GPS_1", recursively: false){
                 if let gp2 = gameScene.rootNode.childNode(withName: "GPS_2", recursively: false) {
@@ -84,45 +151,43 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 }
             }
         }else{
+            // Get Latitude and Logitude from CLLocation
             let currentLat = (locations.last?.coordinate.latitude)!
             let currentLong = (locations.last?.coordinate.longitude)!
+            print(currentLat)
+            print(currentLong)
             
+            // gpsCoordinates contains the coordinates for each of the GPS Points. These are static coordinates for static locations
+            //Get distance in coordinates between GPSPoint 1 and GPS Point 2. Distance is calcualted with the Haversine Formaula in order to get accurate distance readings from coordinates. Haversine takes into account Earth Curvature.
             let coordDistance = haversine(x1: gpsCoordinates[0][0], y1: gpsCoordinates[0][1], x2: gpsCoordinates[1][0], y2: gpsCoordinates[1][1])
+            //Get Pixel distance betewen GPSPoint 1 and GPSPoint 2 these disatnces are static and will not change
             let pixelDisatnce = distance(x1: Double(gpsPoints[0].position.x), y1: Double(gpsPoints[0].position.z), x2: Double(gpsPoints[1].position.x), y2: Double(gpsPoints[1].position.z))
             
+            //Meters to Pixel Conversion Number
             let pixelsToCoords = pixelDisatnce / coordDistance
-            print(pixelsToCoords)
+//            print(pixelsToCoords)
             
+            //Get Dustances from GPSPoints to Current Location. Not static distances Unlike other ones. Once again uses Haversine formaula in order to get accurate readings
             let d1c = haversine(x1: currentLat, y1: currentLong, x2: gpsCoordinates[0][0], y2: gpsCoordinates[0][1])
             let d2c = haversine(x1: currentLat, y1: currentLong, x2: gpsCoordinates[1][0], y2: gpsCoordinates[1][1])
             let d3c = haversine(x1: currentLat, y1: currentLong, x2: gpsCoordinates[2][0], y2: gpsCoordinates[2][1])
-            print("\(d1c / 1000) \(d2c / 1000) \(d3c / 1000)")
             
+            // COnvert meter distanee from coordinate distance into pixel distances
             let d1p = d1c * pixelsToCoords
             let d2p = d2c * pixelsToCoords
             let d3p = d3c * pixelsToCoords
-
-            print("\(d1p) \(d2p) \(d3p)")
-//
-            let points = circleIntersection(x1: Double(gpsPoints[0].position.x), y1: Double(gpsPoints[0].position.z), r1: d1p, x2: Double(gpsPoints[1].position.x), y2: Double(gpsPoints[1].position.z), r2: d2p)
-            print(points)
             
-//            let node1 = SCNNode(geometry: SCNSphere(radius: 1))
-//            node1.position = SCNVector3(points[0], 0, points[1])
-//            node1.geometry?.materials.first?.diffuse.contents = UIColor.blue
-//
-//            let node2 = SCNNode(geometry: SCNSphere(radius: 1))
-//            node2.position = SCNVector3(points[2], 0, points[3])
-//            node2.geometry?.materials.first?.diffuse.contents = UIColor.orange
-//
-//            gameScene.rootNode.addChildNode(node1)
-//            gameScene.rootNode.addChildNode(node2)
+            // Gets Intersection points from gps point 1 and two. Circes are created areound the points with radius of the ditance it is to the current location. the poiunts array contains two one or zero points based on where the circles intersect.
+            let points = circleIntersection(x1: Double(gpsPoints[0].position.x), y1: Double(gpsPoints[0].position.z), r1: d1p, x2: Double(gpsPoints[1].position.x), y2: Double(gpsPoints[1].position.z), r2: d2p)
+            
+            // Get distance from the circle intersection points to the thord gps point in order to determine the users location.
             let p1d = distance(x1: points[0], y1: points[1], x2: Double(gpsPoints[2].position.x), y2: Double(gpsPoints[2].position.z))
             let p2d = distance(x1: points[2], y1: points[3], x2: Double(gpsPoints[2].position.x), y2: Double(gpsPoints[2].position.z))
             
+            // DIfferences between the points
             let difference1 = abs(p1d - d3p)
             let difference2 = abs(p2d - d3p)
-//
+
             var x:Float
             var y:Float
             if difference1 <= difference2 {
@@ -132,16 +197,30 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 x = Float(points[2])
                 y = Float(points[3])
             }
-            gameScene.rootNode.childNode(withName: "location", recursively: false)?.position.x = x
-            gameScene.rootNode.childNode(withName: "location", recursively: false)?.position.z = y
+            // Animate the moving of the location marker in order to make smooth transitions
+            let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)!
+            let animation = CABasicAnimation(keyPath: "position")
+            animation.fromValue = locationNode.position
+            animation.toValue = SCNVector3(x, locationNode.position.y, y)
+            animation.duration = 0.2
+            animation.repeatCount = 0
+            animation.isRemovedOnCompletion = false
+            animation.fillMode = CAMediaTimingFillMode.forwards
+            locationNode.addAnimation(animation, forKey: "move")
+            //Set permanent location after the animation is complete
+            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { (timer) in
+                locationNode.position = SCNVector3(x, locationNode.position.y, y)
+            }
+            
         }
         
-//        print("\(locations.last?.coordinate.latitude) \(locations.last?.coordinate.longitude)")
         
     }
+    // Distance Formula
     func distance(x1:Double, y1:Double, x2:Double, y2:Double) -> Double{
         return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
     }
+    // Haversine Formula FUnciton
     func haversine(x1:Double, y1:Double, x2:Double, y2:Double) -> Double{
         let r = 6371e3
         let a1 = x1 * (Double.pi / 180)
@@ -156,6 +235,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         return r * c
     }
     
+    // Circle INtersection calcualtor
     func circleIntersection(x1:Double, y1:Double, r1:Double, x2:Double, y2:Double, r2:Double) -> [Double]{
         let dx = x2 - x1
         let dy = y2 - y1
@@ -188,14 +268,10 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         return [xi, yi, xi2, yi2]
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-    }
-    
     
     
     func initView(){
+        // Create SceneVIew For Map
         let sV = SCNView(frame: UIScreen.main.bounds)
         view.addSubview(sV)
         gameView = sV
@@ -204,23 +280,24 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     }
     
     func initScene() {
+        // Loads Scene File (The Map) To display
         guard let s = SCNScene(named: "art.scnassets/Map.scn")
             else{fatalError("NO Load")}
         gameScene = s
-        
         gameView.scene = gameScene
         gameView.isPlaying = true;
-//        gameView.allowsCameraControl = true
         camera = Camera(gameScene)
-        
-        
     }
     
+    //Sets up
     func setUpView(){
+        // Create Overlay
         overlayController = OverlayController()
+        // Set Overlay Delegate
         overlayController?.delegate = self
         let overlay:UIView = (overlayController?.view)!
         gameView.addSubview(overlay)
+        // Set Constraints + save in order to move it later
         leftAnchor = overlay.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 20)
         leftAnchor.isActive = true
         overlay.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 20).isActive = true
@@ -228,8 +305,10 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         bottomAnchor?.isActive = true
         overlay.widthAnchor.constraint(equalToConstant: 300).isActive = true
         let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
+        // Add resizeable Drag Bar to Overlay View
         overlayController?.dragBar.addGestureRecognizer(pan)
         
+        // Create a Route Bar
         routeBar = RouteController()
         routeBar.delegate = self
         self.addChild(routeBar)
@@ -241,6 +320,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         routeBar.view.centerXAnchor.constraint(equalTo: gameView.centerXAnchor).isActive = true
         routeBar.setupView(NavigationSession(start: "180", end: "280", usesElevators: false))
         
+        // Create Floor Select View
         floorSelect = FloorSelectController()
         floorSelect.delegate = self
         addChild(floorSelect)
@@ -250,6 +330,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         floorSelect.view.widthAnchor.constraint(equalToConstant: 50).isActive = true
         floorSelect.view.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
+        //Create OPtions View (Schedule, Teacher Search, Settings)
         let optionController = OptionsController()
         optionController.delegate = self
         optionController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -261,22 +342,23 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         optionController.view.heightAnchor.constraint(equalToConstant: 132.5).isActive = true
         
         
+        // Add Pan Recongnizers to the Sceen.
         let gamePan = UIPanGestureRecognizer(target: self, action: #selector(handleCameraMove(gesture:)))
         gameView.addGestureRecognizer(gamePan)
 
         let zoom = UIPinchGestureRecognizer(target: self, action: #selector(handleCameraZoom(gesture:)))
         gameView.addGestureRecognizer(zoom)
 
-//        let rotate = UIRotationGestureRecognizer(target: self, action: #selector(handleCameraRotate(gesture:)))
-//        gameView.addGestureRecognizer(rotate)
     }
     
     @objc
     func handleCameraMove(gesture:UIPanGestureRecognizer){
+        // Move Camera When Panning
         camera?.move(gesture.velocity(in: gameView), state: gesture.state, numOfTouches: gesture.numberOfTouches)
     }
     @objc
     func handleCameraZoom(gesture:UIPinchGestureRecognizer) {
+        // Zoom Camera when panning
         camera?.zoom(gesture.velocity, state: gesture.state)
     }
     var schoolRotation:Float!
@@ -297,7 +379,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             break
         }
     }
-    
+    // Change size of Overaly COntroller if drag bar is apnned on
     @objc
     func handlePan(gesture:UIGestureRecognizer){
         let panGesture:UIPanGestureRecognizer = gesture as! UIPanGestureRecognizer
@@ -317,6 +399,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        //Update canera Motion
         camera?.applyVelocity()
     }
     
@@ -358,7 +441,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         //Sets Nodes variable with both arrays
         Global.nodes = [floor1Nodes, floor2Nodes]
-        
+        // Following Code Exports FIle with Node Locations included
 //        var fileStr = ""
 //        var curFloor = 1
 //        for floor in Global.nodes {
@@ -400,7 +483,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         Global.rooms = rooms
     }
-    
+    // Get all geometry for structures so highlighting can be changed
     func initStructures() {
         let stuctures:[[SCNNode]] = [(gameScene.rootNode.childNode(withName: "Structures1", recursively: true)?.childNodes)!, (gameScene.rootNode.childNode(withName: "Structures2", recursively: true)?.childNodes)!]
         var file = "fallback"
@@ -409,17 +492,20 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         Global.structures = StructureParser.parseStructures(file, structureNodes: stuctures)
     }
-    
+    // Load stair data into map
     func initStairs(){
+        // Get Stair file
         var file = "fallback"
         if let f = UserDefaults.standard.object(forKey: "stairs") as? String {
             file = f
         }
         let stairs = StairParser.parseStairs(file)
+        // Prepare array for stars
         var validStairs:[Stair] = []
         for stair in stairs{
             var mapCheck = false
             var nodeCheck = false
+            // Check to see if satir exists on map
             if let stairNode = gameScene.rootNode.childNode(withName: stair.name, recursively: true){
                 stairNode.geometry?.firstMaterial?.diffuse.contents = UIColor.clear
                 mapCheck = true
@@ -427,7 +513,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             else{
                 print("Stair Not Found\(stair.name)")
             }
-            
+            // CHeck to see if stair has a node associated with it
             for floor in Global.nodes{
                 for node in floor{
                     if node.name == stair.entryStr{
@@ -441,10 +527,12 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             if(!nodeCheck){
                 print("Node not found: \(stair.entryStr) for stair: \(stair.name)")
             }
+            // Allow stair to be used if passed both tests
             if mapCheck && nodeCheck {
                 validStairs.append(stair)
             }
         }
+        // Set other stair (from diffferent floor)
         for stair in validStairs {
             for cStair in validStairs {
                 if stair.name != cStair.name && stair.id == cStair.id {
@@ -455,13 +543,15 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         Global.stairs = validStairs
     }
-    
+    // Retrieve staff information
     func initStaff(){
+        //GEt Staff file
         var file = "fallback"
         if let f = UserDefaults.standard.object(forKey: "staff") as? String {
             file = f
         }
         StaffParser.parseStaff(file)
+        //Get classes into array from staff
         for s in Global.staff {
             for c in Global.classes {
                 if s.classIds.contains(c.id){
@@ -471,7 +561,30 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             }
         }
     }
-    
+    // Load Mac Address Data into project
+    func initMacAddresses(){
+        //load mac address data into project
+        var parseSuccesful = false
+        if let macData = UserDefaults.standard.value(forKey: "mac-addresses") as? Data {
+            let macAddressesParse = try? PropertyListDecoder().decode(Array<MacAddress>.self, from: macData)
+            if let macAddresses = macAddressesParse {
+                Global.macAddresses = macAddresses
+                parseSuccesful = true
+            }
+        }
+        // If parse failed or there was no mac address data saved.
+        if !parseSuccesful {
+            
+            let macAddresses = MacAddressParser.parse()
+            let macDataEncode = try? PropertyListEncoder().encode(macAddresses)
+            if let macData = macDataEncode {
+                UserDefaults.standard.set(macData, forKey: "mac-addresses")
+            }
+            Global.macAddresses = macAddresses
+            
+        }
+    }
+    // CHnages size of the overlay controller based on preset sizes
     func resizeOverlay(_ size: OverlaySize) {
         var newBottomConstant = bottomConstant
         switch size {
@@ -493,10 +606,12 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             self.view.layoutIfNeeded()
         }
     }
-    
+    // Implementation of changeFloor from FloorSelectDelegate Protocol
     func changeFloor(_ floor: Int) {
+        //Get Parent Nodes of all floor 1 and floor 2 objects
         let floor1Node = gameScene.rootNode.childNode(withName: "Floor1", recursively: true)!
         let floor2Node = gameScene.rootNode.childNode(withName: "Floor2", recursively: true)!
+        //Switch line that is shown on the map
         switchVisiblePath(floor)
         switch floor {
         case 1:
@@ -509,20 +624,38 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         default:
             break
         }
-        
+        // Hide show correct labels
         for label in roomLabels[floor - 1] {
             label.isHidden = false
         }
         for label in roomLabels[(floor == 1) ? 1 : 0] {
             label.isHidden = true
         }
+        
+        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: true)!
+        if floor == 1 {
+            locationNode.scale.y = 0.61
+        }else{
+            locationNode.scale.y = 3.836
+        }
     }
-    
+    var lastPath:[[Node]]!
+    /*
+     
+     */
+ 
+ 
     func startNavigation(_ session: NavigationSession) {
         currentNavSession = session
+        //find path
         guard let path = Pathfinder.search(start: session.start, end: session.end, useElevator: session.usesElevators) else{
             return
         }
+        // Get written instructions on path
+        Pathfinder.getDirections(path)
+        //Save path
+        lastPath = path
+        //Change floor to start floor of path
         floorSelect.setFloor(session.start.floor)
         var makeVisible = true
         for p in path {
@@ -530,46 +663,63 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             currentNavSession?.lines[p[0].floor] = line
             makeVisible = false
         }
+        //remvove current room highlights
         removeHighlights()
+        //Highlight start and end rooms
         if let s = Global.structures.searchForStructure((currentNavSession?.startStr)!){
             highlight(room: s)
         }
         if let s = Global.structures.searchForStructure((currentNavSession?.endStr)!){
             highlight(room: s)
         }
-//        if currentNavSession?.startStr
-//        for room in (currentNavSession?.start.rooms)! {
-//            if let s = Global.structures.searchForStructure(room){
-//                highlight(room: s)
-//                break
-//            }
-//        }
-//        for room in (currentNavSession?.end.rooms)! {
-//            if let s = Global.structures.searchForStructure(room){
-//                highlight(room: s)
-//                break
-//            }
-//        }
         camera?.showWholeMap()
         
-        
+        // Rest the over controller so it shows the default view again
         overlayController?.reset()
+        // Dispay Route Bar At bottom
         routeBar.changeRooms(session)
         routeBottomAnchor.constant = -15
+        // Animate dissmissal of overlay controller to the left
         leftAnchor.constant = -300
         UIView.animate(withDuration: 0.5) {
             self.gameView.layoutIfNeeded()
         }
+        // Following code is for debugging purposes. Moves location Node along path
+//        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
+//        locationNode?.position = (currentNavSession?.lines[1])![0].position
+//        currentIndex = 1
         
+//        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
+//            self.followRoute()
+//        }
     }
-    
+    // Function for debugging only. Moves location marker along path
+    var currentIndex = 1;
+    func followRoute(){
+        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
+        let target = lastPath[0][currentIndex]
+        let panAnimation = CABasicAnimation(keyPath: "position")
+        panAnimation.fromValue = NSValue(scnVector3: locationNode!.position)
+        panAnimation.toValue = NSValue(scnVector3: target.position)
+        panAnimation.duration = 0.4
+        locationNode?.position = target.position
+        locationNode!.addAnimation(panAnimation, forKey: nil)
+        currentIndex += 1
+        if lastPath[0].count == currentIndex {
+            currentIndex -= 1
+        }
+    }
+    // endRoute implementation from RouteBarDelegate
     func endRoute(){
+        // Dismiss Route Bar
         leftAnchor.constant = 20
         routeBottomAnchor.constant = 100
         UIView.animate(withDuration: 0.5) {
             self.gameView.layoutIfNeeded()
         }
+        //Remove All highlights from map
         removeHighlights()
+        // Remove Path from map
         if let line = currentNavSession?.lines[1] {
             for n in line {
                 n.removeFromParentNode()
@@ -583,6 +733,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         resizeOverlay(.Large)
         currentNavSession = nil
     }
+    // Called When floor is changed. If path extends to multiple floors will display the correct path based on floor
     func switchVisiblePath(_ floor:Int){
         if let session = currentNavSession {
             for ml in session.lines.values {
@@ -598,11 +749,12 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         
     }
-    
+    // Creates line/path on the screen from the node path given from Pathfinder
     func drawPath(_ path:[Node], radius:CGFloat, color:UIColor) -> [SCNNode]{
         var nodesAdded:[SCNNode] = []
         var prev:Node? = nil
         for n in path {
+            // Create Spheres at each Node in order to give illusion of round corners
             let sphere = SCNSphere(radius: radius)
             sphere.firstMaterial?.diffuse.contents = color
             let sphereNode = SCNNode(geometry: sphere)
@@ -613,6 +765,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 prev = n
                 continue
             }
+            // buildLineInTwoPointsWithROtation is an Extension of SCNNode. Implemented in Extensions.swift file
             let lineNode = SCNNode().buildLineInTwoPointsWithRotation(from: (prev?.position)!, to: n.position, radius: radius, color: color)
             gameScene.rootNode.addChildNode(lineNode)
             nodesAdded.append(lineNode)
@@ -620,14 +773,17 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         return nodesAdded
     }
-    
+    // Applies highlight animation to a structure
     func highlight(room:Structure){
         let mat = SCNMaterial()
         mat.diffuse.contents = room.node.geometry?.firstMaterial?.diffuse.contents as! UIColor
         mat.emission.contents = UIColor.cyan
+        //allow structure to extrude a bit in order to remove rendering problems on teo diffrent materials at same location
         room.node.scale.y += 0.2
         room.node.geometry?.materials[0] = mat
+        // Keep track of highlighted rooms
         highlightedRooms.append(room)
+        // Add pulsing animation
         let highlighAnim = CABasicAnimation(keyPath: "geometry.firstMaterial.emission.contents")
         highlighAnim.fromValue = UIColor.cyan
         highlighAnim.toValue = UIColor.clear
@@ -638,6 +794,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     }
     
     func removeHighlights(){
+        // REmove all highlights from highlighted rooms
         for s in highlightedRooms{
             s.node.removeAnimation(forKey: "glow")
             s.node.geometry?.firstMaterial?.emission.contents = UIColor.clear
@@ -645,14 +802,17 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         highlightedRooms = []
     }
-    
+    // creates label above strucure in order to symbolize room names
     func displayLabels(){
         var allLocations:[String:LabelLocation] = [:]
         for room in Global.rooms {
+            // skips bathrooms since there are special symbols for bathrooms
             if room == "Bathroom" {
                 continue
             }
+            // Search for structure is implementd in Extensions.swift
             if let s = Global.structures.searchForStructure(room) {
+                //Creates Lavel location from structure and name
                 let labelLocation = LabelLocation(rooms: s.name, isStructure: true, structure: s, node: nil)
                 
                 if !allLocations.values.contains(labelLocation) {
@@ -664,6 +824,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 
                 
             }else if let n = Global.nodes.searchForByRoom(room){
+                //search for by foom is imolemented in Extensions.swift
+                // THis fcreates labels from rooms thate dont have structures
                 let labelLocation = LabelLocation(rooms: n.rooms,isStructure: false, structure: nil, node: n)
                 
                 if !allLocations.values.contains(labelLocation) {
@@ -676,6 +838,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 print("No Node or Structure For \(room)")
             }
         }
+        // Make ure there is no duplicate labels
         var labels:[[SCNNode]] = [[], []]
         for location in allLocations.values {
             var room = location.rooms[0]
@@ -684,12 +847,12 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                     room = r
                 }
             }
-            
+            // Create Label
             let text = SCNText(string: room, extrusionDepth: 0)
             text.font = UIFont.boldSystemFont(ofSize: 0.25)
             text.firstMaterial?.diffuse.contents = UIColor.black
             
-            
+            // Allow bilboarding so it always faces camera
             let node = SCNNode(geometry: text)
             node.constraints = [SCNBillboardConstraint()]
             
@@ -714,24 +877,25 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         updateLabelDisplay()
         
     }
-    
+    // openSchedule Implementation of OptionsDelegate
     func openSchedule() {
         let cont = UINavigationController(rootViewController: ScheduleController())
         cont.modalPresentationStyle = .formSheet
         present(cont, animated: true, completion: nil)
     }
+    // openStaffFinder Implementation of OptionsDelegate
     func openStaffFinder() {
         let cont = UINavigationController(rootViewController: StaffSearchController())
         cont.modalPresentationStyle = .formSheet
         present(cont, animated: true, completion: nil)
     }
-    
+    //openSettings Implementation of OptionsDelegate
     func openSettings() {
         let cont = UINavigationController(rootViewController: SettingsController())
         cont.modalPresentationStyle = .formSheet
         present(cont, animated: true, completion: nil)
     }
-    
+    //Called When Notification is recieved
     @objc
     func updateLabelDisplay() {
         let shouldDisplay:Bool = UserDefaults.standard.bool(forKey: "displayRoomLabels")
@@ -743,76 +907,6 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     }
 
 
-}
-class   CylinderLine: SCNNode
-{
-    init( parent: SCNNode,//Needed to add destination point of your line
-        v1: SCNVector3,//source
-        v2: SCNVector3,//destination
-        radius: CGFloat,//somes option for the cylinder
-        radSegmentCount: Int, //other option
-        color: UIColor )// color of your node object
-    {
-        super.init()
-        print(v1)
-        print(v2)
-        //Calcul the height of our line
-        let  height = v1.distance(receiver: v2)
-        print(height)
-        
-        //set position to v1 coordonate
-        position = v1
-        
-        //Create the second node to draw direction vector
-        let nodeV2 = SCNNode()
-        
-        //define his position
-        nodeV2.position = v2
-        //add it to parent
-        parent.addChildNode(nodeV2)
-        
-        //Align Z axis
-        let zAlign = SCNNode()
-        zAlign.eulerAngles.x = Float(Double.pi / 2)
-        
-        //create our cylinder
-        let cyl = SCNCylinder(radius: radius, height: CGFloat(height))
-        cyl.radialSegmentCount = radSegmentCount
-        cyl.firstMaterial?.diffuse.contents = color
-        
-        //Create node with cylinder
-        let nodeCyl = SCNNode(geometry: cyl )
-        nodeCyl.position.y = -height/2
-        zAlign.addChildNode(nodeCyl)
-        
-        //Add it to child
-        addChildNode(zAlign)
-        
-        //set contrainte direction to our vector
-        constraints = [SCNLookAtConstraint(target: nodeV2)]
-    }
-    
-    override init() {
-        super.init()
-    }
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-}
-
-private extension SCNVector3{
-    func distance(receiver:SCNVector3) -> Float{
-        let xd = receiver.x - self.x
-        let yd = receiver.y - self.y
-        let zd = receiver.z - self.z
-        let distance = Float(sqrt(xd * xd + yd * yd + zd * zd))
-        
-        if (distance < 0){
-            return (distance * -1)
-        } else {
-            return (distance)
-        }
-    }
 }
 
 struct LabelLocation:Equatable {

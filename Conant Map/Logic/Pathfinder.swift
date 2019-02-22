@@ -153,6 +153,60 @@ class Pathfinder {
         }
         return -1
     }
+    static func getDirections(_ paths:[[Node]]){
+        for path in paths {
+            var counter = 0
+            for node in path {
+                if counter + 2 < path.count {
+                    let a = node.position.distance(receiver: path[counter + 1].position)
+                    let b = path[counter + 2].position.distance(receiver: path[counter + 1].position)
+                    let c = node.position.distance(receiver: path[counter + 2].position)
+                    
+                    let angle = acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b))
+                    if angle > Float.pi / 4 && angle < (Float.pi / 4) * 3 {
+                        let aPos = node.position
+                        let bPos = path[counter + 1].position
+                        let cPos = path[counter + 2].position
+                        let isRight = isPointRightOfRay(xParam: cPos.x, yParam: cPos.z, raySxParam: aPos.x, raySyParam: aPos.z, rayExParam: bPos.x, rayEyParam: bPos.z)
+                        print("Turn \(isRight ? "Right" : "Left")")
+                    }
+                }
+                counter += 1
+            }
+        }
+    }
+    
+    static func isPointRightOfRay(xParam:Float, yParam:Float, raySxParam:Float, raySyParam:Float, rayExParam:Float, rayEyParam:Float) -> Bool{
+        var theCos:Float = 0
+        var theSin:Float = 0
+        var dist:Float = 0
+        
+        var rayEx = rayExParam
+        var rayEy = rayEyParam
+        let raySx = raySxParam
+        let raySy = raySyParam
+        var x = xParam
+        var y = yParam
+    //  Translate the system so that the ray
+    //  starts on the origin.
+        rayEx -= raySx;
+        rayEy -= raySy;
+        x -= raySx;
+        y -= raySy;
+    
+    //  Discover the ray’s length.
+        dist=sqrt(rayEx * rayEx + rayEy * rayEy);
+    
+    //  Rotate the system so that the ray
+    //  points along the positive X-axis.
+        theCos = rayEx / dist;
+        theSin = rayEy / dist;
+        y = y * theCos - x * theSin;
+    
+    //  Return the result.
+        return y > 0;
+        
+    }
     
 }
 

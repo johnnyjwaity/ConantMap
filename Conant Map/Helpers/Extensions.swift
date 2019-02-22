@@ -172,6 +172,17 @@ extension Array where Iterator.Element == Structure {
     }
 }
 
+extension Array where Iterator.Element == MacAddress {
+    func searchWithAddress(_ address:String)->MacAddress?{
+        for macAddress in self {
+            if macAddress.convert() == address {
+                return macAddress
+            }
+        }
+        return nil
+    }
+}
+
 extension SCNVector3 {
     static func + (lhs: SCNVector3, rhs:CGPoint) -> SCNVector3 {
         var vec = lhs
@@ -184,6 +195,13 @@ extension SCNVector3 {
         vec.x += rhs.x
         vec.y += rhs.y
         vec.z += rhs.z
+        return vec
+    }
+    static func - (lhs:SCNVector3, rhs:SCNVector3) -> SCNVector3 {
+        var vec = lhs
+        vec.x -= rhs.x
+        vec.y -= rhs.y
+        vec.z -= rhs.z
         return vec
     }
     
@@ -205,6 +223,18 @@ extension SCNVector3 {
         let my = self.y + vec.y
         let mz = self.z + vec.z
         return SCNVector3(mx/2, my/2, mz/2)
+    }
+    func distance(receiver:SCNVector3) -> Float{
+        let xd = receiver.x - self.x
+        let yd = receiver.y - self.y
+        let zd = receiver.z - self.z
+        let distance = Float(sqrt(xd * xd + yd * yd + zd * zd))
+        
+        if (distance < 0){
+            return (distance * -1)
+        } else {
+            return (distance)
+        }
     }
 }
 

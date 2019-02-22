@@ -20,6 +20,10 @@
 		3D188EFB2134C54E002076DB /* RouteBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D188EFA2134C54E002076DB /* RouteBarDelegate.swift */; };
 		3D188EFD2134CA87002076DB /* SearchNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D188EFC2134CA87002076DB /* SearchNavigationController.swift */; };
 		3D188EFF2134CCC2002076DB /* SearchNavigationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D188EFE2134CCC2002076DB /* SearchNavigationDelegate.swift */; };
+		3D1E6390220242F10088DFC4 /* Mac-Addresses.csv in Resources */ = {isa = PBXBuildFile; fileRef = 3D1E638F220242F10088DFC4 /* Mac-Addresses.csv */; };
+		3D1E63922202432F0088DFC4 /* MacAddressParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E63912202432F0088DFC4 /* MacAddressParser.swift */; };
+		3D1E6394220243D60088DFC4 /* MacAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E6393220243D60088DFC4 /* MacAddress.swift */; };
+		3D1E639622025A100088DFC4 /* CylinderLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1E639522025A100088DFC4 /* CylinderLine.swift */; };
 		3D1F2FE020E2D4A30078D044 /* stairs.dat in Resources */ = {isa = PBXBuildFile; fileRef = 3D1F2FDF20E2D4A20078D044 /* stairs.dat */; };
 		3D1F2FE320E2D4B00078D044 /* colors.dat in Resources */ = {isa = PBXBuildFile; fileRef = 3D1F2FE120E2D4B00078D044 /* colors.dat */; };
 		3D1F2FE420E2D4B00078D044 /* nodes.dat in Resources */ = {isa = PBXBuildFile; fileRef = 3D1F2FE220E2D4B00078D044 /* nodes.dat */; };
@@ -62,10 +66,11 @@
 		3DC37917217F9EC4005790CB /* OptionsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC37916217F9EC4005790CB /* OptionsController.swift */; };
 		3DC37919217FE8FD005790CB /* OptionsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC37918217FE8FD005790CB /* OptionsDelegate.swift */; };
 		3DC3791B2180182D005790CB /* QuickSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC3791A2180182D005790CB /* QuickSelectCell.swift */; };
+		3DCD145421F11C6C00867FEA /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DCD145321F11C6C00867FEA /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3D1130E420DACDAC009AD6E4 /* NavigationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationSession.swift; sourceTree = "<group>"; };
+		3D1130E420DACDAC009AD6E4 /* NavigationSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationSession.swift; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		3D1130E620DCAE8E009AD6E4 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
 		3D17EFB820C5F599002AEBE2 /* Conant Map.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Conant Map.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -80,6 +85,10 @@
 		3D188EFA2134C54E002076DB /* RouteBarDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteBarDelegate.swift; sourceTree = "<group>"; };
 		3D188EFC2134CA87002076DB /* SearchNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNavigationController.swift; sourceTree = "<group>"; };
 		3D188EFE2134CCC2002076DB /* SearchNavigationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNavigationDelegate.swift; sourceTree = "<group>"; };
+		3D1E638F220242F10088DFC4 /* Mac-Addresses.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Mac-Addresses.csv"; sourceTree = "<group>"; };
+		3D1E63912202432F0088DFC4 /* MacAddressParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacAddressParser.swift; sourceTree = "<group>"; };
+		3D1E6393220243D60088DFC4 /* MacAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacAddress.swift; sourceTree = "<group>"; };
+		3D1E639522025A100088DFC4 /* CylinderLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CylinderLine.swift; sourceTree = "<group>"; };
 		3D1F2FDF20E2D4A20078D044 /* stairs.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = stairs.dat; sourceTree = "<group>"; };
 		3D1F2FE120E2D4B00078D044 /* colors.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = colors.dat; sourceTree = "<group>"; };
 		3D1F2FE220E2D4B00078D044 /* nodes.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nodes.dat; sourceTree = "<group>"; };
@@ -123,6 +132,7 @@
 		3DC37916217F9EC4005790CB /* OptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsController.swift; sourceTree = "<group>"; };
 		3DC37918217FE8FD005790CB /* OptionsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsDelegate.swift; sourceTree = "<group>"; };
 		3DC3791A2180182D005790CB /* QuickSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSelectCell.swift; sourceTree = "<group>"; };
+		3DCD145321F11C6C00867FEA /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +140,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3DCD145421F11C6C00867FEA /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,6 +152,7 @@
 			children = (
 				3D17EFBA20C5F599002AEBE2 /* Conant Map */,
 				3D17EFB920C5F599002AEBE2 /* Products */,
+				3DCD145221F11C6C00867FEA /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -190,6 +202,7 @@
 		3D3DDCD020D1EBB200B865CE /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				3D1E638F220242F10088DFC4 /* Mac-Addresses.csv */,
 				3D188EF0212E1E9F002076DB /* staff.dat */,
 				3D1F2FDF20E2D4A20078D044 /* stairs.dat */,
 				3D1F2FE120E2D4B00078D044 /* colors.dat */,
@@ -208,6 +221,7 @@
 				3D7D535D212B41B1004378E4 /* Staff.swift */,
 				3D7D535F212B41BE004378E4 /* Class.swift */,
 				3D3E9008216DBB44005FA9DD /* Schedule.swift */,
+				3D1E6393220243D60088DFC4 /* MacAddress.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -223,6 +237,7 @@
 				3D7D535B212B4161004378E4 /* StaffParser.swift */,
 				3D88F188215C91FD002F1EBF /* IC.js */,
 				3D55A2CE21B3815500466088 /* Startup.swift */,
+				3D1E63912202432F0088DFC4 /* MacAddressParser.swift */,
 			);
 			path = Logic;
 			sourceTree = "<group>";
@@ -255,6 +270,7 @@
 				3D17EFD320C75156002AEBE2 /* Extensions.swift */,
 				3D996A8B20E57BFF00604AA1 /* Global.swift */,
 				3D3CAE3C20E86E9C00735610 /* DataHolder.swift */,
+				3D1E639522025A100088DFC4 /* CylinderLine.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -270,6 +286,14 @@
 				3D515A4221D6D95B00D5BBB2 /* StaffCell.swift */,
 			);
 			path = Cells;
+			sourceTree = "<group>";
+		};
+		3DCD145221F11C6C00867FEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3DCD145321F11C6C00867FEA /* MapKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -310,6 +334,9 @@
 							com.apple.AccessWiFi = {
 								enabled = 1;
 							};
+							com.apple.Maps.iOS = {
+								enabled = 1;
+							};
 						};
 					};
 				};
@@ -343,6 +370,7 @@
 				3D17EFC820C5F599002AEBE2 /* LaunchScreen.storyboard in Resources */,
 				3D188EF1212E1E9F002076DB /* staff.dat in Resources */,
 				3D88F189215C91FD002F1EBF /* IC.js in Resources */,
+				3D1E6390220242F10088DFC4 /* Mac-Addresses.csv in Resources */,
 				3D17EFC520C5F599002AEBE2 /* Assets.xcassets in Resources */,
 				3D1F2FE020E2D4A30078D044 /* stairs.dat in Resources */,
 			);
@@ -376,6 +404,7 @@
 				3D338EB42189EB6200A4368E /* SettingsController.swift in Sources */,
 				3D3E900521618283005FA9DD /* DateEnterCell.swift in Sources */,
 				3D996A8C20E57BFF00604AA1 /* Global.swift in Sources */,
+				3D1E63922202432F0088DFC4 /* MacAddressParser.swift in Sources */,
 				3D3E900B216EC607005FA9DD /* ScheduleCell.swift in Sources */,
 				3D3E9009216DBB44005FA9DD /* Schedule.swift in Sources */,
 				3D1130E720DCAE8E009AD6E4 /* Camera.swift in Sources */,
@@ -383,11 +412,13 @@
 				3D996A8820E55AF100604AA1 /* RoomCell.swift in Sources */,
 				3D515A4321D6D95B00D5BBB2 /* StaffCell.swift in Sources */,
 				3D3CAE4520EDEDA300735610 /* FloorSelectDelegate.swift in Sources */,
+				3D1E6394220243D60088DFC4 /* MacAddress.swift in Sources */,
 				3D1130E520DACDAC009AD6E4 /* NavigationSession.swift in Sources */,
 				3D3CAE4320EDCC7100735610 /* FloorSelectController.swift in Sources */,
 				3D3CAE3B20E8544900735610 /* RoomSearchDelegate.swift in Sources */,
 				3D996A8520E34EA300604AA1 /* Structure.swift in Sources */,
 				3D4610932171BB8000433E5B /* ScheduleImportDelegate.swift in Sources */,
+				3D1E639622025A100088DFC4 /* CylinderLine.swift in Sources */,
 				3D3CAE4120EC19D500735610 /* OverlayDelegate.swift in Sources */,
 				3D17EFD420C75156002AEBE2 /* Extensions.swift in Sources */,
 				3D8136762136F8CA006761CB /* StaffInfoController.swift in Sources */,
