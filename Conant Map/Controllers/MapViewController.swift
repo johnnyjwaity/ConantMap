@@ -135,6 +135,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     }
     // Location update Implementation from CLLocationManagerDelegate Protocol
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("updateing location")
         // Init GPS Points Array if is empty
         /*
          Three GPS poitns are on the scene view in these points are used to translate coordinates into pixel position with
@@ -150,7 +151,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                     }
                 }
             }
-        }else{
+        }
+        if true{
             // Get Latitude and Logitude from CLLocation
             let currentLat = (locations.last?.coordinate.latitude)!
             let currentLong = (locations.last?.coordinate.longitude)!

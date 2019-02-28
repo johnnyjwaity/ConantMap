@@ -100,16 +100,30 @@ class StaffSearchController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 75
+        if sortedStaff.count > 0 {
+            return 75
+        }else{
+            return 44
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return sortedStaff.count
+        if sortedStaff.count > 0{
+            return sortedStaff.count
+        }else{
+            return 1
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "staff") as! StaffCell
-        cell.changeInfo(sortedStaff[indexPath.row])
+        if sortedStaff.count > 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "staff") as! StaffCell
+            cell.changeInfo(sortedStaff[indexPath.row])
+            return cell
+        }
+        let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
+        cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        cell.textLabel?.text = "No Results Found :("
         return cell
     }
     
@@ -119,6 +133,9 @@ class StaffSearchController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        if sortedStaff.count == 0 {
+            return
+        }
         let viewCont:UIViewController = StaffInfoController(name: sortedStaff[indexPath.row].name)
         let placeHolder = UIViewController()
         placeHolder.title = "Staff Finder"
@@ -144,9 +161,12 @@ class StaffSearchController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
         sortedStaff = contains
-        sortedStaff.append(contentsOf: discard)
+//        sortedStaff.append(contentsOf: discard)
         tableView.reloadData()
-        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        if sortedStaff.count > 0 {
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        }
+        
     }
     
     func sortByFirstName(){
