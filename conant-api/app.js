@@ -98,7 +98,7 @@ function convertToJSON() {
     ) {});
   });
 }
-// convertToJSON();
+convertToJSON();
 
 fs.readdir(__dirname + "/data", function(err, items) {
   for (i = 0; i < items.length; i++) {

@@ -42,7 +42,20 @@ class Pathfinder {
                 }
             }
             let points:[Node] = [start, (closestStair?.entryNode)!, (closestStair?.complementary.entryNode)!, end]
-            return performMultiPath(points)
+            var path = performMultiPath(points)
+            var firstPath = path?.first
+            let stairNode = Node("Start Stair", id: 5002)
+            stairNode.floor = (firstPath?.first?.floor)!
+            stairNode.position = (closestStair?.postion)!
+            firstPath?.append(stairNode)
+            
+            var secondPath = path?.last
+            let stairNode2 = Node("End Stair", id: 5003)
+            stairNode2.floor = (secondPath?.first?.floor)!
+            stairNode2.position = (closestStair?.complementary.postion)!
+            secondPath?.insert(stairNode2, at: 0)
+            path = [firstPath!, secondPath!]
+            return path
         }
         else{
             return [findPath(start: start, end: end)!]
@@ -154,6 +167,7 @@ class Pathfinder {
         return -1
     }
     static func getDirections(_ paths:[[Node]]){
+        var pathCount = 1
         for path in paths {
             var counter = 0
             for node in path {
@@ -171,8 +185,21 @@ class Pathfinder {
                         print("Turn \(isRight ? "Right" : "Left")")
                     }
                 }
+                
+                if pathCount == 1 && paths.count > 1 {
+                    if counter + 1 == path.count {
+                        if paths[1][0].floor == 2 {
+                            print("Go Up")
+                        }else{
+                            print("Go Down")
+                        }
+                    }
+                }
+                
                 counter += 1
             }
+            
+            pathCount += 1
         }
     }
     

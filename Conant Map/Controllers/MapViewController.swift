@@ -40,6 +40,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     var currentNavSession:NavigationSession? = nil
     var highlightedRooms:[Structure] = []
     var roomLabels:[[SCNNode]]!
+    var lastPath:[[Node]]!
     
     //Location Varaibles
     let locationManager = CLLocationManager()
@@ -444,33 +445,33 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         //Sets Nodes variable with both arrays
         Global.nodes = [floor1Nodes, floor2Nodes]
         // Following Code Exports FIle with Node Locations included
-//        var fileStr = ""
-//        var curFloor = 1
-//        for floor in Global.nodes {
-//            for node in floor {
-//                fileStr += "%\(node.name)\n"
-//                fileStr += "x\(node.position.x)\n"
-//                fileStr += "y\(node.position.z)\n"
-//                fileStr += "f\(curFloor)\n"
-//                for connection in node.strConnections {
-//                    fileStr += "-\(connection)\n"
-//                }
-//                for room in node.rooms {
-//                    fileStr += "@\(room)\n"
-//                }
-//            }
-//            curFloor += 1
-//        }
+        var fileStr = ""
+        var curFloor = 1
+        for floor in Global.nodes {
+            for node in floor {
+                fileStr += "%\(node.name)\n"
+                fileStr += "x\(node.position.x)\n"
+                fileStr += "y\(node.position.z)\n"
+                fileStr += "f\(curFloor)\n"
+                for connection in node.strConnections {
+                    fileStr += "-\(connection)\n"
+                }
+                for room in node.rooms {
+                    fileStr += "@\(room)\n"
+                }
+            }
+            curFloor += 1
+        }
         
-//        let fileManager = FileManager.default
-//        do{
-//            let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-//            let fileURL = documents.appendingPathComponent("nodes.dat")
-//            print(fileURL)
-//            try fileStr.write(to: fileURL, atomically: true, encoding: .ascii)
-//        }catch{
-//            print("Did Not Write")
-//        }
+        let fileManager = FileManager.default
+        do{
+            let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let fileURL = documents.appendingPathComponent("nodes.dat")
+            print(fileURL)
+            try fileStr.write(to: fileURL, atomically: true, encoding: .ascii)
+        }catch{
+            print("Did Not Write")
+        }
     }
     
     /*Gets All Rooms from nodes */
@@ -510,6 +511,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             // Check to see if satir exists on map
             if let stairNode = gameScene.rootNode.childNode(withName: stair.name, recursively: true){
                 stairNode.geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+                stair.postion = stairNode.getPositionFromGeometry()
                 mapCheck = true
             }
             else{
@@ -641,7 +643,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             locationNode.scale.y = 3.836
         }
     }
-    var lastPath:[[Node]]!
+    
     /*
      
      */
@@ -650,9 +652,67 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     func startNavigation(_ session: NavigationSession) {
         currentNavSession = session
         //find path
-        guard let path = Pathfinder.search(start: session.start, end: session.end, useElevator: session.usesElevators) else{
+        guard var path = Pathfinder.search(start: session.start, end: session.end, useElevator: session.usesElevators) else{
             return
         }
+        if let startStruc = Global.structures.searchForStructure(session.startStr) {
+            var startPos = startStruc.node.getPositionFromGeometry()
+            print(startPos)
+            startPos.y = session.start.position.y
+            print(startPos)
+            let newNode = Node("Temp Start", id: 5000)
+            newNode.position = startPos
+            newNode.floor = session.start.floor
+            var floorPath = path.first
+            if (floorPath?.first?.position.distance(receiver: floorPath![1].position))! < newNode.position.distance(receiver: floorPath![1].position){
+                floorPath?.insert(newNode, at: 0)
+            }else{
+                floorPath![0] = newNode
+            }
+            
+            if let f = floorPath{
+                path[0] = f
+            }
+            
+            let possbilePoints = [SCNVector3(path[0][0].position.x, path[0][0].position.y, path[0][1].position.z),SCNVector3(path[0][1].position.x, path[0][0].position.y, path[0][0].position.z)]
+            let closest = (possbilePoints[0].distance(receiver: session.start.position) < possbilePoints[1].distance(receiver: session.start.position)) ? possbilePoints[0] : possbilePoints[1]
+            var fPath = path[0]
+            let squareNode = Node("Square Start", id: 5005)
+            squareNode.floor = fPath[0].floor
+            squareNode.position = closest
+            fPath.insert(squareNode, at: 1)
+            path[0] = fPath
+        }
+        if let endStruc = Global.structures.searchForStructure(session.endStr){
+            var endPos = endStruc.node.getPositionFromGeometry()
+            endPos.y = session.end.position.y
+            let newNode = Node("Temp End", id: 5001)
+            newNode.position = endPos
+            newNode.floor = session.end.floor
+            var floorPath = path.last
+            if (floorPath?.last?.position.distance(receiver: floorPath![(floorPath?.count)! - 2].position))! < newNode.position.distance(receiver: floorPath![(floorPath?.count)! - 2].position){
+                floorPath?.append(newNode)
+            }else{
+                floorPath![(floorPath?.count)! - 1] = newNode
+            }
+            
+            if let f = floorPath{
+                path[path.count - 1] = f
+            }
+            let lastNode = path[path.count - 1].last!
+            let secondToLastNode = path[path.count - 1][ path[path.count - 1].count - 2]
+            let point1 = SCNVector3(lastNode.position.x, lastNode.position.y, secondToLastNode.position.z)
+            let point2 = SCNVector3(secondToLastNode.position.x, lastNode.position.y, lastNode.position.z)
+            let closest = (point1.distance(receiver: session.end.position) < point2.distance(receiver: session.end.position)) ? point1 : point2
+            var fPath = path[path.count - 1]
+            let squareNode = Node("Square End", id: 5006)
+            squareNode.floor = fPath[0].floor
+            squareNode.position = closest
+            fPath.insert(squareNode, at: fPath.count - 1)
+            path[path.count - 1] = fPath
+        }
+        
+        
         // Get written instructions on path
         Pathfinder.getDirections(path)
         //Save path

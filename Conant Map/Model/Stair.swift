@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import SceneKit
 
 class Stair{
     let name:String
     var id:Int = 0
     var isElevator:Bool = false
     var entryStr:String = ""
-    
+    var postion:SCNVector3!
     var entryNode:Node? = nil
     var floor:Int = 0
     var complementary:Stair!
