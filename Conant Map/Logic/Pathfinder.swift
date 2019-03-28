@@ -68,7 +68,9 @@ class Pathfinder {
     
     static func findPath(start:Node, end:Node) -> [Node]? {
         
-        
+        if start == end {
+            return [start]
+        }
         
         let nodes = Global.nodes[start.floor-1]
         
@@ -166,44 +168,101 @@ class Pathfinder {
         }
         return -1
     }
-    static func getDirections(_ paths:[[Node]]){
+    static func getDirections(_ paths:[[Node]]) -> [Node:WalkDirection]{
+        var directions:[Node:WalkDirection] = [:]
         var pathCount = 1
         for path in paths {
-            var counter = 0
-            for node in path {
-                if counter + 2 < path.count {
-                    let a = node.position.distance(receiver: path[counter + 1].position)
-                    let b = path[counter + 2].position.distance(receiver: path[counter + 1].position)
-                    let c = node.position.distance(receiver: path[counter + 2].position)
-                    
-                    let angle = acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b))
-                    if angle > Float.pi / 4 && angle < (Float.pi / 4) * 3 {
-                        let aPos = node.position
-                        let bPos = path[counter + 1].position
-                        let cPos = path[counter + 2].position
-                        let isRight = isPointRightOfRay(xParam: cPos.x, yParam: cPos.z, raySxParam: aPos.x, raySyParam: aPos.z, rayExParam: bPos.x, rayEyParam: bPos.z)
-                        print("Turn \(isRight ? "Right" : "Left")")
-                    }
-                }
-                
-                if pathCount == 1 && paths.count > 1 {
-                    if counter + 1 == path.count {
-                        if paths[1][0].floor == 2 {
-                            print("Go Up")
+            for i in 1...path.count-2 {
+                let d1 = path[i].position.distance(receiver: path[i-1].position)
+                let d2 = path[i].position.distance(receiver: path[i+1].position)
+                let d3 = path[i-1].position.distance(receiver: path[i+1].position)
+                var angle = acos((pow(d1, 2) + pow(d2, 2) - pow(d3, 2)) / (2 * d1 * d2))
+                angle = angle * (180 / Float.pi)
+                if angle > 70 && angle < 110 {
+                    let isLeft = isPointLeftOfRay(xParam: path[i + 1].position.x, yParam: path[i + 1].position.z, raySxParam: path[i].position.x, raySyParam: path[i].position.z, rayExParam: path[i - 1].position.x, rayEyParam: path[i-1].position.z)
+                    if i == path.count - 2 {
+                        if pathCount == 1 && paths.count > 1 {
+                            directions[path[i]] = isLeft ? WalkDirection.stairLeft : WalkDirection.stairRight
                         }else{
-                            print("Go Down")
+                            directions[path[i]] = isLeft ? WalkDirection.destinationLeft : WalkDirection.destinationRight
                         }
+                    }else{
+                        directions[path[i]] = isLeft ? WalkDirection.left : WalkDirection.right
                     }
+                    
                 }
-                
-                counter += 1
             }
             
+            if pathCount == 1 && paths.count > 1 {
+                directions[path[path.count - 1]] = path[0].floor == 1 ? WalkDirection.up : WalkDirection.down
+            }else{
+                directions[path[path.count - 1]] = WalkDirection.arrive
+            }
             pathCount += 1
         }
+        return directions
+    }
+//    var counter = 0
+//    for node in path {
+//    if counter + 2 < path.count {
+//    let a = node.position.distance(receiver: path[counter + 1].position)
+//    let b = path[counter + 2].position.distance(receiver: path[counter + 1].position)
+//    let c = node.position.distance(receiver: path[counter + 2].position)
+//
+//    let angle = acos((pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2 * a * b))
+//    if angle > 70 * (Float.pi / 180) && angle < 110 * (Float.pi / 180) {
+//    let aPos = node.position
+//    let bPos = path[counter + 1].position
+//    let cPos = path[counter + 2].position
+//    let isRight = isPointRightOfRay(xParam: cPos.x, yParam: cPos.z, raySxParam: aPos.x, raySyParam: aPos.z, rayExParam: bPos.x, rayEyParam: bPos.z)
+//    directions[node] = isRight ? WalkDirection.right : WalkDirection.left
+//    }
+//    }
+//
+//    if pathCount == 1 && paths.count > 1 {
+//    if counter + 1 == path.count {
+//    if paths[1][0].floor == 2 {
+//    directions[node] = WalkDirection.up
+//    }else{
+//    directions[node] = WalkDirection.down
+//    }
+//    }
+//    }
+//
+//    counter += 1
+//    }
+    
+    static func simplifyPath(_ ogPathParam:[[Node]]?) -> [[Node]]? {
+        if ogPathParam == nil {
+            return nil
+        }
+        var ogPath = ogPathParam!
+        for p in ogPath {
+            if p.count - 2 < 1 {
+                continue
+            }
+            var path = p
+            var indeciesToRemove:[Int] = []
+            for i in 1...path.count-2 {
+                let d1 = path[i].position.distance(receiver: path[i-1].position)
+                let d2 = path[i].position.distance(receiver: path[i+1].position)
+                let d3 = path[i-1].position.distance(receiver: path[i+1].position)
+                var angle = acos((pow(d1, 2) + pow(d2, 2) - pow(d3, 2)) / (2 * d1 * d2))
+                angle = angle * (180 / Float.pi)
+//                print(angle)
+                if angle > 175 || angle.isNaN {
+                    indeciesToRemove.insert(i, at: 0)
+                }
+            }
+            for remove in indeciesToRemove {
+                path.remove(at: remove)
+            }
+            ogPath[ogPath.firstIndex(of: p)!] = path
+        }
+        return ogPath
     }
     
-    static func isPointRightOfRay(xParam:Float, yParam:Float, raySxParam:Float, raySyParam:Float, rayExParam:Float, rayEyParam:Float) -> Bool{
+    static func isPointLeftOfRay(xParam:Float, yParam:Float, raySxParam:Float, raySyParam:Float, rayExParam:Float, rayEyParam:Float) -> Bool{
         var theCos:Float = 0
         var theSin:Float = 0
         var dist:Float = 0
@@ -239,4 +298,15 @@ class Pathfinder {
 
 enum Heuristic {
     case ManhattenDistance
+}
+enum WalkDirection {
+    case left
+    case right
+    case up
+    case down
+    case stairRight
+    case stairLeft
+    case destinationRight
+    case destinationLeft
+    case arrive
 }

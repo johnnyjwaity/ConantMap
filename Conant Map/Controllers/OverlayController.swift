@@ -40,7 +40,7 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
             let s:UIView = UIView()
             s.translatesAutoresizingMaskIntoConstraints = false
             s.backgroundColor = UIColor.lightGray
-            s.layer.cornerRadius = 5
+            s.layer.cornerRadius = 4.5
             return s
         }()
         v.addSubview(slider)

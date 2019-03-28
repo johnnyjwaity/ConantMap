@@ -41,6 +41,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     var highlightedRooms:[Structure] = []
     var roomLabels:[[SCNNode]]!
     var lastPath:[[Node]]!
+    var wordPath:[Node:WalkDirection]!
+    var locationObserver:NSKeyValueObservation? = nil
     
     //Location Varaibles
     let locationManager = CLLocationManager()
@@ -48,6 +50,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     let gpsCoordinates = [[42.035705, -88.064329], [42.036693, -88.061544], [42.037123, -88.062951]]
     var scale:[Double]!
     var macLabel:UILabel!
+    
+    let banner = DirectionBanner()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,6 +71,17 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         displayLabels()
         
+        
+        
+        gameView.addSubview(banner)
+        banner.topConstraint = banner.topAnchor.constraint(equalTo: gameView.topAnchor, constant: -100)
+        banner.topConstraint.isActive = true
+        banner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        banner.widthAnchor.constraint(equalToConstant: 450).isActive = true
+        banner.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        banner.isDisplayed = false
+        
+        
         //Create Mac Address Label
         macLabel = UILabel()
         macLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -81,6 +96,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         //Label Listener
         NotificationCenter.default.addObserver(self, selector: #selector(updateLabelDisplay), name: Notification.Name("ChangeRoomLabelDispaly"), object: nil)
         
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(panned(_:)))
+        gameView.addGestureRecognizer(pan)
         //Set up GPS
         locationManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
@@ -111,6 +128,22 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             }
         }
         
+    }
+    var startPoint:SCNVector3!
+    @objc
+    func panned(_ gesture:UIPanGestureRecognizer){
+        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
+        switch gesture.state {
+        case .began:
+            startPoint = locationNode?.position
+            break
+        case .changed:
+            locationNode?.position = startPoint + SCNVector3(Double(gesture.translation(in: gameView).x) / 10, 0, Double(gesture.translation(in: gameView).y) / 10)
+        case .ended:
+            startPoint = locationNode?.position
+        default:
+            break
+        }
     }
     // Uses Captive Network Framework in order to retrieve SSID and BSSID
     func getWIFIInformation() -> [String:String]{
@@ -153,7 +186,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 }
             }
         }
-        if true{
+        if false{
             // Get Latitude and Logitude from CLLocation
             let currentLat = (locations.last?.coordinate.latitude)!
             let currentLong = (locations.last?.coordinate.longitude)!
@@ -657,6 +690,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         if let startStruc = Global.structures.searchForStructure(session.startStr) {
             var startPos = startStruc.node.getPositionFromGeometry()
+            if startStruc.name.contains("Cafeteria"){
+                startPos.z = 21.1
+            }
             print(startPos)
             startPos.y = session.start.position.y
             print(startPos)
@@ -685,6 +721,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         if let endStruc = Global.structures.searchForStructure(session.endStr){
             var endPos = endStruc.node.getPositionFromGeometry()
+            if endStruc.name.contains("Cafeteria"){
+                endPos.z = 21.1
+            }
             endPos.y = session.end.position.y
             let newNode = Node("Temp End", id: 5001)
             newNode.position = endPos
@@ -712,9 +751,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             path[path.count - 1] = fPath
         }
         
-        
+        path = Pathfinder.simplifyPath(path)!
         // Get written instructions on path
-        Pathfinder.getDirections(path)
+        wordPath = Pathfinder.getDirections(path)
         //Save path
         lastPath = path
         //Change floor to start floor of path
@@ -746,14 +785,90 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         UIView.animate(withDuration: 0.5) {
             self.gameView.layoutIfNeeded()
         }
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
+            if self.currentNavSession != nil {
+                self.updateDirectionDisplay()
+                print(self.getCurrentLocation())
+            }else{
+                timer.invalidate()
+            }
+        }
+        
         // Following code is for debugging purposes. Moves location Node along path
 //        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
-//        locationNode?.position = (currentNavSession?.lines[1])![0].position
+//        locationNode?.position = lastPath[0][0].position
 //        currentIndex = 1
+//        self.followRoute()
         
-//        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
-//            self.followRoute()
-//        }
+    }
+    let mainBounds:[[Point]:String] = [[Point(x: 3.461, y: 13.327), Point(x: 8.933, y: 18.677)]:"Gym", [Point(x: 17.79, y: 11.714), Point(x: 19.508, y: 19.159)]:"Atrium", [Point(x: -5.086, y: 20.294), Point(x: -0.593, y: 21.429)]:"Media Center", [Point(x: -7.049, y: 21.526), Point(x: -0.776, y: 23.64)]:"Media Center", [Point(x: -2.998, y: 23.916), Point(x: 1.579, y: 25.295)]:"Media Center", [Point(x: -16.509, y: 20.397), Point(x: -11.643, y: 24.514)]:"Auditorium"]
+    func getCurrentLocation() -> String? {
+        let currentFloor = 1
+        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)!
+        if currentFloor == 1{
+            for key in mainBounds.keys {
+                if withinBounds(point: locationNode.position, boundA: key[0], boundB: key[1]) {
+                    return mainBounds[key]!
+                }
+            }
+        }
+        var closestStructure:Structure? = nil
+        var closestDistance:Float? = nil
+        for struc in Global.structures {
+            if struc.floor != currentFloor {
+                continue
+            }
+            if closestStructure == nil {
+                closestStructure = struc
+                closestDistance = struc.node.getPositionFromGeometry().distance(receiver: locationNode.position)
+            }else{
+                let potentialDistance = struc.node.getPositionFromGeometry().distance(receiver: locationNode.position)
+                if potentialDistance < closestDistance! {
+                    closestStructure = struc
+                    closestDistance = potentialDistance
+                }
+            }
+        }
+        if let c = closestStructure {
+            return c.name[0]
+        }
+        return nil
+    }
+    func withinBounds(point:SCNVector3, boundA:Point, boundB:Point) -> Bool {
+        if CGFloat(point.x) >= boundA.x && CGFloat(point.x) <= boundB.x && CGFloat(point.z) >= boundA.y && CGFloat(point.z) <= boundB.y {
+            return true
+        }
+        return false
+    }
+    func updateDirectionDisplay(){
+        let currentFloor = 1
+        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
+        var closestDistance:Float = (locationNode?.position.distance(receiver: lastPath[currentFloor - 1][0].position))!
+        var closestNode = lastPath[currentFloor - 1][0]
+        var counter = 0
+        for node in lastPath[currentFloor - 1] {
+            if counter == 0 {
+                counter += 1
+                continue
+            }
+            let distance = distanceFromPoint(p: CGPoint(x: Double((locationNode?.position.x)!), y: Double((locationNode?.position.z)!)), toLineSegment: CGPoint(x: Double(lastPath[currentFloor - 1][counter - 1].position.x), y: Double(lastPath[currentFloor - 1][counter - 1].position.z)), and: CGPoint(x: Double(node.position.x), y: Double(node.position.z)))
+            if distance < closestDistance {
+                closestDistance = distance
+                closestNode = node
+            }
+            counter += 1
+        }
+        if (locationNode?.position.distance(receiver: closestNode.position))! < (closestNode.position.distance(receiver: lastPath[currentFloor - 1][lastPath[currentFloor - 1].firstIndex(of: closestNode)! - 1].position)) / 2 {
+            if let dir = self.wordPath[closestNode] {
+                banner.update(dir)
+                banner.show()
+            }else{
+                banner.hide()
+            }
+        }else{
+            banner.hide()
+        }
+        
     }
     // Function for debugging only. Moves location marker along path
     var currentIndex = 1;
@@ -763,14 +878,19 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         let panAnimation = CABasicAnimation(keyPath: "position")
         panAnimation.fromValue = NSValue(scnVector3: locationNode!.position)
         panAnimation.toValue = NSValue(scnVector3: target.position)
-        panAnimation.duration = 0.4
+        panAnimation.duration = Double(0.4 * (locationNode?.position.distance(receiver: target.position))!)
         locationNode?.position = target.position
         locationNode!.addAnimation(panAnimation, forKey: nil)
         currentIndex += 1
         if lastPath[0].count == currentIndex {
-            currentIndex -= 1
+            return
+        }
+        Timer.scheduledTimer(withTimeInterval: panAnimation.duration, repeats: false) { (timer) in
+            self.followRoute()
         }
     }
+    
+    
     // endRoute implementation from RouteBarDelegate
     func endRoute(){
         // Dismiss Route Bar
@@ -794,6 +914,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         resizeOverlay(.Large)
         currentNavSession = nil
+        locationObserver = nil
+        banner.hide()
     }
     // Called When floor is changed. If path extends to multiple floors will display the correct path based on floor
     func switchVisiblePath(_ floor:Int){
@@ -939,6 +1061,35 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         updateLabelDisplay()
         
     }
+    func distanceFromPoint(p: CGPoint, toLineSegment v: CGPoint, and w: CGPoint) -> Float {
+        let pv_dx = p.x - v.x
+        let pv_dy = p.y - v.y
+        let wv_dx = w.x - v.x
+        let wv_dy = w.y - v.y
+        
+        let dot = pv_dx * wv_dx + pv_dy * wv_dy
+        let len_sq = wv_dx * wv_dx + wv_dy * wv_dy
+        let param = dot / len_sq
+        
+        var int_x, int_y: CGFloat /* intersection of normal to vw that goes through p */
+        
+        if param < 0 || (v.x == w.x && v.y == w.y) {
+            int_x = v.x
+            int_y = v.y
+        } else if param > 1 {
+            int_x = w.x
+            int_y = w.y
+        } else {
+            int_x = v.x + param * wv_dx
+            int_y = v.y + param * wv_dy
+        }
+        
+        /* Components of normal */
+        let dx = p.x - int_x
+        let dy = p.y - int_y
+        
+        return Float(sqrt(dx * dx + dy * dy))
+    }
     // openSchedule Implementation of OptionsDelegate
     func openSchedule() {
         let cont = UINavigationController(rootViewController: ScheduleController())
@@ -1007,5 +1158,12 @@ struct LabelLocation:Equatable {
         }else{
             return (node?.floor)!
         }
+    }
+}
+struct Point:Hashable {
+    let x:CGFloat
+    let y:CGFloat
+    func cgpoint() -> CGPoint{
+        return CGPoint(x: x, y: y)
     }
 }
