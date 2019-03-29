@@ -106,6 +106,7 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         }
         else{
             let navOptions = NavOptionsController()
+            navOptions.setupView()
             navOptions.delegate = self
             navOptions.setRoom(pos: pos, room: name)
             controllers["NavOptions"] = navOptions

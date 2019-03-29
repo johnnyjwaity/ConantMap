@@ -58,7 +58,24 @@ extension SCNNode {
         let marker = SCNNode()
         self.addChildNode(marker)
         marker.position = mid!
-        return marker.worldPosition
+        let worldPosition = marker.worldPosition
+        marker.removeFromParentNode()
+        return worldPosition
+    }
+    func containedInGeometryBounds(_ point:SCNVector3) -> Bool{
+        let min = (self.geometry?.boundingBox.min)!
+        let max = (self.geometry?.boundingBox.max)!
+        let marker = SCNNode()
+        self.addChildNode(marker)
+        marker.position = min
+        let worldMin = marker.worldPosition
+        marker.position = max
+        let worldMax = marker.worldPosition
+        marker.removeFromParentNode()
+        if (worldMin.x < worldMax.x ? worldMin.x : worldMax.x) <= point.x && (worldMin.x > worldMax.x ? worldMin.x : worldMax.x) >= point.x && (worldMin.z < worldMax.z ? worldMin.z : worldMax.z) <= point.z && (worldMin.z > worldMax.z ? worldMin.z : worldMax.z) >= point.z {
+            return true
+        }
+        return false
     }
     
     func getZForward() -> SCNVector3 {

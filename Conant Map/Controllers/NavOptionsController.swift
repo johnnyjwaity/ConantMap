@@ -21,10 +21,12 @@ class NavOptionsController: UIViewController {
     
     var delegate:NavOptionsDelegate!
     
+    let currentLocationButton = UIButton(type: .system)
+    let toCurrentLocationButton = UIButton(type: .system)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
+//        setupView()
     }
 
     func setupView(){
@@ -86,6 +88,22 @@ class NavOptionsController: UIViewController {
         fromLabel.topAnchor.constraint(equalTo: toFromContainer.topAnchor).isActive = true
         fromLabel.bottomAnchor.constraint(equalTo: divider.topAnchor).isActive = true
         
+        
+        currentLocationButton.setImage(#imageLiteral(resourceName: "target").withRenderingMode(.alwaysTemplate), for: .normal)
+        currentLocationButton.tintColor = UIColor.black
+        currentLocationButton.translatesAutoresizingMaskIntoConstraints = false
+        currentLocationButton.backgroundColor = UIColor.lightGray
+        currentLocationButton.layer.cornerRadius = 8
+        currentLocationButton.imageEdgeInsets = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
+        currentLocationButton.tag = 0
+        currentLocationButton.addTarget(self, action: #selector(setToCurrentLocation(_:)), for: .touchUpInside)
+        toFromContainer.addSubview(currentLocationButton)
+        currentLocationButton.rightAnchor.constraint(equalTo: toFromContainer.rightAnchor, constant: -8).isActive = true
+        currentLocationButton.centerYAnchor.constraint(equalTo: fromLabel.centerYAnchor).isActive = true
+        currentLocationButton.heightAnchor.constraint(equalToConstant: 27).isActive = true
+        currentLocationButton.widthAnchor.constraint(lessThanOrEqualToConstant: 27).isActive = true
+
+        
         let toLabel = UILabel()
         toLabel.text = "To:"
         toLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -94,6 +112,20 @@ class NavOptionsController: UIViewController {
         toLabel.leftAnchor.constraint(equalTo: toFromContainer.leftAnchor, constant: 10).isActive = true
         toLabel.topAnchor.constraint(equalTo: divider.bottomAnchor).isActive = true
         toLabel.bottomAnchor.constraint(equalTo: toFromContainer.bottomAnchor).isActive = true
+        
+        toCurrentLocationButton.setImage(#imageLiteral(resourceName: "target").withRenderingMode(.alwaysTemplate), for: .normal)
+        toCurrentLocationButton.tintColor = UIColor.black
+        toCurrentLocationButton.translatesAutoresizingMaskIntoConstraints = false
+        toCurrentLocationButton.backgroundColor = UIColor.lightGray
+        toCurrentLocationButton.layer.cornerRadius = 8
+        toCurrentLocationButton.imageEdgeInsets = UIEdgeInsets(top: 3, left: 3, bottom: 3, right: 3)
+        toCurrentLocationButton.tag = 1
+        toCurrentLocationButton.addTarget(self, action: #selector(setToCurrentLocation(_:)), for: .touchUpInside)
+        toFromContainer.addSubview(toCurrentLocationButton)
+        toCurrentLocationButton.rightAnchor.constraint(equalTo: toFromContainer.rightAnchor, constant: -8).isActive = true
+        toCurrentLocationButton.centerYAnchor.constraint(equalTo: toLabel.centerYAnchor).isActive = true
+        toCurrentLocationButton.heightAnchor.constraint(equalToConstant: 27).isActive = true
+        toCurrentLocationButton.widthAnchor.constraint(lessThanOrEqualToConstant: 27).isActive = true
         
         fromButton.setTitle(fromRoom, for: .normal)
         fromButton.translatesAutoresizingMaskIntoConstraints = false
@@ -138,12 +170,42 @@ class NavOptionsController: UIViewController {
     }
     
     @objc
+    func setToCurrentLocation(_ sender:UIButton){
+        
+        if sender.tag == 0 {
+            setRoom(pos: .From, room: sender.tintColor == UIColor.black ? "Current Location" : "Select")
+        }else{
+            setRoom(pos: .To, room: sender.tintColor == UIColor.black ? "Current Location" : "Select")
+        }
+        if sender.tintColor == UIColor.black {
+            sender.tintColor = UIView().tintColor
+        }else{
+            sender.tintColor = UIColor.black
+        }
+    }
+    
+    @objc
     func selectButtonClicked(sender:UIButton){
+        if sender.titleLabel?.text == "Current Location" {
+            if sender.tag == 0 {
+                setToCurrentLocation(currentLocationButton)
+            }else{
+                setToCurrentLocation(toCurrentLocationButton)
+            }
+        }
         delegate.findRoomRequested(location: ((sender.tag == 0) ? NavPosition.From : NavPosition.To))
     }
     
     @objc
     func startNav() {
+        if fromRoom == "Current Location" || toRoom == "Current Location" {
+            guard let currentLocation = MapViewController.main?.getCurrentLocation() else{return}
+            if fromRoom == "Current Location"{
+                fromRoom = currentLocation
+            }else{
+                toRoom = currentLocation
+            }
+        }
         let navSession = NavigationSession(start: fromRoom, end: toRoom, usesElevators: elevatorSwitch.isOn)
         delegate.startRoute(navSession)
     }
@@ -167,8 +229,19 @@ class NavOptionsController: UIViewController {
         default:
             break
         }
+        if pos == .To && fromRoom == "Select"{
+            print("Auto Set Current Location")
+            setToCurrentLocation(currentLocationButton)
+        }
         if toRoom != "Select" && fromRoom != "Select" {
             routeButton.isEnabled = true
+        }else{
+            routeButton.isEnabled = false
+        }
+        if routeButton.isEnabled {
+            if toRoom == fromRoom {
+                routeButton.isEnabled = false
+            }
         }
     }
 

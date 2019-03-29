@@ -802,7 +802,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
     }
     let mainBounds:[[Point]:String] = [[Point(x: 3.461, y: 13.327), Point(x: 8.933, y: 18.677)]:"Gym", [Point(x: 17.79, y: 11.714), Point(x: 19.508, y: 19.159)]:"Atrium", [Point(x: -5.086, y: 20.294), Point(x: -0.593, y: 21.429)]:"Media Center", [Point(x: -7.049, y: 21.526), Point(x: -0.776, y: 23.64)]:"Media Center", [Point(x: -2.998, y: 23.916), Point(x: 1.579, y: 25.295)]:"Media Center", [Point(x: -16.509, y: 20.397), Point(x: -11.643, y: 24.514)]:"Auditorium"]
+    
     func getCurrentLocation() -> String? {
+        "Need To Set Correct Floor"
         let currentFloor = 1
         let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)!
         if currentFloor == 1{
@@ -818,6 +820,20 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             if struc.floor != currentFloor {
                 continue
             }
+            var foundNon = false
+            for name in struc.name {
+                if name.contains("Non") {
+                    foundNon = true
+                    break
+                }
+            }
+            if foundNon {
+                continue
+            }
+            if struc.node.containedInGeometryBounds(locationNode.position) {
+                return struc.name[0]
+            }
+            
             if closestStructure == nil {
                 closestStructure = struc
                 closestDistance = struc.node.getPositionFromGeometry().distance(receiver: locationNode.position)
@@ -841,6 +857,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         return false
     }
     func updateDirectionDisplay(){
+        "Need To Set Correct Floor"
         let currentFloor = 1
         let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
         var closestDistance:Float = (locationNode?.position.distance(receiver: lastPath[currentFloor - 1][0].position))!
