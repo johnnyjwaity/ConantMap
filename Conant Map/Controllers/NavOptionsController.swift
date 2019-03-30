@@ -207,6 +207,12 @@ class NavOptionsController: UIViewController {
             }
         }
         let navSession = NavigationSession(start: fromRoom, end: toRoom, usesElevators: elevatorSwitch.isOn)
+        if navSession.start == navSession.end {
+            let alert = UIAlertController(title: "Hmmm", message: "It seems like you are already here. These two locations are next to each other.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ok!", style: .default, handler: nil))
+            present(alert, animated: true, completion: nil)
+            return
+        }
         delegate.startRoute(navSession)
     }
     

@@ -50,7 +50,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     let gpsCoordinates = [[42.035705, -88.064329], [42.036693, -88.061544], [42.037123, -88.062951]]
     var scale:[Double]!
     var macLabel:UILabel!
-    
+    let currentLocationFloor = 2
     let banner = DirectionBanner()
     
     override func viewDidLoad() {
@@ -690,9 +690,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         if let startStruc = Global.structures.searchForStructure(session.startStr) {
             var startPos = startStruc.node.getPositionFromGeometry()
-            if startStruc.name.contains("Cafeteria"){
-                startPos.z = 21.1
-            }
+//            if startStruc.name.contains("Cafeteria"){
+//                startPos.z = 21.1
+//            }
             print(startPos)
             startPos.y = session.start.position.y
             print(startPos)
@@ -700,7 +700,18 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             newNode.position = startPos
             newNode.floor = session.start.floor
             var floorPath = path.first
-            if (floorPath?.first?.position.distance(receiver: floorPath![1].position))! < newNode.position.distance(receiver: floorPath![1].position){
+            let xChange = abs(floorPath![1].position.x - floorPath![0].position.x)
+            let zChange = abs(floorPath![1].position.z - floorPath![0].position.z)
+            var originalDistance:Float = 0
+            var newDistance:Float = 0
+            if xChange > zChange {
+                originalDistance = xChange
+                newDistance = abs(floorPath![1].position.x - newNode.position.x)
+            }else{
+                originalDistance = zChange
+                newDistance = abs(floorPath![1].position.z - newNode.position.z)
+            }
+            if (originalDistance < newDistance){
                 floorPath?.insert(newNode, at: 0)
             }else{
                 floorPath![0] = newNode
@@ -721,15 +732,27 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         if let endStruc = Global.structures.searchForStructure(session.endStr){
             var endPos = endStruc.node.getPositionFromGeometry()
-            if endStruc.name.contains("Cafeteria"){
-                endPos.z = 21.1
-            }
+//            if endStruc.name.contains("Cafeteria"){
+//                endPos.z = 21.1
+//            }
             endPos.y = session.end.position.y
             let newNode = Node("Temp End", id: 5001)
             newNode.position = endPos
             newNode.floor = session.end.floor
             var floorPath = path.last
-            if (floorPath?.last?.position.distance(receiver: floorPath![(floorPath?.count)! - 2].position))! < newNode.position.distance(receiver: floorPath![(floorPath?.count)! - 2].position){
+            
+            let xChange = abs(floorPath![floorPath!.count - 2].position.x - floorPath![floorPath!.count - 1].position.x)
+            let zChange = abs(floorPath![floorPath!.count - 2].position.z - floorPath![floorPath!.count - 1].position.z)
+            var originalDistance:Float = 0
+            var newDistance:Float = 0
+            if xChange > zChange {
+                originalDistance = xChange
+                newDistance = abs(floorPath![floorPath!.count - 2].position.x - newNode.position.x)
+            }else{
+                originalDistance = zChange
+                newDistance = abs(floorPath![floorPath!.count - 2].position.z - newNode.position.z)
+            }
+            if (originalDistance < newDistance){
                 floorPath?.append(newNode)
             }else{
                 floorPath![(floorPath?.count)! - 1] = newNode
@@ -804,8 +827,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     let mainBounds:[[Point]:String] = [[Point(x: 3.461, y: 13.327), Point(x: 8.933, y: 18.677)]:"Gym", [Point(x: 17.79, y: 11.714), Point(x: 19.508, y: 19.159)]:"Atrium", [Point(x: -5.086, y: 20.294), Point(x: -0.593, y: 21.429)]:"Media Center", [Point(x: -7.049, y: 21.526), Point(x: -0.776, y: 23.64)]:"Media Center", [Point(x: -2.998, y: 23.916), Point(x: 1.579, y: 25.295)]:"Media Center", [Point(x: -16.509, y: 20.397), Point(x: -11.643, y: 24.514)]:"Auditorium"]
     
     func getCurrentLocation() -> String? {
-        "Need To Set Correct Floor"
-        let currentFloor = 1
+        let currentFloor = currentLocationFloor
         let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)!
         if currentFloor == 1{
             for key in mainBounds.keys {
@@ -822,7 +844,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             }
             var foundNon = false
             for name in struc.name {
-                if name.contains("Non") {
+                if name.contains("Non") || name.contains("Bathroom") {
                     foundNon = true
                     break
                 }
@@ -857,8 +879,12 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         return false
     }
     func updateDirectionDisplay(){
-        "Need To Set Correct Floor"
-        let currentFloor = 1
+//        "Need To Set Correct Floor"
+        let currentFloor = lastPath[0][0].floor == currentLocationFloor ? 1 : 2
+        if currentFloor - 1 >= lastPath.count {
+            banner.hide()
+            return
+        }
         let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
         var closestDistance:Float = (locationNode?.position.distance(receiver: lastPath[currentFloor - 1][0].position))!
         var closestNode = lastPath[currentFloor - 1][0]
