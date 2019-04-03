@@ -58,6 +58,7 @@
 		3D88F1872155FAB2002F1EBF /* InfinteCampusController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D88F1862155FAB2002F1EBF /* InfinteCampusController.swift */; };
 		3D88F189215C91FD002F1EBF /* IC.js in Resources */ = {isa = PBXBuildFile; fileRef = 3D88F188215C91FD002F1EBF /* IC.js */; };
 		3D93246920C9C7AE00BDF3C7 /* OverlayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */; };
+		3D972329224FC4C10093C754 /* MacLocations.json in Resources */ = {isa = PBXBuildFile; fileRef = 3D972328224FC4C10093C754 /* MacLocations.json */; };
 		3D996A7F20E34A3500604AA1 /* Stair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A7E20E34A3500604AA1 /* Stair.swift */; };
 		3D996A8120E34ADE00604AA1 /* StairParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8020E34ADE00604AA1 /* StairParser.swift */; };
 		3D996A8320E34E9500604AA1 /* StructureParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D996A8220E34E9500604AA1 /* StructureParser.swift */; };
@@ -125,6 +126,7 @@
 		3D88F1862155FAB2002F1EBF /* InfinteCampusController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfinteCampusController.swift; sourceTree = "<group>"; };
 		3D88F188215C91FD002F1EBF /* IC.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = IC.js; sourceTree = "<group>"; };
 		3D93246820C9C7AE00BDF3C7 /* OverlayController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayController.swift; sourceTree = "<group>"; };
+		3D972328224FC4C10093C754 /* MacLocations.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MacLocations.json; sourceTree = "<group>"; };
 		3D996A7E20E34A3500604AA1 /* Stair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stair.swift; sourceTree = "<group>"; };
 		3D996A8020E34ADE00604AA1 /* StairParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StairParser.swift; sourceTree = "<group>"; };
 		3D996A8220E34E9500604AA1 /* StructureParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructureParser.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 		3D3DDCD020D1EBB200B865CE /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				3D972328224FC4C10093C754 /* MacLocations.json */,
 				3D1E638F220242F10088DFC4 /* Mac-Addresses.csv */,
 				3D188EF0212E1E9F002076DB /* staff.dat */,
 				3D1F2FDF20E2D4A20078D044 /* stairs.dat */,
@@ -375,6 +378,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3D972329224FC4C10093C754 /* MacLocations.json in Resources */,
 				3D17EFBE20C5F599002AEBE2 /* art.scnassets in Resources */,
 				3D1F2FE420E2D4B00078D044 /* nodes.dat in Resources */,
 				3D1F2FE320E2D4B00078D044 /* colors.dat in Resources */,

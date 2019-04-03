@@ -42,7 +42,6 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     var roomLabels:[[SCNNode]]!
     var lastPath:[[Node]]!
     var wordPath:[Node:WalkDirection]!
-    var locationObserver:NSKeyValueObservation? = nil
     
     //Location Varaibles
     let locationManager = CLLocationManager()
@@ -52,6 +51,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     var macLabel:UILabel!
     let currentLocationFloor = 2
     let banner = DirectionBanner()
+    var macLocations:[MacLocation]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,7 +97,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         NotificationCenter.default.addObserver(self, selector: #selector(updateLabelDisplay), name: Notification.Name("ChangeRoomLabelDispaly"), object: nil)
         
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panned(_:)))
-        gameView.addGestureRecognizer(pan)
+//        gameView.addGestureRecognizer(pan)
         //Set up GPS
         locationManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
@@ -620,6 +620,100 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             Global.macAddresses = macAddresses
             
         }
+        initMacLocations()
+    }
+    func initMacLocations(){
+        do{
+            let path = Bundle.main.path(forResource: "MacLocations", ofType: "json")
+            
+            var locations:[MacLocation] = try JSONDecoder().decode([MacLocation].self, from: Data(contentsOf: URL(fileURLWithPath: path!)))
+            print(locations[0])
+            print(locations[57])
+            print(locations[62])
+            print(locations[118])
+            let zeroXOffset = -locations[0].x
+            let zeroYOffset = -locations[0].y
+            let zeroXOffset2 = -locations[62].x
+            let zeroYOffset2 = -locations[62].y
+            for i in 0..<locations.count {
+                if locations[i].floor == 1{
+                    locations[i].x += zeroXOffset
+                    locations[i].y += zeroYOffset
+                }else{
+                    locations[i].x += zeroXOffset2
+                    locations[i].y += zeroYOffset2
+                }
+            }
+            let struc107X = -10.273
+            let struc107Y = 24.923
+            let struc185X = 14.224
+            let struc185Y = 12.798
+            
+            let struc204X = -8.854
+            let struc204Y = 27.083
+            let struc286X = 16.942
+            let struc286Y = 12.747
+            
+            let xChange = locations[57].x - locations[0].x
+            let yChange = locations[57].y - locations[0].y
+            let actualXChange = struc185X - struc107X
+            let actualYChange = struc185Y - struc107Y
+            let xMultiplier = actualXChange / xChange
+            let yMultiplier = actualYChange / yChange
+            
+            let xChange2 = locations[118].x - locations[62].x
+            let yChange2 = locations[118].y - locations[62].y
+            let actualXChange2 = struc286X - struc204X
+            let actualYChange2 = struc286Y - struc204Y
+            let xMultiplier2 = actualXChange2 / xChange2
+            let yMultiplier2 = actualYChange2 / yChange2
+            
+            for i in 0..<locations.count {
+                if locations[i].floor == 1 {
+                    locations[i].x *= xMultiplier
+                    locations[i].y *= yMultiplier
+                }else{
+                    locations[i].x *= xMultiplier2
+                    locations[i].y *= yMultiplier2
+                }
+            }
+            
+            let xOffset = struc107X - locations[0].x
+            let yOffset = struc107Y - locations[0].y
+            
+            let xOffset2 = struc204X - locations[62].x
+            let yOffset2 = struc204Y - locations[62].y
+            
+            for i in 0..<locations.count {
+                if locations[i].floor == 1 {
+                    locations[i].x += xOffset
+                    locations[i].y += yOffset
+                }else{
+                    locations[i].x += xOffset2
+                    locations[i].y += yOffset2
+                }
+            }
+            for i in 0..<locations.count {
+                if locations[i].floor == 2 {
+                    locations[i].y -= 0.5
+                }
+            }
+            macLocations = locations
+            //Debug Only
+//            let mat = SCNMaterial()
+//            mat.diffuse.contents = UIColor.orange
+//            for l in locations {
+//                if l.floor == 2 {
+//                    continue
+//                }
+//                let node = SCNNode(geometry: SCNBox(width: 0.5, height: 0.5, length: 0.5, chamferRadius: 0))
+//                node.geometry?.firstMaterial = mat
+//                node.position = SCNVector3(l.x, l.floor == 1 ? 0.2 : 0.6, l.y)
+//                gameScene.rootNode.addChildNode(node)
+//            }
+        }catch{
+            
+        }
     }
     // CHnages size of the overlay controller based on preset sizes
     func resizeOverlay(_ size: OverlaySize) {
@@ -957,7 +1051,6 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         resizeOverlay(.Large)
         currentNavSession = nil
-        locationObserver = nil
         banner.hide()
     }
     // Called When floor is changed. If path extends to multiple floors will display the correct path based on floor
@@ -1209,4 +1302,10 @@ struct Point:Hashable {
     func cgpoint() -> CGPoint{
         return CGPoint(x: x, y: y)
     }
+}
+struct MacLocation:Codable{
+    let name:String
+    var x:Double
+    var y:Double
+    let floor:Int
 }
