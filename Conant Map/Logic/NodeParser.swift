@@ -83,10 +83,26 @@ class NodeParser {
                 n.connections.append(searchForNode(name: s, nodes: nodes)!)
             }
         }
-        
+        parseIntersections()
         //returns array of nodes
         return nodes
     }
+    
+    static func parseIntersections(){
+        do{
+            //Get File Path
+            let path = Bundle.main.path(forResource: "Intersections", ofType: "json")
+            //String from File
+//            let rawString = try String(contentsOfFile: path!)
+            Global.intersections = try JSONDecoder().decode([Intersection].self, from: Data(contentsOf: URL(fileURLWithPath: path!)))
+            
+        }catch{
+            print(error)
+        }
+        
+        
+    }
+    
     
     /* Finds node from array based on the nodes name */
     static func searchForNode(name:String, nodes:[Node]) -> Node? {

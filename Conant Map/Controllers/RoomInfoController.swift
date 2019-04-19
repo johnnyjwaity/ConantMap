@@ -245,35 +245,35 @@ class RoomInfoController: UIViewController {
     @objc
     func navigateButton(_ sender:UIButton){
         
-        var otherController:UIViewController? = nil
+//        var otherController:UIViewController? = nil
         if let cont = ScheduleController.sharedInstance {
-            otherController = cont
-            print("Found Schedule Controller")
+//            otherController = cont
+            NotificationCenter.default.post(name: Notification.Name("Dismiss All"), object: nil)
         }
         else if let cont = StaffSearchController.sharedInstance {
-            otherController = cont
+//            otherController = cont
+            NotificationCenter.default.post(name: Notification.Name("Dismiss All"), object: nil)
             
         }
         
-        if let s = otherController {
-            s.dismiss(animated: true, completion: nil)
-            s.dismiss(animated: true) {
-                switch sender.tag {
-                case 0:
-                    //From
-                    OverlayController.sharedInstance.roomSelected(name: self.title!, pos: .From)
-                    break
-                case 1:
-                    //To
-                    OverlayController.sharedInstance.roomSelected(name: self.title!, pos: .To)
-                    break
-                default:
-                    break
-                }
-            }
-            return
-        }
-        
+//        if let s = otherController {
+//            s.dismiss(animated: true, completion: nil)
+//            s.dismiss(animated: true) {
+//                switch sender.tag {
+//                case 0:
+//                    //From
+//                    OverlayController.sharedInstance.roomSelected(name: self.title!, pos: .From)
+//                    break
+//                case 1:
+//                    //To
+//                    OverlayController.sharedInstance.roomSelected(name: self.title!, pos: .To)
+//                    break
+//                default:
+//                    break
+//                }
+//            }
+//            return
+//        }
         switch sender.tag {
         case 0:
             //From

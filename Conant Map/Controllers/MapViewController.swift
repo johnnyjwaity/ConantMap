@@ -42,6 +42,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     var roomLabels:[[SCNNode]]!
     var lastPath:[[Node]]!
     var wordPath:[Node:WalkDirection]!
+    var subDirections:[Node:String]!
     
     //Location Varaibles
     let locationManager = CLLocationManager()
@@ -49,9 +50,11 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     let gpsCoordinates = [[42.035705, -88.064329], [42.036693, -88.061544], [42.037123, -88.062951]]
     var scale:[Double]!
     var macLabel:UILabel!
-    let currentLocationFloor = 2
+    var currentLocationFloor = 2
     let banner = DirectionBanner()
     var macLocations:[MacLocation]!
+    var lastAddress:MacAddress? = nil
+//    var locationType = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -70,7 +73,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         setUpView()
         
         displayLabels()
-        
+        changeFloor(1)
         
         
         gameView.addSubview(banner)
@@ -92,17 +95,27 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         macLabel.rightAnchor.constraint(equalTo: gameView.rightAnchor).isActive = true
         macLabel.textAlignment = .right
         
+        if UserDefaults.standard.object(forKey: "location") == nil {
+            UserDefaults.standard.set(1, forKey: "location")
+        }
+//        locationType = UserDefaults.standard.integer(forKey: "location")
         //Listen for Settings Updates to reflect in map
         //Label Listener
         NotificationCenter.default.addObserver(self, selector: #selector(updateLabelDisplay), name: Notification.Name("ChangeRoomLabelDispaly"), object: nil)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(updateLocationType), name: Notification.Name("ChangeLocationType"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(dismissAllControllers), name: Notification.Name("Dismiss All"), object: nil)
+        
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panned(_:)))
-//        gameView.addGestureRecognizer(pan)
+        gameView.addGestureRecognizer(pan)
+        
         //Set up GPS
         locationManager.requestWhenInUseAuthorization()
         if CLLocationManager.locationServicesEnabled() {
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            locationManager.distanceFilter = kCLDistanceFilterNone
             locationManager.headingOrientation = .landscapeLeft
             locationManager.startUpdatingLocation()
             locationManager.startUpdatingHeading()
@@ -111,13 +124,46 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
             let wifiInfo = self.getWIFIInformation()
             if wifiInfo["SSID"] == "D211-Mobile" {
-                let bssid = String((wifiInfo["BSSID"]!).filter{!":".contains($0)})
+                var bssid = wifiInfo["BSSID"]!//String((wifiInfo["BSSID"]!).filter{!":".contains($0)})
+                var components = bssid.components(separatedBy: ":")
+                var counter = 0
+                for c in components {
+                    if c.count == 1 {
+                        components[counter] = "0" + components[counter]
+                    }
+                    counter += 1
+                }
+                bssid = components.joined()
                 let macAddress = Global.macAddresses.searchWithAddress(bssid)
                 if let address = macAddress {
-                    DispatchQueue.main.async {
-                        let text = "BSSID: \(MacAddress.readable(bssid))\nMAC Address: \(MacAddress.readable(address.address))\nName: \(address.name)"
-                        self.macLabel.text = text
+//                    DispatchQueue.main.async {
+//                        let text = "BSSID: \(MacAddress.readable(bssid))\nMAC Address: \(MacAddress.readable(address.address))\nName: \(address.name)"
+//                        self.macLabel.text = text
+//                    }
+                    for macLoc in self.macLocations {
+                        if macLoc.name == address.name {
+                            self.currentLocationFloor = macLoc.floor
+                            let locationNode = self.gameScene.rootNode.childNode(withName: "location", recursively: false)!
+//                            if self.locationType != 0 {
+                                if self.floorSelect.getFloor() != self.currentLocationFloor {
+                                    locationNode.opacity = 0
+                                }else{
+                                    locationNode.opacity = 1
+                                }
+//                            }
+                            
+                            if true{
+                                print("set mac")
+                                if address.name != self.lastAddress?.name {
+//                                    if self.locationType == 1 || self.locationType == 3 {
+                                        self.moveLocationMarker(x: Float(macLoc.x), y: Float(macLoc.y))
+//                                    }
+                                }
+                            }
+                            break
+                        }
                     }
+                    self.lastAddress = address
                 }else{
                     DispatchQueue.main.async {
                         let text = "BSSID: \(bssid)\nMAC Address: NONE FOUND\nName: NONE FOUND"
@@ -165,9 +211,14 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         print("Heading \(Float(newHeading.trueHeading))")
         print(newHeading.headingAccuracy)
         //Update rotation based on heading
-        gameScene.rootNode.childNode(withName: "location", recursively: false)?.eulerAngles.y = -(Float(newHeading.trueHeading) * (Float.pi / 180))
+        gameScene.rootNode.childNode(withName: "location", recursively: false)?.eulerAngles.y = -(Float(newHeading.magneticHeading) * (Float.pi / 180))
+    }
+    func locationManagerShouldDisplayHeadingCalibration(_ manager: CLLocationManager) -> Bool {
+        return true
     }
     // Location update Implementation from CLLocationManagerDelegate Protocol
+    var lastGPSX:Float? = nil
+    var lastGPSY:Float? = nil
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print("updateing location")
         // Init GPS Points Array if is empty
@@ -186,12 +237,13 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 }
             }
         }
-        if false{
+        if true{
+            print("LOCATION")
             // Get Latitude and Logitude from CLLocation
             let currentLat = (locations.last?.coordinate.latitude)!
             let currentLong = (locations.last?.coordinate.longitude)!
-            print(currentLat)
-            print(currentLong)
+//            print(currentLat)
+//            print(currentLong)
             
             // gpsCoordinates contains the coordinates for each of the GPS Points. These are static coordinates for static locations
             //Get distance in coordinates between GPSPoint 1 and GPS Point 2. Distance is calcualted with the Haversine Formaula in order to get accurate distance readings from coordinates. Haversine takes into account Earth Curvature.
@@ -233,25 +285,48 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 x = Float(points[2])
                 y = Float(points[3])
             }
-            // Animate the moving of the location marker in order to make smooth transitions
-            let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)!
-            let animation = CABasicAnimation(keyPath: "position")
-            animation.fromValue = locationNode.position
-            animation.toValue = SCNVector3(x, locationNode.position.y, y)
-            animation.duration = 0.2
-            animation.repeatCount = 0
-            animation.isRemovedOnCompletion = false
-            animation.fillMode = CAMediaTimingFillMode.forwards
-            locationNode.addAnimation(animation, forKey: "move")
-            //Set permanent location after the animation is complete
-            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { (timer) in
-                locationNode.position = SCNVector3(x, locationNode.position.y, y)
+            if x != lastGPSX || y != lastGPSY{
+//                if locationType == 1 || locationType == 2 {
+                    moveLocationMarker(x: x, y: y)
+//                }
             }
+            lastGPSX = x
+            lastGPSY = y
             
         }
         
         
     }
+    var movingMarker = false
+    func moveLocationMarker(x:Float, y:Float){
+        return
+        if movingMarker {
+            Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { (timer) in
+                self.moveLocationMarker(x: x, y: y)
+            }
+            return
+        }
+        
+        
+        movingMarker = true
+        
+        // Animate the moving of the location marker in order to make smooth transitions
+        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)!
+        let animation = CABasicAnimation(keyPath: "position")
+        animation.fromValue = locationNode.position
+        animation.toValue = SCNVector3(x, locationNode.position.y, y)
+        animation.duration = 0.2
+        animation.repeatCount = 0
+        animation.isRemovedOnCompletion = false
+        animation.fillMode = CAMediaTimingFillMode.forwards
+        locationNode.addAnimation(animation, forKey: "move")
+        //Set permanent location after the animation is complete
+        Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { (timer) in
+            locationNode.position = SCNVector3(x, locationNode.position.y, y)
+            self.movingMarker = false
+        }
+    }
+    
     // Distance Formula
     func distance(x1:Double, y1:Double, x2:Double, y2:Double) -> Double{
         return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
@@ -366,13 +441,27 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         floorSelect.view.widthAnchor.constraint(equalToConstant: 50).isActive = true
         floorSelect.view.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
+        //Current Location Button
+        let currentLocationButton = UIButton(type: .system)
+        currentLocationButton.backgroundColor = UIColor.white
+        currentLocationButton.layer.cornerRadius = 12
+        currentLocationButton.translatesAutoresizingMaskIntoConstraints = false
+        currentLocationButton.setImage(#imageLiteral(resourceName: "target2").withRenderingMode(.alwaysTemplate), for: .normal)
+        currentLocationButton.imageEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        currentLocationButton.addTarget(self, action: #selector(panToCurrentLocation), for: .touchUpInside)
+        gameView.addSubview(currentLocationButton)
+        currentLocationButton.topAnchor.constraint(equalTo: floorSelect.view.bottomAnchor, constant: 20).isActive = true
+        currentLocationButton.centerXAnchor.constraint(equalTo: floorSelect.view.centerXAnchor).isActive = true
+        currentLocationButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        currentLocationButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
         //Create OPtions View (Schedule, Teacher Search, Settings)
         let optionController = OptionsController()
         optionController.delegate = self
         optionController.view.translatesAutoresizingMaskIntoConstraints = false
         gameView.addSubview(optionController.view)
         addChild(optionController)
-        optionController.view.topAnchor.constraint(equalTo: floorSelect.view.bottomAnchor, constant: 20).isActive = true
+        optionController.view.topAnchor.constraint(equalTo: currentLocationButton.bottomAnchor, constant: 20).isActive = true
         optionController.view.centerXAnchor.constraint(equalTo: floorSelect.view.centerXAnchor).isActive = true
         optionController.view.widthAnchor.constraint(equalTo: floorSelect.view.widthAnchor).isActive = true
         optionController.view.heightAnchor.constraint(equalToConstant: 132.5).isActive = true
@@ -433,6 +522,15 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             break
         }
     }
+    @objc
+    func panToCurrentLocation(){
+        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: true)!
+        if abs(locationNode.position.x) > 100 || abs(locationNode.position.z) > 100 {
+            return
+        }
+        floorSelect.setFloor(currentLocationFloor)
+        camera?.panToPosition(locationNode.position, type: .Node, room: nil, floor: currentLocationFloor)
+    }
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         //Update canera Motion
@@ -450,8 +548,12 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             file = f
         }
         let allNodes = NodeParser.parse(file: file)
+        
+        
+        
         //Gets Node for the school
         let schoolNode:SCNNode = gameScene.rootNode.childNode(withName: "School", recursively: false)!
+        
         //Iterates over each node to determine which floor it is on
         for n in allNodes {
             if let sn1:SCNNode = schoolNode.childNode(withName: "Floor1", recursively: false)?.childNode(withName: "Nodes1", recursively: false)?.childNode(withName: n.name, recursively: false){
@@ -475,36 +577,109 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 print("No Scene Node Found")
             }
         }
+        
+        
+        
         //Sets Nodes variable with both arrays
         Global.nodes = [floor1Nodes, floor2Nodes]
-        // Following Code Exports FIle with Node Locations included
-        var fileStr = ""
-        var curFloor = 1
+        
+        //Strips Away Bad Connections
+//        for node in allNodes {
+//            if node.name == "N_103" {
+//                var brokeAllConnections = false
+//                while !brokeAllConnections {
+//                    for c in node.connections {
+//                        for c2 in node.connections {
+//                            if c == c2 {
+//                                continue
+//                            }
+//                            let angle = findAngle(p0: CGPoint(x: Double(c.position.x), y: Double(c.position.z)), p1: CGPoint(x: Double(node.position.x), y: Double(node.position.z)), p2: CGPoint(x: Double(c2.position.x), y: Double(c2.position.z)))
+//                            print("\(angle) \(c.name) \(c2.name)")
+//
+//                        }
+//                    }
+//                    brokeAllConnections = true
+//                }
+//
+//            }
+//        }
         for floor in Global.nodes {
             for node in floor {
-                fileStr += "%\(node.name)\n"
-                fileStr += "x\(node.position.x)\n"
-                fileStr += "y\(node.position.z)\n"
-                fileStr += "f\(curFloor)\n"
-                for connection in node.strConnections {
-                    fileStr += "-\(connection)\n"
-                }
-                for room in node.rooms {
-                    fileStr += "@\(room)\n"
+                var removedAllConnections = false
+                connectionLoop: while !removedAllConnections {
+                    for c in node.connections {
+                        for c2 in node.connections {
+                            if c == c2 {
+                                continue
+                            }
+                            let angle = findAngle(p0: CGPoint(x: Double(c.position.x), y: Double(c.position.z)), p1: CGPoint(x: Double(node.position.x), y: Double(node.position.z)), p2: CGPoint(x: Double(c2.position.x), y: Double(c2.position.z)))
+                            if abs(angle) < 10 {
+                                if node.position.distance(receiver: c.position) < node.position.distance(receiver: c2.position) {
+                                    node.connections.remove(at: node.connections.firstIndex(of: c2)!)
+                                    node.strConnections.remove(at: node.strConnections.firstIndex(of: c2.name)!)
+                                    c2.connections.remove(at: c2.connections.firstIndex(of: node)!)
+                                    c2.strConnections.remove(at: c2.strConnections.firstIndex(of: node.name)!)
+                                }else{
+                                    node.connections.remove(at: node.connections.firstIndex(of: c)!)
+                                    node.strConnections.remove(at: node.strConnections.firstIndex(of: c.name)!)
+                                    c.connections.remove(at: c.connections.firstIndex(of: node)!)
+                                    c.strConnections.remove(at: c.strConnections.firstIndex(of: node.name)!)
+                                }
+//                                print("Broke Connection")
+                                continue connectionLoop
+                            }
+                        }
+                    }
+                    removedAllConnections = true
                 }
             }
-            curFloor += 1
         }
         
-        let fileManager = FileManager.default
-        do{
-            let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileURL = documents.appendingPathComponent("nodes.dat")
-            print(fileURL)
-            try fileStr.write(to: fileURL, atomically: true, encoding: .ascii)
-        }catch{
-            print("Did Not Write")
+        
+        for n in allNodes {
+            for c in n.connections {
+                if !c.connections.contains(n) {
+                    print("\(c.name) does not contain \(n.name)")
+                }
+            }
         }
+        // Following Code Exports FIle with Node Locations included
+//        var fileStr = ""
+//        var curFloor = 1
+//        for floor in Global.nodes {
+//            for node in floor {
+//                fileStr += "%\(node.name)\n"
+//                fileStr += "x\(node.position.x)\n"
+//                fileStr += "y\(node.position.z)\n"
+//                fileStr += "f\(curFloor)\n"
+//                for connection in node.strConnections {
+//                    fileStr += "-\(connection)\n"
+//                }
+//                for room in node.rooms {
+//                    fileStr += "@\(room)\n"
+//                }
+//            }
+//            curFloor += 1
+//        }
+//
+//        let fileManager = FileManager.default
+//        do{
+//            let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+//            let fileURL = documents.appendingPathComponent("nodes.dat")
+//            print(fileURL)
+//            try fileStr.write(to: fileURL, atomically: true, encoding: .ascii)
+//        }catch{
+//            print("Did Not Write")
+//        }
+    }
+    
+    func findAngle(p0:CGPoint, p1:CGPoint, p2:CGPoint) -> CGFloat {
+        let a = pow(p1.x - p0.x, 2) + pow(p1.y - p0.y, 2)
+        let b = pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2)
+        let c = pow(p2.x - p0.x, 2) + pow(p2.y - p0.y, 2)
+        var cosPart:CGFloat = (a + b - c)
+        cosPart /= sqrt(4 * a * b)
+        return acos(cosPart) * (180 / CGFloat.pi)
     }
     
     /*Gets All Rooms from nodes */
@@ -631,10 +806,16 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             print(locations[57])
             print(locations[62])
             print(locations[118])
-            let zeroXOffset = -locations[0].x
-            let zeroYOffset = -locations[0].y
-            let zeroXOffset2 = -locations[62].x
-            let zeroYOffset2 = -locations[62].y
+            let mac107 = locations.searchForLocation("C-R-107.d211.org") //0
+            let mac185 = locations.searchForLocation("C-R-185.d211.org") //57
+            let mac204 = locations.searchForLocation("C-R-204.d211.org") //62
+            let mac286 = locations.searchForLocation("C-R-286.d211.org") //118
+            
+            
+            let zeroXOffset = -locations[mac107].x
+            let zeroYOffset = -locations[mac107].y
+            let zeroXOffset2 = -locations[mac204].x
+            let zeroYOffset2 = -locations[mac204].y
             for i in 0..<locations.count {
                 if locations[i].floor == 1{
                     locations[i].x += zeroXOffset
@@ -654,15 +835,15 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             let struc286X = 16.942
             let struc286Y = 12.747
             
-            let xChange = locations[57].x - locations[0].x
-            let yChange = locations[57].y - locations[0].y
+            let xChange = locations[mac185].x - locations[mac107].x
+            let yChange = locations[mac185].y - locations[mac107].y
             let actualXChange = struc185X - struc107X
             let actualYChange = struc185Y - struc107Y
             let xMultiplier = actualXChange / xChange
             let yMultiplier = actualYChange / yChange
             
-            let xChange2 = locations[118].x - locations[62].x
-            let yChange2 = locations[118].y - locations[62].y
+            let xChange2 = locations[mac286].x - locations[mac204].x
+            let yChange2 = locations[mac286].y - locations[mac204].y
             let actualXChange2 = struc286X - struc204X
             let actualYChange2 = struc286Y - struc204Y
             let xMultiplier2 = actualXChange2 / xChange2
@@ -678,11 +859,11 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 }
             }
             
-            let xOffset = struc107X - locations[0].x
-            let yOffset = struc107Y - locations[0].y
+            let xOffset = struc107X - locations[mac107].x
+            let yOffset = struc107Y - locations[mac107].y
             
-            let xOffset2 = struc204X - locations[62].x
-            let yOffset2 = struc204Y - locations[62].y
+            let xOffset2 = struc204X - locations[mac204].x
+            let yOffset2 = struc204Y - locations[mac204].y
             
             for i in 0..<locations.count {
                 if locations[i].floor == 1 {
@@ -769,6 +950,11 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }else{
             locationNode.scale.y = 3.836
         }
+        if floor == currentLocationFloor {
+            locationNode.opacity = 1
+        }else{
+            locationNode.opacity = 0
+        }
     }
     
     /*
@@ -781,6 +967,27 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         //find path
         guard var path = Pathfinder.search(start: session.start, end: session.end, useElevator: session.usesElevators) else{
             return
+        }
+        subDirections = [:]
+        for floor in path {
+            for node in floor {
+                for intersection in Global.intersections {
+                    if intersection.node == node.name {
+                        let startIndex = floor.index(of: node)! - 1
+                        let endIndex = floor.index(of: node)! + 1
+                        if startIndex < 0 || endIndex >= floor.count {
+                            break
+                        }
+                        for p in intersection.paths {
+                            if p.start == floor[startIndex].name && p.end == floor[endIndex].name {
+                                subDirections[node] = p.message
+                                break
+                            }
+                        }
+                        break
+                    }
+                }
+            }
         }
         if let startStruc = Global.structures.searchForStructure(session.startStr) {
             var startPos = startStruc.node.getPositionFromGeometry()
@@ -823,6 +1030,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             squareNode.position = closest
             fPath.insert(squareNode, at: 1)
             path[0] = fPath
+            subDirections[squareNode] = "Out of \(session.startStr)"
         }
         if let endStruc = Global.structures.searchForStructure(session.endStr){
             var endPos = endStruc.node.getPositionFromGeometry()
@@ -905,7 +1113,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
             if self.currentNavSession != nil {
                 self.updateDirectionDisplay()
-                print(self.getCurrentLocation())
+                print(self.getCurrentLocation() as Any)
             }else{
                 timer.invalidate()
             }
@@ -972,32 +1180,169 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         }
         return false
     }
+    var testNodes:[SCNNode] = []
     func updateDirectionDisplay(){
 //        "Need To Set Correct Floor"
-        let currentFloor = lastPath[0][0].floor == currentLocationFloor ? 1 : 2
-        if currentFloor - 1 >= lastPath.count {
+        let pathIndex = lastPath[0][0].floor == currentLocationFloor ? 0 : 1
+        if pathIndex >= lastPath.count {
             banner.hide()
             return
         }
         let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
-        var closestDistance:Float = (locationNode?.position.distance(receiver: lastPath[currentFloor - 1][0].position))!
-        var closestNode = lastPath[currentFloor - 1][0]
+//        var closestDistance:Float = (locationNode?.position.distance(receiver: lastPath[pathIndex][0].position))!
+        var closestNode = lastPath[pathIndex][0]
+        
+        var nodeDistances:[[Node]:Float] = [:]
         var counter = 0
-        for node in lastPath[currentFloor - 1] {
+        for node in lastPath[pathIndex] {
             if counter == 0 {
                 counter += 1
                 continue
             }
-            let distance = distanceFromPoint(p: CGPoint(x: Double((locationNode?.position.x)!), y: Double((locationNode?.position.z)!)), toLineSegment: CGPoint(x: Double(lastPath[currentFloor - 1][counter - 1].position.x), y: Double(lastPath[currentFloor - 1][counter - 1].position.z)), and: CGPoint(x: Double(node.position.x), y: Double(node.position.z)))
-            if distance < closestDistance {
-                closestDistance = distance
-                closestNode = node
-            }
+            let distance = distanceFromPoint(p: CGPoint(x: Double((locationNode?.position.x)!), y: Double((locationNode?.position.z)!)), toLineSegment: CGPoint(x: Double(lastPath[pathIndex][counter - 1].position.x), y: Double(lastPath[pathIndex][counter - 1].position.z)), and: CGPoint(x: Double(node.position.x), y: Double(node.position.z)))
+//            if distance < closestDistance {
+//                closestDistance = distance
+//                closestNode = node
+//            }
+            nodeDistances[[lastPath[pathIndex][counter - 1], node]] = distance
             counter += 1
         }
-        if (locationNode?.position.distance(receiver: closestNode.position))! < (closestNode.position.distance(receiver: lastPath[currentFloor - 1][lastPath[currentFloor - 1].firstIndex(of: closestNode)! - 1].position)) / 2 {
+        let sorted = nodeDistances.sorted(by: { (keyVal1, keyVal2) -> Bool in
+            keyVal1.value < keyVal2.value
+        })
+        for node in testNodes {
+            node.removeFromParentNode()
+        }
+        testNodes = []
+//        for node in sorted[0].key {
+//            let scnNode = SCNNode(geometry: SCNCylinder(radius: 0.5, height: 3))
+//            let mat = SCNMaterial()
+//            mat.diffuse.contents = UIColor.orange
+//            scnNode.geometry?.firstMaterial = mat
+//            gameScene.rootNode.addChildNode(scnNode)
+//            scnNode.position = node.position
+//            testNodes.append(scnNode)
+//        }
+        var closerPoint:Node = sorted[0].key[0]
+        if sorted[0].key[1].position.distance(receiver: locationNode!.position) < closerPoint.position.distance(receiver: locationNode!.position) {
+            closerPoint = sorted[0].key[1]
+        }
+//        let scnNode = SCNNode(geometry: SCNCylinder(radius: 0.55, height: 4))
+//        let mat = SCNMaterial()
+//        mat.diffuse.contents = UIColor.cyan
+//        scnNode.geometry?.firstMaterial = mat
+//        gameScene.rootNode.addChildNode(scnNode)
+//        scnNode.position = closerPoint.position
+//        testNodes.append(scnNode)
+        
+        var isIntersection = false
+        var closerCount = 0
+        for s in sorted {
+            for n in s.key {
+                if n == closerPoint {
+                    closerCount += 1
+                }
+            }
+        }
+        if closerCount > 1 {
+            isIntersection = true
+        }
+        
+        var direction = (locationNode?.eulerAngles.y)! * (180 / Float.pi)
+        if direction < 0 {
+            while direction < 0 {
+                direction += 360
+            }
+        }else{
+            while direction >= 360 {
+                direction -= 360
+            }
+        }
+        
+        var directionAxis:Axis = .Horizontal
+        if direction > 315 || direction < 45 {
+            directionAxis = .Up
+        }else if direction >= 45 && direction <= 135 {
+            directionAxis = .Left
+        }else if direction > 135 && direction < 225 {
+            directionAxis = .Down
+        }else {
+            directionAxis = .Right
+        }
+        
+        if locationNode!.position.distance(receiver: closerPoint.position) < 1.5 && isIntersection {
+//            mat.diffuse.contents = UIColor.red
+            for s in sorted {
+                if s == sorted[0] {
+                    continue
+                }
+                if s.key.contains(closerPoint) {
+                    let otherNode = s.key[0] == closerPoint ? s.key[1] : s.key[0]
+//                    let scnNode2 = SCNNode(geometry: SCNCylinder(radius: 0.55, height: 4))
+//                    let mat2 = SCNMaterial()
+//                    mat2.diffuse.contents = UIColor.green
+//                    scnNode2.geometry?.firstMaterial = mat2
+//                    gameScene.rootNode.addChildNode(scnNode2)
+//                    scnNode2.position = otherNode.position
+//                    testNodes.append(scnNode2)
+                    
+                    let startNode = sorted[0].key[0] == closerPoint ? sorted[0].key[1] : sorted[0].key[0]
+                    var ogAngle = findAngle(p0: CGPoint(x: Double(closerPoint.position.x), y: Double(closerPoint.position.z - 1)), p1: closerPoint.position.toCGPoint(), p2: startNode.position.toCGPoint())
+                    var newAngle = findAngle(p0: CGPoint(x: Double(closerPoint.position.x), y: Double(closerPoint.position.z - 1)), p1: closerPoint.position.toCGPoint(), p2: otherNode.position.toCGPoint())
+                    while ogAngle >= 360 {
+                        ogAngle -= 360
+                    }
+                    while newAngle >= 360 {
+                        newAngle -= 360
+                    }
+                    
+                    var ogAxis:Axis = .Horizontal
+                    let ogFirst = lastPath[pathIndex].firstIndex(of: startNode)! < lastPath[pathIndex].firstIndex(of: closerPoint)! ? startNode : closerPoint
+                    let ogLast = lastPath[pathIndex].firstIndex(of: startNode)! < lastPath[pathIndex].firstIndex(of: closerPoint)! ? closerPoint : startNode
+
+                    ogAxis = Axis.determineAxis(first: ogFirst, last: ogLast)
+                    
+                    var newAxis:Axis = .Horizontal
+                    let newFirst = lastPath[pathIndex].firstIndex(of: otherNode)! < lastPath[pathIndex].firstIndex(of: closerPoint)! ? otherNode : closerPoint
+                    let newLast = lastPath[pathIndex].firstIndex(of: otherNode)! < lastPath[pathIndex].firstIndex(of: closerPoint)! ? closerPoint : otherNode
+                    newAxis = Axis.determineAxis(first: newFirst, last: newLast)
+                    print("OG \(ogAxis) NEW \(newAxis)")
+                    
+                    
+//                    locationNode?.eulerAngles.y += 5 * (Float.pi / 180)
+                    print("DIRECTION AXIS \(directionAxis) DIRECTION ANGLE \(direction)")
+                    
+                    let futureAxis = lastPath[pathIndex].firstIndex(of: otherNode)! > lastPath[pathIndex].firstIndex(of: startNode)! ? newAxis : ogAxis
+                    if futureAxis == directionAxis {
+                        closestNode = lastPath[pathIndex].firstIndex(of: otherNode)! > lastPath[pathIndex].firstIndex(of: startNode)! ? otherNode : startNode
+                    }else{
+                        closestNode = closerPoint
+                    }
+                    break
+                }
+            }
+        }else{
+            closestNode = lastPath[pathIndex].firstIndex(of: sorted[0].key[0])! > lastPath[pathIndex].firstIndex(of: sorted[0].key[1])! ? sorted[0].key[0] : sorted[0].key[1]
+        }
+        
+        
+        if (locationNode?.position.distance(receiver: closestNode.position))! < 3/*(closestNode.position.distance(receiver: lastPath[currentFloor - 1][lastPath[currentFloor - 1].firstIndex(of: closestNode)! - 1].position)) / 2*/ {
             if let dir = self.wordPath[closestNode] {
                 banner.update(dir)
+                if let sub = self.subDirections[closestNode] {
+                    banner.updateSubDirection(sub)
+                }
+                banner.show()
+            }else{
+                banner.hide()
+            }
+        }else if sorted[0].value < 2{
+            let forwardDirection = Axis.determineAxis(first: sorted[0].key[0] == closestNode ? sorted[0].key[1] : sorted[0].key[0], last: closestNode)
+            if forwardDirection == directionAxis {
+                banner.update(.forward)
+                banner.show()
+            }else if forwardDirection.opposite() == directionAxis{
+                banner.update(.backward)
                 banner.show()
             }else{
                 banner.hide()
@@ -1254,8 +1599,28 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
             }
         }
     }
-
-
+    @objc
+    func updateLocationType(){
+//        print("CHANGING LOCATION TYPE")
+//        let type = UserDefaults.standard.integer(forKey: "location")
+//        locationType = type
+//        let locationNode = gameScene.rootNode.childNode(withName: "location", recursively: false)
+//        if type == 0 {
+//            locationNode?.opacity = 0
+//        }else{
+//            if currentLocationFloor == floorSelect.getFloor() {
+//                locationNode?.opacity = 1
+//            }
+//        }
+    }
+    @objc
+    func dismissAllControllers(){
+        var topController = presentedViewController
+        while let c = topController?.presentingViewController{
+            topController = c
+        }
+        topController?.dismiss(animated: true, completion: nil)
+    }
 }
 
 struct LabelLocation:Equatable {
@@ -1308,4 +1673,45 @@ struct MacLocation:Codable{
     var x:Double
     var y:Double
     let floor:Int
+}
+enum Axis {
+    case Horizontal
+    case Vertical
+    case Up
+    case Down
+    case Right
+    case Left
+    static func determineAxis(first: Node, last:Node) -> Axis{
+        if abs(first.position.x - last.position.x) > abs(first.position.y - last.position.y) {
+            //Left Or Right
+            if last.position.x < first.position.x {
+                return.Left
+            }else{
+                return .Right
+            }
+        }else{
+            // UP Or Down
+            if last.position.z < first.position.z {
+                return .Up
+            }else{
+                return .Down
+            }
+        }
+    }
+    func opposite() -> Axis{
+        switch self {
+        case .Up:
+            return .Down
+        case .Left:
+            return .Right
+        case .Right:
+            return .Left
+        case .Down:
+            return .Up
+        case .Vertical:
+            return .Horizontal
+        case .Horizontal:
+            return .Vertical
+        }
+    }
 }

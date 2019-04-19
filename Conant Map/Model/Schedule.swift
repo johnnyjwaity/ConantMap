@@ -29,6 +29,7 @@ class Schedule{
             for s in Global.staff {
                 if s.name == c.staff.name {
                     cl.potentialStaff = s
+                    print(s.name)
                     print("Found \(c.staff.name)")
                     break
                 }

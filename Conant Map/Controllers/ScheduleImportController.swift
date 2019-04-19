@@ -128,7 +128,7 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         
         
         
-        let alert = UIAlertController(title: "Importing Scedule", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Importing Schedule", message: nil, preferredStyle: .alert)
         
         
         let loadingIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .gray)

@@ -13,6 +13,7 @@ class DirectionBanner: UIVisualEffectView {
     var directionImageView:UIImageView!
     var secondImageView:UIImageView!
     var directionText:UILabel!
+    var subDirectionText:UILabel!
     
     var isDisplayed = false
     var topConstraint:NSLayoutConstraint!
@@ -31,6 +32,7 @@ class DirectionBanner: UIVisualEffectView {
         contentView.addSubview(directionText)
         directionText.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
         directionText.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 15).isActive = true
+        
         
         let directionImage = #imageLiteral(resourceName: "Left").withRenderingMode(.alwaysTemplate)
         directionImageView = UIImageView(image: directionImage)
@@ -53,6 +55,17 @@ class DirectionBanner: UIVisualEffectView {
         secondImageView.rightAnchor.constraint(equalTo: directionImageView.leftAnchor, constant: -15).isActive = true
         secondImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
         secondImageView.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        subDirectionText = UILabel()
+        subDirectionText.text = "Test"
+        subDirectionText.textColor = UIColor.white
+        subDirectionText.translatesAutoresizingMaskIntoConstraints = false
+        subDirectionText.adjustsFontSizeToFitWidth = true
+        subDirectionText.font = UIFont.boldSystemFont(ofSize: 18)
+        contentView.addSubview(subDirectionText)
+        subDirectionText.topAnchor.constraint(equalTo: directionText.bottomAnchor, constant: 2).isActive = true
+        subDirectionText.leftAnchor.constraint(equalTo: directionText.leftAnchor).isActive = true
+        subDirectionText.rightAnchor.constraint(equalTo: secondImageView.leftAnchor, constant: -2).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -104,10 +117,23 @@ class DirectionBanner: UIVisualEffectView {
             primaryImage = #imageLiteral(resourceName: "destination")
             text = "Arrived"
             break
+        case .forward:
+            primaryImage = #imageLiteral(resourceName: "forward")
+            text = "Go Forward"
+            break
+        case .backward:
+            primaryImage = #imageLiteral(resourceName: "u-turn").rotate(radians: Float.pi / 2)
+            text = "Turn Around"
+            break
         }
+        
         directionImageView.image = primaryImage.withRenderingMode(.alwaysTemplate)
         secondImageView.image = secondaryImage
         directionText.text = text
+        subDirectionText.text = ""
+    }
+    func updateSubDirection(_ text:String) {
+        subDirectionText.text = text
     }
     func getConstraint() -> NSLayoutConstraint {
         return constraintsAffectingLayout(for: .vertical)[0]

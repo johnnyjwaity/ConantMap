@@ -1,0 +1,887 @@
+[
+    {
+        "node":"N_40",
+        "paths": [
+            {
+                "start":"N_123",
+                "end":"N_22",
+                "message":"Out of Media Center"
+            },
+            {
+                "start":"N_22",
+                "end":"N_123",
+                "message":"Into Media Center"
+            },
+            {
+                "start":"N_171",
+                "end":"N_123",
+                "message":"Into Media Center"
+            },
+            {
+                "start":"N_123",
+                "end":"N_171",
+                "message":"Out of Media Center"
+            },
+            {
+                "start":"N_4",
+                "end":"N_171",
+                "message":"After Stairs"
+            },
+            {
+                "start":"N_171",
+                "end":"N_4",
+                "message":"After Stairs"
+            },
+            {
+                "start":"N_22",
+                "end":"N_4",
+                "message":"After Room 140"
+            },
+            {
+                "start":"N_4",
+                "end":"N_22",
+                "message":"After Room 140"
+            }
+        ]
+    },
+    {
+        "node":"N_25",
+        "paths":[
+            {
+                "start":"N_14",
+                "end":"N_171",
+                "message":"After Stairs"
+            },
+            {
+                "start":"N_171",
+                "end":"N_14",
+                "message":"After Stairs"
+            },
+            {
+                "start":"N_14",
+                "end":"N_59",
+                "message":"After English Office"
+            },
+            {
+                "start":"N_59",
+                "end":"N_14",
+                "message":"Before Stairs"
+            }
+        ]
+    },
+    {
+        "node":"N_56",
+        "paths":[
+            {
+                "start":"N_139",
+                "end":"N_59",
+                "message":"After English Office"
+            },
+            {
+                "start":"N_59",
+                "end":"N_139",
+                "message":"After English Office"
+            },
+            {
+                "start":"N_64",
+                "end":"N_59",
+                "message":"After Room 113"
+            },
+            {
+                "start":"N_59",
+                "end":"N_64",
+                "message":"After Room 113"
+            },
+            {
+                "start":"N_139",
+                "end":"N_138",
+                "message":"After Bathrooms"
+            },
+            {
+                "start":"N_138",
+                "end":"N_139",
+                "message":"After Bathrooms"
+            },
+            {
+                "start":"N_64",
+                "end":"N_138",
+                "message":"After Room 112"
+            },
+            {
+                "start":"N_138",
+                "end":"N_64",
+                "message":"After Room 113"
+            }
+        ]
+    },
+    {
+        "node":"N_138",
+        "paths":[
+            {
+                "start":"N_56",
+                "end":"N_106",
+                "message":"After Room 112"
+            },
+            {
+                "start":"N_106",
+                "end":"N_56",
+                "message":"After Room 112"
+            },
+            {
+                "start":"N_134",
+                "end":"N_106",
+                "message":"Before Room 112"
+            },
+            {
+                "start":"N_106",
+                "end":"N_134",
+                "message":"Before Room 112"
+            }
+        ]
+    },
+    {
+        "node":"N_84",
+        "paths":[
+            {
+                "start":"N_44",
+                "end":"N_51",
+                "message":"At Doors"
+            },
+            {
+                "start":"N_51",
+                "end":"N_44",
+                "message":"After Doors"
+            },
+            {
+                "start":"N_17",
+                "end":"N_51",
+                "message":"At Doors"
+            },
+            {
+                "start":"N_51",
+                "end":"N_17",
+                "message":"After Doors"
+            }
+        ]
+    },
+    {
+        "node":"N_17",
+        "paths":[
+            {
+                "start":"N_84",
+                "end":"N_48",
+                "message":"Before Exit Doors"
+            },
+            {
+                "start":"N_48",
+                "end":"N_84",
+                "message":"After Music Office"
+            }
+        ]
+    },
+    {
+        "node":"N_66",
+        "paths":[
+            {
+                "start":"N_34",
+                "end":"N_51",
+                "message":"After Room 107"
+            },
+            {
+                "start":"N_51",
+                "end":"N_34",
+                "message":"Before Nurse"
+            },
+            {
+                "start":"N_34",
+                "end":"N_108",
+                "message":"After Nurse"
+            },
+            {
+                "start":"N_108",
+                "end":"N_34",
+                "message":"After Nurse"
+            }
+        ]
+    },
+    {
+        "node":"N_89",
+        "paths":[
+            {
+                "start":"N_144",
+                "end":"N_113",
+                "message":"After Entering Doors"
+            },
+            {
+                "start":"N_113",
+                "end":"N_144",
+                "message":"Into Media Center"
+            },
+            {
+                "start":"N_23",
+                "end":"N_113",
+                "message":"After Bathrooms"
+            },
+            {
+                "start":"N_113",
+                "end":"N_23",
+                "message":"After Bathrooms"
+            }
+        ]
+    },
+    {
+        "node":"N_144",
+        "paths":[
+            {
+                "start":"N_89",
+                "end":"N_162",
+                "message":"Towards Cafeteria"
+            },
+            {
+                "start":"N_162",
+                "end":"N_89",
+                "message":"Into Team Room Hallway"
+            },
+            {
+                "start":"N_89",
+                "end":"N_127",
+                "message":"After Entering Media Center"
+            },
+            {
+                "start":"N_127",
+                "end":"N_89",
+                "message":"Into Team Room Hallway"
+            }
+        ]
+    },
+    {
+        "node":"N_61",
+        "paths":[
+            {
+                "start":"N_162",
+                "end":"N_3",
+                "message":"Out of Media Center"
+            },
+            {
+                "start":"N_3",
+                "end":"N_162",
+                "message":"Into Media Center"
+            },
+            {
+                "start":"N_162",
+                "end":"N_95",
+                "message":"Out of Media Center"
+            },
+            {
+                "start":"N_95",
+                "end":"N_162",
+                "message":"Into Media Center"
+            }
+        ]
+    },
+    {
+        "node":"N_37",
+        "paths":[
+            {
+                "start":"N_22",
+                "end":"N_158",
+                "message":"Before Bathrroms"
+            },
+            {
+                "start":"N_158",
+                "end":"N_22",
+                "message":"After Room 141"
+            },
+            {
+                "start":"N_160",
+                "end":"N_158",
+                "message":"After Bathroms"
+            },
+            {
+                "start":"N_158",
+                "end":"N_160",
+                "message":"After Room 141"
+            }
+        ]
+    },
+    {
+        "node":"N_160",
+        "paths":[
+            {
+                "start":"N_95",
+                "end":"N_37",
+                "message":"Before Stairs"
+            },
+            {
+                "start":"N_37",
+                "end":"N_95",
+                "message":"After Elevator"
+            },
+            {
+                "start":"N_63",
+                "end":"N_95",
+                "message":"After Cafeteria"
+            },
+            {
+                "start":"N_95",
+                "end":"N_63",
+                "message":"After Cafeteria"
+            }
+        ]
+    },
+    {
+        "node":"N_63",
+        "paths":[
+            {
+                "start":"N_160",
+                "end":"N_49",
+                "message":"Into Girl's Locker Room"
+            },
+            {
+                "start":"N_47",
+                "end":"N_49",
+                "message":"Into Girl's Locker Room"
+            }
+        ]
+    },
+    {
+        "node":"N_140",
+        "paths":[
+            {
+                "start":"N_41",
+                "end":"N_88",
+                "message":"Into Boy's Locker Room"
+            },
+            {
+                "start":"N_32",
+                "end":"N_88",
+                "message":"Into Boy's Locker Room"
+            }
+        ]
+    },
+    {
+        "node":"N_47",
+        "paths":[
+            {
+                "start":"N_146",
+                "end":"N_63",
+                "message":"After Exiting Gym"
+            },
+            {
+                "start":"N_63",
+                "end":"N_146",
+                "message":"Into Gym"
+            },
+            {
+                "start":"N_146",
+                "end":"N_133",
+                "message":"After Exiting Gym"
+            },
+            {
+                "start":"N_133",
+                "end":"N_146",
+                "message":"Into Gym"
+            }
+        ]
+    },
+    {
+        "node":"N_41",
+        "paths":[
+            {
+                "start":"N_38",
+                "end":"N_133",
+                "message":"After Exiting Gym"
+            },
+            {
+                "start":"N_133",
+                "end":"N_38",
+                "message":"Into Gym"
+            },
+            {
+                "start":"N_38",
+                "end":"N_140",
+                "message":"After Exiting Gym"
+            },
+            {
+                "start":"N_140",
+                "end":"N_38",
+                "message":"Into Gym"
+            }
+        ]
+    },
+    {
+        "node":"N_32",
+        "paths":[
+            {
+                "start":"N_148",
+                "end":"N_140",
+                "message":"Before Bathrooms"
+            },
+            {
+                "start":"N_140",
+                "end":"N_148",
+                "message":"After Bathrooms"
+            },
+            {
+                "start":"N_148",
+                "end":"N_109",
+                "message":"Towards Exit"
+            },
+            {
+                "start":"N_109",
+                "end":"N_148",
+                "message":"Before Doorway"
+            },
+            {
+                "start":"N_109",
+                "end":"N_75",
+                "message":"Before Doorway"
+            },
+            {
+                "start":"N_75",
+                "end":"N_109",
+                "message":"After Room 170"
+            },
+            {
+                "start":"N_75",
+                "end":"N_140",
+                "message":"After Bathrooms"
+            },
+            {
+                "start":"N_140",
+                "end":"N_75",
+                "message":"After Bathrooms"
+            }
+        ]
+    },
+    {
+        "node":"N_109",
+        "paths":[
+            {
+                "start":"N_32",
+                "end":"N_96",
+                "message":"Before Ramp"
+            },
+            {
+                "start":"N_96",
+                "end":"N_32",
+                "message":"After 174"
+            },
+            {
+                "start":"N_39",
+                "end":"N_96",
+                "message":"After Ramp"
+            },
+            {
+                "start":"N_96",
+                "end":"N_39",
+                "message":"After Applied Tech Office"
+            }
+        ]
+    },
+    {
+        "node":"N_8",
+        "paths":[
+            {
+                "start":"N_39",
+                "end":"N_126",
+                "message":"Into Atrium"
+            },
+            {
+                "start":"N_126",
+                "end":"N_39",
+                "message":"After Exiting Atrium"
+            }
+        ]
+    },
+    {
+        "node":"N_46",
+        "paths":[
+            {
+                "start":"N_148",
+                "end":"N_168",
+                "message":"After Stairs"
+            },
+            {
+                "start":"N_168",
+                "end":"N_148",
+                "message":"After Science Office"
+            },
+            {
+                "start":"N_36",
+                "end":"N_168",
+                "message":"After Bathrooms"
+            },
+            {
+                "start":"N_168",
+                "end":"N_36",
+                "message":"After Room 181"
+            }
+        ]
+    },
+    {
+        "node":"N_74",
+        "paths":[
+            {
+                "start":"N_100",
+                "end":"N_12",
+                "message":"After Room 185"
+            },
+            {
+                "start":"N_12",
+                "end":"N_100",
+                "message":"After Stairs"
+            },
+            {
+                "start":"N_100",
+                "end":"N_36",
+                "message":"After Room 183"
+            },
+            {
+                "start":"N_36",
+                "end":"N_100",
+                "message":"After Bathrooms"
+            }
+        ]
+    },
+    {
+        "node":"N_73",
+        "paths":[
+            {
+                "start":"N_81",
+                "end":"N_104",
+                "message":"After Auditorium"
+            },
+            {
+                "start":"N_104",
+                "end":"N_81",
+                "message":"After Auditorium"
+            },
+            {
+                "start":"N_104",
+                "end":"N_143",
+                "message":"After Auditorium"
+            },
+            {
+                "start":"N_143",
+                "end":"N_104",
+                "message":"After Auditorium"
+            }
+        ]
+    },
+    {
+        "node":"N_143",
+        "paths":[
+            {
+                "start":"N_73",
+                "end":"N_163",
+                "message":"Before Room 222"
+            },
+            {
+                "start":"N_163",
+                "end":"N_73",
+                "message":"After Bathrooms"
+            },
+            {
+                "start":"N_91",
+                "end":"N_163",
+                "message":"Before Bathrroms"
+            },
+            {
+                "start":"N_163",
+                "end":"N_91",
+                "message":"After Room 222"
+            },
+            {
+                "start":"N_110",
+                "end":"N_91",
+                "message":"After Room 213"
+            },
+            {
+                "start":"N_91",
+                "end":"N_110",
+                "message":"Before Room 212"
+            },
+            {
+                "start":"N_110",
+                "end":"N_73",
+                "message":"After Room 212"
+            },
+            {
+                "start":"N_73",
+                "end":"N_110",
+                "message":"After Room 213"
+            }
+        ]
+    },
+    {
+        "node":"N_103",
+        "paths":[
+            {
+                "start":"N_142",
+                "end":"N_167",
+                "message":"Before Room 220"
+            },
+            {
+                "start":"N_167",
+                "end":"N_142",
+                "message":"Before Business Office"
+            }
+        ]
+    },
+    {
+        "node":"N_159",
+        "paths":[
+            {
+                "start":"N_26",
+                "end":"N_79",
+                "message":"Before Room 204"
+            },
+            {
+                "start":"N_79",
+                "end":"N_26",
+                "message":"Before Stairs"
+            }
+        ]
+    },
+    {
+        "node":"N_15",
+        "paths":[
+            {
+                "start":"N_167",
+                "end":"N_30",
+                "message":"At Room 233"
+            },
+            {
+                "start":"N_30",
+                "end":"N_167",
+                "message":"Before Room 233"
+            },
+            {
+                "start":"N_30",
+                "end":"N_99",
+                "message":"Before Room 233"
+            },
+            {
+                "start":"N_99",
+                "end":"N_30",
+                "message":"At Room 233"
+            }
+        ]
+    },
+    {
+        "node":"N_11",
+        "paths":[
+            {
+                "start":"N_99",
+                "end":"N_82",
+                "message":"At Room 234"
+            },
+            {
+                "start":"N_82",
+                "end":"N_99",
+                "message":"Before Room 234"
+            },
+            {
+                "start":"N_76",
+                "end":"N_82",
+                "message":"At Room 234"
+            },
+            {
+                "start":"N_82",
+                "end":"N_76",
+                "message":"Before Room 234"
+            }
+        ]
+    },
+    {
+        "node":"N_78",
+        "paths":[
+            {
+                "start":"N_91",
+                "end":"N_30",
+                "message":"Before Stairs"
+            },
+            {
+                "start":"N_30",
+                "end":"N_91",
+                "message":"After Room 223"
+            },
+            {
+                "start":"N_30",
+                "end":"N_145",
+                "message":"After Room 223"
+            },
+            {
+                "start":"N_145",
+                "end":"N_30",
+                "message":"After Stairs"
+            }
+        ]
+    },
+    {
+        "node":"N_31",
+        "paths":[
+            {
+                "start":"N_129",
+                "end":"N_145",
+                "message":"After Room 246"
+            },
+            {
+                "start":"N_145",
+                "end":"N_129",
+                "message":"After Stairs"
+            },
+            {
+                "start":"N_129",
+                "end":"N_120",
+                "message":"After Room 246"
+            },
+            {
+                "start":"N_120",
+                "end":"N_129",
+                "message":"Before Stairs"
+            }
+        ]
+    },
+    {
+        "node":"N_145",
+        "paths":[
+            {
+                "start":"N_78",
+                "end":"N_16",
+                "message":"Before Room 248"
+            },
+            {
+                "start":"N_16",
+                "end":"N_78",
+                "message":"After Room 230"
+            },
+            {
+                "start":"N_16",
+                "end":"N_13",
+                "message":"After Room 248"
+            },
+            {
+                "start":"N_31",
+                "end":"N_16",
+                "message":"At Stairs"
+            }
+        ]
+    },
+    {
+        "node":"N_112",
+        "paths":[
+            {
+                "start":"N_43",
+                "end":"N_151",
+                "message":"At Bathrooms"
+            },
+            {
+                "start":"N_151",
+                "end":"N_43",
+                "message":"Before Room 252"
+            },
+            {
+                "start":"N_43",
+                "end":"N_27",
+                "message":"At Bathrooms"
+            },
+            {
+                "start":"N_27",
+                "end":"N_43",
+                "message":"Before Room 227"
+            }
+        ]
+    },
+    {
+        "node":"N_52",
+        "paths":[
+            {
+                "start":"N_76",
+                "end":"N_92",
+                "message":"Before Room 238"
+            },
+            {
+                "start":"N_92",
+                "end":"N_76",
+                "message":"Before Room 237"
+            }
+        ]
+    },
+    {
+        "node":"N_72",
+        "paths":[
+            {
+                "start":"N_7",
+                "end":"N_120",
+                "message":"Before Math Office"
+            },
+            {
+                "start":"N_120",
+                "end":"N_7",
+                "message":"Before Faculty Bathrooms"
+            },
+            {
+                "start":"N_7",
+                "end":"N_86",
+                "message":"Before Math Office"
+            },
+            {
+                "start":"N_86",
+                "end":"N_7",
+                "message":"Before Room 241"
+            }
+        ]
+    },
+    {
+        "node":"N_71",
+        "paths":[
+            {
+                "start":"N_2",
+                "end":"N_105",
+                "message":"After Stairs"
+            },
+            {
+                "start":"N_105",
+                "end":"N_2",
+                "message":"After Room 279"
+            },
+            {
+                "start":"N_105",
+                "end":"N_150",
+                "message":"After Room 281"
+            },
+            {
+                "start":"N_150",
+                "end":"N_105",
+                "message":"Before Stairs"
+            }
+        ]
+    },
+    {
+        "node":"N_85",
+        "paths":[
+            {
+                "start":"N_0",
+                "end":"N_62",
+                "message":"Before Bathrooms"
+            },
+            {
+                "start":"N_62",
+                "end":"N_0",
+                "message":"After Room 285"
+            },
+            {
+                "start":"N_1",
+                "end":"N_62",
+                "message":"Before Stairs"
+            },
+            {
+                "start":"N_62",
+                "end":"N_1",
+                "message":"After Room 283"
+            }
+        ]
+    }
+]

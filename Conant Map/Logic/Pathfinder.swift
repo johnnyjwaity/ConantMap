@@ -309,4 +309,6 @@ enum WalkDirection {
     case destinationRight
     case destinationLeft
     case arrive
+    case forward
+    case backward
 }

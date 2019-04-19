@@ -146,6 +146,7 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.endEditing(true)
         filterArray(searched: searchBar.text!)
     }
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {

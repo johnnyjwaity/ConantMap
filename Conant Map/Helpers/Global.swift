@@ -15,6 +15,7 @@ struct Global {
     static var staff:[Staff] = []
     static var classes:[Class] = []
     static var macAddresses:[MacAddress] = []
+    static var intersections:[Intersection] = []
     static let departments:[String:String] = ["Student Services": "Student Services Desk",
                                               "Math": "Math Office",
                                               "Physical Education": "Gym",

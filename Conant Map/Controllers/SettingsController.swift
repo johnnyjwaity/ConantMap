@@ -10,7 +10,7 @@ import UIKit
 
 class SettingsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    let fields:[[String]] = [["Display Room Labels"], ["Created By John Waity", "Report a Bug"]]
+    let fields:[[String]] = [["Display Room Labels", "Current Location"], ["Created By John Waity", "Report a Bug"]]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +38,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 2
     }
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
@@ -54,7 +54,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return 1
+            return 2
         case 1:
             return 2
         default:
@@ -70,6 +70,11 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
             s.isOn = UserDefaults.standard.bool(forKey: "displayRoomLabels")
             s.addTarget(self, action: #selector(toggleRoomLabels(_:)), for: .valueChanged)
             cell.accessoryView = s
+        }else if indexPath.section == 0 && indexPath.row == 1 {
+            let segment = UISegmentedControl(items: ["Off", "Hybrid", "GPS", "MAC"])
+            segment.selectedSegmentIndex = UserDefaults.standard.integer(forKey: "location")
+            cell.accessoryView = segment
+            segment.addTarget(self, action: #selector(changeLocationType(_:)), for: .valueChanged)
         }
         else if indexPath.section == 1 {
             cell.textLabel?.textColor = UIView().tintColor
@@ -98,5 +103,9 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         UserDefaults.standard.set(sender.isOn, forKey: "displayRoomLabels")
         NotificationCenter.default.post(name: Notification.Name("ChangeRoomLabelDispaly"), object: nil)
     }
-
+    @objc
+    func changeLocationType(_ sender:UISegmentedControl) {
+        UserDefaults.standard.set(sender.selectedSegmentIndex, forKey: "location")
+        NotificationCenter.default.post(name: Notification.Name("ChangeLocationType"), object: nil)
+    }
 }

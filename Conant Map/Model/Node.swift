@@ -13,9 +13,10 @@ class Node: Hashable {
     
     init(_ nodeName:String, id:Int) {
         name = nodeName
-        hashValue = id
+        self.id = id
+//        hashValue = id
     }
-    
+    let id:Int
     let name:String
     var floor:Int = 0
     var connections:[Node] = []
@@ -27,11 +28,15 @@ class Node: Hashable {
         return self.name
     }
     
-    var hashValue: Int
+//    var hashValue: Int
     static func == (lhs: Node, rhs: Node) -> Bool {
         if lhs.name == rhs.name {
             return true
         }
         return false
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
