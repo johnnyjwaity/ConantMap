@@ -26,8 +26,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     // UI Left Overlay Variables
     var overlayController:OverlayController? = nil
     var bottomAnchor:NSLayoutConstraint? = nil
+    var heightAnchor:NSLayoutConstraint? = nil
     var leftAnchor:NSLayoutConstraint!
-    var bottomConstant:CGFloat = -20
+    var bottomConstant:CGFloat = 0
     
     //Route Bar Variables
     var routeBar:RouteController!
@@ -50,7 +51,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     let gpsCoordinates = [[42.035705, -88.064329], [42.036693, -88.061544], [42.037123, -88.062951]]
     var scale:[Double]!
     var macLabel:UILabel!
-    var currentLocationFloor = 2
+    var currentLocationFloor = 1
     let banner = DirectionBanner()
     var macLocations:[MacLocation]!
     var lastAddress:MacAddress? = nil
@@ -80,7 +81,11 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         banner.topConstraint = banner.topAnchor.constraint(equalTo: gameView.topAnchor, constant: -100)
         banner.topConstraint.isActive = true
         banner.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        banner.widthAnchor.constraint(equalToConstant: 450).isActive = true
+        if UIDevice.isIPad() {
+            banner.widthAnchor.constraint(equalToConstant: 450).isActive = true
+        }else{
+            banner.widthAnchor.constraint(equalTo: gameView.widthAnchor, multiplier: 0.9).isActive = true
+        }
         banner.heightAnchor.constraint(equalToConstant: 100).isActive = true
         banner.isDisplayed = false
         
@@ -107,8 +112,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         
         NotificationCenter.default.addObserver(self, selector: #selector(dismissAllControllers), name: Notification.Name("Dismiss All"), object: nil)
         
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(panned(_:)))
-        gameView.addGestureRecognizer(pan)
+//        let pan = UIPanGestureRecognizer(target: self, action: #selector(panned(_:)))
+//        gameView.addGestureRecognizer(pan)
         
         //Set up GPS
         locationManager.requestWhenInUseAuthorization()
@@ -299,7 +304,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     }
     var movingMarker = false
     func moveLocationMarker(x:Float, y:Float){
-        return
+//        return
         if movingMarker {
             Timer.scheduledTimer(withTimeInterval: 0.2, repeats: false) { (timer) in
                 self.moveLocationMarker(x: x, y: y)
@@ -408,15 +413,28 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         overlayController?.delegate = self
         let overlay:UIView = (overlayController?.view)!
         gameView.addSubview(overlay)
+        overlay.layer.zPosition = 2
         // Set Constraints + save in order to move it later
-        leftAnchor = overlay.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 20)
-        leftAnchor.isActive = true
-        overlay.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 20).isActive = true
-        bottomAnchor = overlay.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: bottomConstant)
-        bottomAnchor?.isActive = true
-        overlay.widthAnchor.constraint(equalToConstant: 300).isActive = true
-        let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
+        if UIDevice.isIPad() {
+            bottomConstant = -20
+            leftAnchor = overlay.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 20)
+            leftAnchor.isActive = true
+            overlay.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 20).isActive = true
+            bottomAnchor = overlay.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: bottomConstant)
+            bottomAnchor?.isActive = true
+            overlay.widthAnchor.constraint(equalToConstant: 300).isActive = true
+            
+        }else{
+            bottomConstant = 200
+            bottomAnchor = overlay.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: 25)
+            bottomAnchor?.isActive = true
+            heightAnchor = overlay.heightAnchor.constraint(equalToConstant: 200)
+            heightAnchor?.isActive = true
+            overlay.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 10 /*< 300 ? UIScreen.main.bounds.width : 300*/).isActive = true
+            overlay.centerXAnchor.constraint(equalTo: gameView.centerXAnchor).isActive = true
+        }
         // Add resizeable Drag Bar to Overlay View
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
         overlayController?.dragBar.addGestureRecognizer(pan)
         
         // Create a Route Bar
@@ -424,10 +442,10 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         routeBar.delegate = self
         self.addChild(routeBar)
         gameView.addSubview(routeBar.view)
-        routeBottomAnchor = routeBar.view.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: 100)
+        routeBottomAnchor = routeBar.view.bottomAnchor.constraint(equalTo: gameView.bottomAnchor, constant: UIDevice.isIPad() ? 100 : 150)
         routeBottomAnchor.isActive = true
-        routeBar.view.widthAnchor.constraint(equalTo: gameView.widthAnchor, multiplier: 0.6).isActive = true
-        routeBar.view.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        routeBar.view.widthAnchor.constraint(equalTo: gameView.widthAnchor, multiplier: UIDevice.isIPad() ? 0.6 : 1).isActive = true
+        routeBar.view.heightAnchor.constraint(equalToConstant: UIDevice.isIPad() ? 100 : 150).isActive = true
         routeBar.view.centerXAnchor.constraint(equalTo: gameView.centerXAnchor).isActive = true
         routeBar.setupView(NavigationSession(start: "180", end: "280", usesElevators: false))
         
@@ -437,7 +455,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         addChild(floorSelect)
         gameView.addSubview(floorSelect.view)
         floorSelect.view.rightAnchor.constraint(equalTo: gameView.rightAnchor, constant: -20).isActive = true
-        floorSelect.view.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 20).isActive = true
+        floorSelect.view.topAnchor.constraint(equalTo: gameView.topAnchor, constant: UIDevice.isIPad() ? 20 : 150).isActive = true
         floorSelect.view.widthAnchor.constraint(equalToConstant: 50).isActive = true
         floorSelect.view.heightAnchor.constraint(equalToConstant: 100).isActive = true
         
@@ -461,12 +479,18 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         optionController.view.translatesAutoresizingMaskIntoConstraints = false
         gameView.addSubview(optionController.view)
         addChild(optionController)
-        optionController.view.topAnchor.constraint(equalTo: currentLocationButton.bottomAnchor, constant: 20).isActive = true
-        optionController.view.centerXAnchor.constraint(equalTo: floorSelect.view.centerXAnchor).isActive = true
         optionController.view.widthAnchor.constraint(equalTo: floorSelect.view.widthAnchor).isActive = true
         optionController.view.heightAnchor.constraint(equalToConstant: 132.5).isActive = true
+        if UIDevice.isIPad() {
+            optionController.view.topAnchor.constraint(equalTo: currentLocationButton.bottomAnchor, constant: 20).isActive = true
+            optionController.view.centerXAnchor.constraint(equalTo: floorSelect.view.centerXAnchor).isActive = true
+        }else{
+            optionController.view.topAnchor.constraint(equalTo: gameView.topAnchor, constant: 150).isActive = true
+            optionController.view.leftAnchor.constraint(equalTo: gameView.leftAnchor, constant: 20).isActive = true
+        }
         
         
+        gameView.bringSubviewToFront(overlay)
         // Add Pan Recongnizers to the Sceen.
         let gamePan = UIPanGestureRecognizer(target: self, action: #selector(handleCameraMove(gesture:)))
         gameView.addGestureRecognizer(gamePan)
@@ -513,10 +537,10 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         case .began:
             break
         case .changed:
-            bottomAnchor?.constant = bottomConstant + translation.y
+            (UIDevice.isIPad() ? bottomAnchor : heightAnchor)?.constant = bottomConstant + (translation.y * (UIDevice.isIPad() ? 1 : -1))
             break
         case .ended:
-            bottomConstant = (bottomAnchor?.constant)!
+            bottomConstant = ((UIDevice.isIPad() ? bottomAnchor : heightAnchor)?.constant)!
             break
         default:
             break
@@ -901,19 +925,20 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         var newBottomConstant = bottomConstant
         switch size {
         case .Large:
-            newBottomConstant = -20
+            newBottomConstant = UIDevice.isIPad() ? -20 : UIScreen.main.bounds.height * 0.8
             break
         case .xMedium:
-            newBottomConstant = -200
+            newBottomConstant = UIDevice.isIPad() ? -200 : 500
+            
             break
         case .Medium:
-            newBottomConstant = -496.5
+            newBottomConstant = UIDevice.isIPad() ? -496.5 : 300
         case .Small:
             newBottomConstant = -688
             break
         }
         bottomConstant = newBottomConstant
-        bottomAnchor?.constant = newBottomConstant
+        (UIDevice.isIPad() ? bottomAnchor : heightAnchor)?.constant = newBottomConstant
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
@@ -1104,9 +1129,14 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         overlayController?.reset()
         // Dispay Route Bar At bottom
         routeBar.changeRooms(session)
-        routeBottomAnchor.constant = -15
+        routeBottomAnchor.constant = UIDevice.isIPad() ? -15 : 0
         // Animate dissmissal of overlay controller to the left
-        leftAnchor.constant = -300
+        if UIDevice.isIPad() {
+            leftAnchor.constant = -300
+        }else{
+            heightAnchor?.constant = 200
+            bottomAnchor?.constant = 200
+        }
         UIView.animate(withDuration: 0.5) {
             self.gameView.layoutIfNeeded()
         }
@@ -1376,8 +1406,14 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     // endRoute implementation from RouteBarDelegate
     func endRoute(){
         // Dismiss Route Bar
-        leftAnchor.constant = 20
-        routeBottomAnchor.constant = 100
+        if UIDevice.isIPad() {
+            leftAnchor.constant = 20
+        }else{
+            heightAnchor?.constant = 200
+            bottomConstant = 200
+            bottomAnchor?.constant = 25
+        }
+        routeBottomAnchor.constant = UIDevice.isIPad() ? 100 : 150
         UIView.animate(withDuration: 0.5) {
             self.gameView.layoutIfNeeded()
         }
@@ -1394,7 +1430,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 n.removeFromParentNode()
             }
         }
-        resizeOverlay(.Large)
+        if UIDevice.isIPad() {
+            resizeOverlay(.Large)
+        }
         currentNavSession = nil
         banner.hide()
     }

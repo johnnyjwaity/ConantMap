@@ -30,6 +30,8 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         // Do any additional setup after loading the view.
     }
     
+    
+    
     func setup(){
         
         let month = Calendar.current.component(.month, from: Date())
@@ -104,7 +106,8 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         }
         tableView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         tableView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20).isActive = true
+        tableView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+//        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -20).isActive = true
         tableHeightConstriant = tableView.heightAnchor.constraint(equalToConstant: CGFloat(50 * numOfRows))
         tableHeightConstriant.isActive = true
         view.backgroundColor = UIColor.white
@@ -179,8 +182,9 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
     func startImport(){
         let importController = ScheduleImportController()
         importController.delegate = self
-        importController.modalPresentationStyle = .currentContext
-        present(importController, animated: true, completion: nil)
+//        importController.modalPresentationStyle = .currentContext
+//        present(importController, animated: true, completion: nil)
+        navigationController?.pushViewController(importController, animated: true)
     }
     
     @objc
@@ -223,7 +227,5 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         search.pushViewController(viewCont!, animated: false)
         present(search, animated: true, completion: nil)
     }
-    
-    
 
 }

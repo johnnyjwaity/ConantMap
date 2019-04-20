@@ -246,11 +246,11 @@ class RoomInfoController: UIViewController {
     func navigateButton(_ sender:UIButton){
         
 //        var otherController:UIViewController? = nil
-        if let cont = ScheduleController.sharedInstance {
+        if let _ = ScheduleController.sharedInstance {
 //            otherController = cont
             NotificationCenter.default.post(name: Notification.Name("Dismiss All"), object: nil)
         }
-        else if let cont = StaffSearchController.sharedInstance {
+        else if let _ = StaffSearchController.sharedInstance {
 //            otherController = cont
             NotificationCenter.default.post(name: Notification.Name("Dismiss All"), object: nil)
             

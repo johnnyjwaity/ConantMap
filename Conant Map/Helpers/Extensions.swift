@@ -320,3 +320,11 @@ extension UIColor {
 
 
 
+extension UIDevice {
+    static func isIPad() -> Bool {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return true
+        }
+        return false
+    }
+}

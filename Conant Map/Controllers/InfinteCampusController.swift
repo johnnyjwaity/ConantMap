@@ -21,7 +21,6 @@ class InfinteCampusController: UIViewController, WKNavigationDelegate {
     var attemptedLogin = false
     
     init(firstName:String, lastName:String, birthday:Date, id:String, completionHandler: @escaping (_ result:String?, _ error:String?) -> Void) {
-        
         var usernameEntry = id
         if usernameEntry.count == 6 {
             usernameEntry = "000" + usernameEntry

@@ -19,19 +19,34 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
     var tableViewHeightConstraint:NSLayoutConstraint!
     
     var delegate:ScheduleImportDelegate!
+    
+    var toolbar:UIToolbar!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
+        title = "Import Schedule"
         // Do any additional setup after loading the view.
         
+//        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+//        self.view.addGestureRecognizer(tapGesture)
+        
         let titleLabel = UILabel()
-        titleLabel.text = "Import Schedule"
+        titleLabel.text = ""
         titleLabel.font = UIFont.boldSystemFont(ofSize: 30)
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(titleLabel)
-        titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 20).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 40).isActive = true
         titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+//        let cancelButton = UIButton(type: .system)
+//        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+//        cancelButton.setTitle("Cancel", for: .normal)
+//        cancelButton.addTarget(self, action: #selector(exit), for: .touchUpInside)
+//        view.addSubview(cancelButton)
+//        cancelButton.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8).isActive = true
+//        cancelButton.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor).isActive = true
+//        cancelButton.rightAnchor.constraint(equalTo: titleLabel.leftAnchor).isActive = true
         
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -63,16 +78,33 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         importButton.heightAnchor.constraint(equalToConstant: 70).isActive = true
         importButton.addTarget(self, action: #selector(importSchedule), for: .touchUpInside)
         
+        toolbar = UIToolbar(frame: CGRect(x: 0, y: 0,  width: self.view.frame.size.width, height: 30))
+        //create left side empty space so that done button set on right side
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneBtn: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(dismissKeyboard))
+        toolbar.setItems([flexSpace, doneBtn], animated: false)
+        toolbar.sizeToFit()
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 4
     }
     
+    @objc
+    func dismissKeyboard (){
+        self.view.endEditing(true)
+    }
+    
+    
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row != 3 {
             let cell = TextEnterCell()
-            textFields.append(cell.setup(title: fields[indexPath.row], numericOnly: indexPath.row == 2))
+            let field = cell.setup(title: fields[indexPath.row], numericOnly: indexPath.row == 2)
+            field.inputAccessoryView = toolbar
+            textFields.append(field)
+            
             return cell
         }
         let cell = DateEnterCell()
@@ -95,12 +127,14 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         }
         return 55
     }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Index \(indexPath.row)")
         if(indexPath.row != 3){
             tableView.deselectRow(at: indexPath, animated: true)
             return
         }
+        print("BDay")
+        dismissKeyboard()
         tableView.beginUpdates()
         tableView.endUpdates()
         tableView.deselectRow(at: indexPath, animated: true)
@@ -126,7 +160,9 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         let birthday = datePicker.date
         
         
-        
+        if firstName == "" || lastName == "" || id == "" {
+            return
+        }
         
         let alert = UIAlertController(title: "Importing Schedule", message: nil, preferredStyle: .alert)
         
@@ -157,7 +193,8 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
                     let schedule = Schedule(res)
                     schedule.save()
                     self.delegate.displayScheudle(schedule)
-                    self.dismiss(animated: true, completion: nil)
+//                    self.dismiss(animated: true, completion: nil)
+                    self.navigationController?.popViewController(animated: true)
                 })
             }else if let err = error {
                 alert.dismiss(animated: true, completion: {

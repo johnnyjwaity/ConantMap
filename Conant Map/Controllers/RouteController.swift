@@ -32,10 +32,17 @@ class RouteController: UIViewController {
         endRouteButton.translatesAutoresizingMaskIntoConstraints = false
         endRouteButton.setTitleColor(UIColor.white, for: .normal)
         view.addSubview(endRouteButton)
-        endRouteButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15).isActive = true
-        endRouteButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        endRouteButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.7).isActive = true
-        endRouteButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        if UIDevice.isIPad() {
+            endRouteButton.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15).isActive = true
+            endRouteButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            endRouteButton.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.7).isActive = true
+            endRouteButton.widthAnchor.constraint(equalToConstant: 200).isActive = true
+        }else{
+            endRouteButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            endRouteButton.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+            endRouteButton.heightAnchor.constraint(equalToConstant: 60).isActive = true
+            endRouteButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -10).isActive = true
+        }
         endRouteButton.addTarget(self, action: #selector(endRoute), for: .touchUpInside)
         
         
@@ -46,13 +53,21 @@ class RouteController: UIViewController {
         routeLabel.font = UIFont.boldSystemFont(ofSize: 24)
         view.addSubview(routeLabel)
         routeLabel.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 15).isActive = true
-        routeLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        routeLabel.rightAnchor.constraint(equalTo: endRouteButton.leftAnchor, constant: -5).isActive = true
-        routeLabel.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).isActive = true
+        if UIDevice.isIPad() {
+            routeLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+            routeLabel.rightAnchor.constraint(equalTo: endRouteButton.leftAnchor, constant: -5).isActive = true
+            routeLabel.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 1).isActive = true
+        }else{
+            routeLabel.textAlignment = .center
+            routeLabel.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -15).isActive = true
+            routeLabel.bottomAnchor.constraint(equalTo: endRouteButton.topAnchor).isActive = true
+            routeLabel.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        }
+        
     }
     
     func changeRooms(_ session:NavigationSession){
-        routeLabel.text = "\(session.startStr) -> \(session.endStr)"
+        routeLabel.text = "\(session.startStr) → \(session.endStr)"
     }
     
     @objc

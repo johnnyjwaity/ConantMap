@@ -153,7 +153,9 @@ class RoomSearchController: UIViewController, UITableViewDelegate, UITableViewDa
         if let i = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: i, animated: true)
         }
-        
+        if !UIDevice.isIPad() {
+            MapViewController.main?.resizeOverlay(.Large)
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

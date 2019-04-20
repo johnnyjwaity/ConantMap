@@ -173,22 +173,38 @@ class RoomCell: UITableViewCell {
         sendSubviewToBack(dropDown)
         populationArray.append(dropDown)
         
-        addSubview(toButton)
+        let linear = UIStackView(arrangedSubviews: [toButton, fromButton])
+        linear.alignment = .fill
+        linear.distribution = .fillEqually
+        linear.axis = .horizontal
+        linear.isLayoutMarginsRelativeArrangement = true
+        linear.layoutMargins = UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 30)
+        linear.translatesAutoresizingMaskIntoConstraints = false
+        linear.setCustomSpacing(30, after: toButton)
+        addSubview(linear)
+        linear.leftAnchor.constraint(equalTo: dropDown.leftAnchor).isActive = true
+        linear.centerYAnchor.constraint(equalTo: dropDown.centerYAnchor).isActive = true
+        linear.widthAnchor.constraint(equalTo: dropDown.widthAnchor).isActive = true
+        linear.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        
+        populationArray.append(linear)
+        
+//        addSubview(toButton)
         //sendSubview(toBack: toButton)
-        populationArray.append(toButton)
-        toButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
-        toButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        toButton.leftAnchor.constraint(equalTo: dropDown.leftAnchor, constant: 25).isActive = true
-        toButton.centerYAnchor.constraint(equalTo: dropDown.centerYAnchor).isActive = true
+//        populationArray.append(toButton)
+//        toButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
+//        toButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+//        toButton.leftAnchor.constraint(equalTo: dropDown.leftAnchor, constant: 25).isActive = true
+//        toButton.centerYAnchor.constraint(equalTo: dropDown.centerYAnchor).isActive = true
         
         
-        addSubview(fromButton)
-        populationArray.append(fromButton)
-        //sendSubview(toBack: fromButton)
-        fromButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
-        fromButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
-        fromButton.leftAnchor.constraint(equalTo: toButton.rightAnchor, constant: 25).isActive = true
-        fromButton.centerYAnchor.constraint(equalTo: dropDown.centerYAnchor).isActive = true
+//        addSubview(fromButton)
+//        populationArray.append(fromButton)
+//        //sendSubview(toBack: fromButton)
+//        fromButton.widthAnchor.constraint(equalToConstant: 112.5).isActive = true
+//        fromButton.heightAnchor.constraint(equalToConstant: 35).isActive = true
+//        fromButton.leftAnchor.constraint(equalTo: toButton.rightAnchor, constant: 25).isActive = true
+//        fromButton.centerYAnchor.constraint(equalTo: dropDown.centerYAnchor).isActive = true
         
     }
     

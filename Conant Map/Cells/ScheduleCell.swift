@@ -45,10 +45,10 @@ class ScheduleCell: UITableViewCell {
 //        classButton.backgroundColor = UIColor.blue
         classLabel.font = UIFont.systemFont(ofSize: 15, weight: .semibold)
         classLabel.translatesAutoresizingMaskIntoConstraints = false
-        classLabel.lineBreakMode = .byWordWrapping
-        classLabel.numberOfLines = 0
+//        classLabel.lineBreakMode = .byWordWrapping
+        classLabel.numberOfLines = 2
         classLabel.textAlignment = .center
-        
+        classLabel.adjustsFontSizeToFitWidth = true
         addSubview(classLabel)
         classLabel.leftAnchor.constraint(equalTo: periodLabel.rightAnchor).isActive = true
         classLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true

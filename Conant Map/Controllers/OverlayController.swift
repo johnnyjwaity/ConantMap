@@ -63,14 +63,18 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
     }
 
     func setupView(){
-        view.layer.cornerRadius = 8
+        view.layer.cornerRadius = UIDevice.isIPad() ? 8 : 25
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
         view.clipsToBounds = true
         
         
         view.addSubview(dragBar)
-        dragBar.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        if UIDevice.isIPad() {
+            dragBar.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        }else{
+            dragBar.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        }
         dragBar.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         dragBar.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         dragBar.heightAnchor.constraint(equalToConstant: 25).isActive = true
@@ -84,8 +88,13 @@ class OverlayController: UIViewController, RoomSearchDelegate, NavOptionsDelegat
         
         view.addSubview(pageView.view)
         pageView.view.translatesAutoresizingMaskIntoConstraints = false
-        pageView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        pageView.view.bottomAnchor.constraint(equalTo: dragBar.topAnchor).isActive = true
+        if UIDevice.isIPad() {
+            pageView.view.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+            pageView.view.bottomAnchor.constraint(equalTo: dragBar.topAnchor).isActive = true
+        }else{
+            pageView.view.topAnchor.constraint(equalTo: dragBar.bottomAnchor).isActive = true
+            pageView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        }
         pageView.view.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         pageView.view.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         
