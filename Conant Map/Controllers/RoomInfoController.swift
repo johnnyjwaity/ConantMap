@@ -11,6 +11,7 @@ import UIKit
 class RoomInfoController: UIViewController {
     
     let room:String
+    var infoPicker:UISegmentedControl!
     
     init(room:String) {
         self.room = room
@@ -135,86 +136,103 @@ class RoomInfoController: UIViewController {
         toButton.leftAnchor.constraint(equalTo: view.centerXAnchor, constant: 25/2).isActive = true
         toButton.addTarget(self, action: #selector(navigateButton(_:)), for: .touchUpInside)
         
-        let infoPicker = UISegmentedControl(items: ["Staff", "Class"])
-        infoPicker.translatesAutoresizingMaskIntoConstraints = false
-        infoPicker.selectedSegmentIndex = 0
-        view.addSubview(infoPicker)
-        infoPicker.topAnchor.constraint(equalTo: toButton.bottomAnchor, constant: 20).isActive = true
-        infoPicker.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
-        infoPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        infoPicker.addTarget(self, action: #selector(changeTableDisplay(sender:)), for: .valueChanged)
-        
-        
-        let scheduleBackground = UIView()
-        scheduleBackground.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 239/255)
-        scheduleBackground.translatesAutoresizingMaskIntoConstraints = false
-        scheduleBackground.layer.cornerRadius = 8
-        scheduleBackground.clipsToBounds = true
-        view.addSubview(scheduleBackground)
-        scheduleBackground.topAnchor.constraint(equalTo: infoPicker.bottomAnchor, constant: 10).isActive = true
-        scheduleBackground.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
-        scheduleBackground.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        scheduleBackground.heightAnchor.constraint(equalToConstant: CGFloat(50 * fullySorted.count)).isActive = true
-        
-        
-        var lastView = scheduleBackground
-        for c in fullySorted {
-            let listingContainer = UIView()
-            listingContainer.backgroundColor = UIColor.clear
-            listingContainer.translatesAutoresizingMaskIntoConstraints = false
+        if fullySorted.count != 0 {
+            infoPicker = UISegmentedControl(items: ["Staff", "Class"])
+            infoPicker.translatesAutoresizingMaskIntoConstraints = false
+            infoPicker.selectedSegmentIndex = 0
+            view.addSubview(infoPicker)
+            infoPicker.topAnchor.constraint(equalTo: toButton.bottomAnchor, constant: 20).isActive = true
+            infoPicker.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+            infoPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            infoPicker.addTarget(self, action: #selector(changeTableDisplay(sender:)), for: .valueChanged)
             
-            let periodLabel = UILabel()
-            periodLabel.text = ("Period " + c.period) + ":"
-            periodLabel.translatesAutoresizingMaskIntoConstraints = false
-            periodLabel.adjustsFontSizeToFitWidth = true
-            periodLabel.textColor = UIColor.lightGray
             
-            listingContainer.addSubview(periodLabel)
-            periodLabel.leftAnchor.constraint(equalTo: listingContainer.leftAnchor, constant: 5).isActive = true
-            periodLabel.centerYAnchor.constraint(equalTo: listingContainer.centerYAnchor).isActive = true
-            periodLabel.widthAnchor.constraint(equalTo: listingContainer.widthAnchor, multiplier: 0.4).isActive = true
-
-            let teacherButton = UIButton(type: .system)
-            teacherButton.setTitle(c.staff.name, for: .normal)
-            teacherButton.translatesAutoresizingMaskIntoConstraints = false
-            teacherButton.titleLabel?.adjustsFontSizeToFitWidth = true
-            staffButtons[teacherButton] = c
-            listingContainer.addSubview(teacherButton)
-            teacherButton.leftAnchor.constraint(equalTo: periodLabel.rightAnchor, constant: 5).isActive = true
-            teacherButton.rightAnchor.constraint(equalTo: listingContainer.rightAnchor, constant: -5).isActive = true
-            teacherButton.centerYAnchor.constraint(equalTo: listingContainer.centerYAnchor).isActive = true
-            let data = DataHolder()
-            data.data["Teacher"] = c.staff.name;
-            teacherButton.addSubview(data)
-            teacherButton.addTarget(self, action: #selector(teacherButtonClick(sender:)), for: .touchUpInside)
+            let scheduleBackground = UIView()
+            scheduleBackground.backgroundColor = UIColor(red: 239/255, green: 239/255, blue: 239/255, alpha: 239/255)
+            scheduleBackground.translatesAutoresizingMaskIntoConstraints = false
+            scheduleBackground.layer.cornerRadius = 8
+            scheduleBackground.clipsToBounds = true
+            view.addSubview(scheduleBackground)
+            scheduleBackground.topAnchor.constraint(equalTo: infoPicker.bottomAnchor, constant: 10).isActive = true
+            scheduleBackground.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+            scheduleBackground.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+            scheduleBackground.heightAnchor.constraint(equalToConstant: CGFloat(50 * fullySorted.count)).isActive = true
             
-            if fullySorted.last?.id != c.id {
-                let seperator = UIView()
-                seperator.backgroundColor = UIColor.lightGray
-                seperator.translatesAutoresizingMaskIntoConstraints = false
+            
+            var lastView = scheduleBackground
+            for c in fullySorted {
+                let listingContainer = UIView()
+                listingContainer.backgroundColor = UIColor.clear
+                listingContainer.translatesAutoresizingMaskIntoConstraints = false
                 
-                listingContainer.addSubview(seperator)
-                seperator.bottomAnchor.constraint(equalTo: listingContainer.bottomAnchor).isActive = true
-                seperator.leftAnchor.constraint(equalTo: listingContainer.leftAnchor).isActive = true
-                seperator.rightAnchor.constraint(equalTo: listingContainer.rightAnchor).isActive = true
-                seperator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+                let periodLabel = UILabel()
+                periodLabel.text = ("Period " + c.period) + ":"
+                periodLabel.translatesAutoresizingMaskIntoConstraints = false
+                periodLabel.adjustsFontSizeToFitWidth = true
+                periodLabel.textColor = UIColor.lightGray
+                
+                listingContainer.addSubview(periodLabel)
+                periodLabel.leftAnchor.constraint(equalTo: listingContainer.leftAnchor, constant: 5).isActive = true
+                periodLabel.centerYAnchor.constraint(equalTo: listingContainer.centerYAnchor).isActive = true
+                periodLabel.widthAnchor.constraint(equalTo: listingContainer.widthAnchor, multiplier: 0.4).isActive = true
+                
+                let teacherButton = UIButton(type: .system)
+                teacherButton.setTitle(c.staff.name, for: .normal)
+                teacherButton.translatesAutoresizingMaskIntoConstraints = false
+                teacherButton.titleLabel?.adjustsFontSizeToFitWidth = true
+                staffButtons[teacherButton] = c
+                listingContainer.addSubview(teacherButton)
+                teacherButton.leftAnchor.constraint(equalTo: periodLabel.rightAnchor, constant: 5).isActive = true
+                teacherButton.rightAnchor.constraint(equalTo: listingContainer.rightAnchor, constant: -5).isActive = true
+                teacherButton.centerYAnchor.constraint(equalTo: listingContainer.centerYAnchor).isActive = true
+                let data = DataHolder()
+                data.data["Teacher"] = c.staff.name;
+                teacherButton.addSubview(data)
+                teacherButton.addTarget(self, action: #selector(teacherButtonClick(sender:)), for: .touchUpInside)
+                
+                if fullySorted.last?.id != c.id {
+                    let seperator = UIView()
+                    seperator.backgroundColor = UIColor.lightGray
+                    seperator.translatesAutoresizingMaskIntoConstraints = false
+                    
+                    listingContainer.addSubview(seperator)
+                    seperator.bottomAnchor.constraint(equalTo: listingContainer.bottomAnchor).isActive = true
+                    seperator.leftAnchor.constraint(equalTo: listingContainer.leftAnchor).isActive = true
+                    seperator.rightAnchor.constraint(equalTo: listingContainer.rightAnchor).isActive = true
+                    seperator.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+                }
+                
+                
+                scheduleBackground.addSubview(listingContainer)
+                listingContainer.topAnchor.constraint(equalTo: (fullySorted.first!.id == c.id) ? lastView.topAnchor : lastView.bottomAnchor).isActive = true
+                listingContainer.leftAnchor.constraint(equalTo: scheduleBackground.leftAnchor).isActive = true
+                listingContainer.rightAnchor.constraint(equalTo: scheduleBackground.rightAnchor).isActive = true
+                listingContainer.heightAnchor.constraint(equalToConstant: 50).isActive = true
+                
+                lastView = listingContainer
+                
             }
-            
-            
-            scheduleBackground.addSubview(listingContainer)
-            listingContainer.topAnchor.constraint(equalTo: (fullySorted.first!.id == c.id) ? lastView.topAnchor : lastView.bottomAnchor).isActive = true
-            listingContainer.leftAnchor.constraint(equalTo: scheduleBackground.leftAnchor).isActive = true
-            listingContainer.rightAnchor.constraint(equalTo: scheduleBackground.rightAnchor).isActive = true
-            listingContainer.heightAnchor.constraint(equalToConstant: 50).isActive = true
-            
-            lastView = listingContainer
-            
+        }else{
+            let label = UILabel()
+            label.textColor = UIColor.lightGray
+            label.text = "No Schedule Information Available"
+            label.translatesAutoresizingMaskIntoConstraints = false
+            label.textAlignment = .center
+            view.addSubview(label)
+            label.topAnchor.constraint(equalTo: toButton.bottomAnchor, constant: 20).isActive = true
+            label.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9).isActive = true
+            label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         }
+        
+        
         
     }
     
     @objc
     func teacherButtonClick(sender:UIButton){
+        if infoPicker.selectedSegmentIndex == 1 {
+            return
+        }
         var teacherName:String = ""
         for sub in sender.subviews {
             if let dataHolder = sub as? DataHolder {
@@ -244,6 +262,8 @@ class RoomInfoController: UIViewController {
     
     @objc
     func navigateButton(_ sender:UIButton){
+        
+        MapViewController.main?.endRoute()
         
 //        var otherController:UIViewController? = nil
         if let _ = ScheduleController.sharedInstance {

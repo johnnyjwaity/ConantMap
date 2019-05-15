@@ -145,22 +145,24 @@ class RoomCell: UITableViewCell {
         icon.heightAnchor.constraint(equalToConstant: imageSize).isActive = true
         icon.widthAnchor.constraint(equalToConstant: imageSize).isActive = true
         
-        roomLbl = UILabel()
-        roomLbl.translatesAutoresizingMaskIntoConstraints = false
-        roomLbl.font = UIFont.boldSystemFont(ofSize: 20)
-        roomLbl.numberOfLines = 0
-        roomLbl.lineBreakMode = .byWordWrapping
-        
-        mainView.addSubview(roomLbl)
-        roomLbl.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10).isActive = true
-        roomLbl.centerYAnchor.constraint(equalTo: mainView.centerYAnchor).isActive = true
-        roomLbl.rightAnchor.constraint(equalTo: mainView.rightAnchor).isActive = true
-        roomLbl.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         
         mainView.addSubview(infoButton)
         infoButton.rightAnchor.constraint(equalTo: mainView.rightAnchor, constant: -10).isActive = true
         infoButton.centerYAnchor.constraint(equalTo: mainView.centerYAnchor).isActive = true
+        
+        roomLbl = UILabel()
+        roomLbl.translatesAutoresizingMaskIntoConstraints = false
+        roomLbl.font = UIFont.boldSystemFont(ofSize: 20)
+//        roomLbl.numberOfLines = 0
+//        roomLbl.lineBreakMode = .byWordWrapping
+        roomLbl.adjustsFontSizeToFitWidth = true
+        
+        mainView.addSubview(roomLbl)
+        roomLbl.leftAnchor.constraint(equalTo: icon.rightAnchor, constant: 10).isActive = true
+        roomLbl.centerYAnchor.constraint(equalTo: mainView.centerYAnchor).isActive = true
+        roomLbl.rightAnchor.constraint(equalTo: infoButton.leftAnchor).isActive = true
+        roomLbl.heightAnchor.constraint(equalToConstant: 30).isActive = true
         
         
         

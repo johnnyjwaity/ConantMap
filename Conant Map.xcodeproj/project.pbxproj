@@ -16,7 +16,6 @@
 		3D17EFC820C5F599002AEBE2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D17EFC620C5F599002AEBE2 /* LaunchScreen.storyboard */; };
 		3D17EFD420C75156002AEBE2 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D17EFD320C75156002AEBE2 /* Extensions.swift */; };
 		3D188EED212C073A002076DB /* RouteController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D188EEC212C073A002076DB /* RouteController.swift */; };
-		3D188EF1212E1E9F002076DB /* staff.dat in Resources */ = {isa = PBXBuildFile; fileRef = 3D188EF0212E1E9F002076DB /* staff.dat */; };
 		3D188EFB2134C54E002076DB /* RouteBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D188EFA2134C54E002076DB /* RouteBarDelegate.swift */; };
 		3D188EFD2134CA87002076DB /* SearchNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D188EFC2134CA87002076DB /* SearchNavigationController.swift */; };
 		3D188EFF2134CCC2002076DB /* SearchNavigationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D188EFE2134CCC2002076DB /* SearchNavigationDelegate.swift */; };
@@ -71,6 +70,7 @@
 		3DC37919217FE8FD005790CB /* OptionsDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC37918217FE8FD005790CB /* OptionsDelegate.swift */; };
 		3DC3791B2180182D005790CB /* QuickSelectCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC3791A2180182D005790CB /* QuickSelectCell.swift */; };
 		3DCD145421F11C6C00867FEA /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DCD145321F11C6C00867FEA /* MapKit.framework */; };
+		3DD8F19A2288EEA200DCCB0F /* staff.dat in Resources */ = {isa = PBXBuildFile; fileRef = 3DD8F1992288EEA200DCCB0F /* staff.dat */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,7 +85,6 @@
 		3D17EFC920C5F599002AEBE2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3D17EFD320C75156002AEBE2 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		3D188EEC212C073A002076DB /* RouteController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteController.swift; sourceTree = "<group>"; };
-		3D188EF0212E1E9F002076DB /* staff.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = staff.dat; path = "Conant Map/Data/staff.dat"; sourceTree = SOURCE_ROOT; };
 		3D188EFA2134C54E002076DB /* RouteBarDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RouteBarDelegate.swift; sourceTree = "<group>"; };
 		3D188EFC2134CA87002076DB /* SearchNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNavigationController.swift; sourceTree = "<group>"; };
 		3D188EFE2134CCC2002076DB /* SearchNavigationDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchNavigationDelegate.swift; sourceTree = "<group>"; };
@@ -141,6 +140,7 @@
 		3DC37918217FE8FD005790CB /* OptionsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsDelegate.swift; sourceTree = "<group>"; };
 		3DC3791A2180182D005790CB /* QuickSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSelectCell.swift; sourceTree = "<group>"; };
 		3DCD145321F11C6C00867FEA /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		3DD8F1992288EEA200DCCB0F /* staff.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = staff.dat; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -211,9 +211,9 @@
 		3D3DDCD020D1EBB200B865CE /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				3DD8F1992288EEA200DCCB0F /* staff.dat */,
 				3D20FB192265826A00B621D0 /* MacLocations.json */,
 				3D1E638F220242F10088DFC4 /* Mac-Addresses.csv */,
-				3D188EF0212E1E9F002076DB /* staff.dat */,
 				3D1F2FDF20E2D4A20078D044 /* stairs.dat */,
 				3D1F2FE120E2D4B00078D044 /* colors.dat */,
 				3D1F2FE220E2D4B00078D044 /* nodes.dat */,
@@ -385,12 +385,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D20FB16225F0AAC00B621D0 /* Intersections.json in Resources */,
+				3DD8F19A2288EEA200DCCB0F /* staff.dat in Resources */,
 				3D17EFBE20C5F599002AEBE2 /* art.scnassets in Resources */,
 				3D1F2FE420E2D4B00078D044 /* nodes.dat in Resources */,
 				3D1F2FE320E2D4B00078D044 /* colors.dat in Resources */,
 				3D20FB1A2265826A00B621D0 /* MacLocations.json in Resources */,
 				3D17EFC820C5F599002AEBE2 /* LaunchScreen.storyboard in Resources */,
-				3D188EF1212E1E9F002076DB /* staff.dat in Resources */,
 				3D88F189215C91FD002F1EBF /* IC.js in Resources */,
 				3D1E6390220242F10088DFC4 /* Mac-Addresses.csv in Resources */,
 				3D17EFC520C5F599002AEBE2 /* Assets.xcassets in Resources */,

@@ -10,7 +10,7 @@ import UIKit
 
 class SettingsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    let fields:[[String]] = [["Display Room Labels", "Current Location"], ["Created By John Waity", "Report a Bug"]]
+    let fields:[[String]] = [["Display Room Labels", "Current Location"], ["Created By John Waity"]]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +56,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         case 0:
             return 2
         case 1:
-            return 2
+            return 1
         default:
             return 0
         }
@@ -68,6 +68,9 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
         if indexPath.section == 0 && indexPath.row == 0 {
             let s = UISwitch(frame: CGRect.zero)
             s.isOn = UserDefaults.standard.bool(forKey: "displayRoomLabels")
+            if UserDefaults.standard.object(forKey: "displayRoomLabels") == nil {
+                s.isOn = true
+            }
             s.addTarget(self, action: #selector(toggleRoomLabels(_:)), for: .valueChanged)
             cell.accessoryView = s
         }else if indexPath.section == 0 && indexPath.row == 1 {

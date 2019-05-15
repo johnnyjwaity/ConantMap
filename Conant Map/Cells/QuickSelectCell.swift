@@ -27,7 +27,7 @@ class QuickSelectCell: UITableViewCell {
     func setupCell(){
         let gym = QuickButton(name: "Gym", color: UIColor.orange, glyph: #imageLiteral(resourceName: "basketball"))
         let caf = QuickButton(name: "Cafeteria", color: UIColor.red, glyph: #imageLiteral(resourceName: "hamburger"))
-        let lib = QuickButton(name: "Library", color: UIColor.blue, glyph: #imageLiteral(resourceName: "open-book"))
+        let lib = QuickButton(name: "Library", color: UIColor.purple, glyph: #imageLiteral(resourceName: "open-book"))
         let atr = QuickButton(name: "Atrium", color: UIColor.green, glyph: #imageLiteral(resourceName: "sun"))
         
         quickButtons = [gym, caf, lib, atr]

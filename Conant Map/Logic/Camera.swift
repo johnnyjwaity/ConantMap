@@ -122,6 +122,12 @@ class Camera {
     
     func applyVelocity(){
         camRig.position = camRig.position + panVelocity
+        if camRig.position.x > 20 || camRig.position.x < -20 {
+            camRig.position.x -= Float(panVelocity.x)
+        }
+        if camRig.position.z > 40 || camRig.position.z < -20 {
+            camRig.position.z -= Float(panVelocity.y)
+        }
         panVelocity = panVelocity / 1.1
         
     }
@@ -142,6 +148,12 @@ class Camera {
 //            let prevPosition = SCNVector3(camRig.position.x, camRig.position.y, camRig.position.z);
 //            print("Translation: \(translation)")
             camRig.position = camRig.position + translation
+            if camRig.position.y < 1 || camRig.position.y > 30 {
+                camRig.position = camRig.position - translation
+            }
+            if camRig.position.z > 40 || camRig.position.z < -20 {
+                camRig.position = camRig.position - translation
+            }
 //            if translation.x != Float.nan && translation.y != Float.nan && translation.z != Float.nan {
 //
 //            }

@@ -172,6 +172,9 @@ class Pathfinder {
         var directions:[Node:WalkDirection] = [:]
         var pathCount = 1
         for path in paths {
+            if path.count - 2 < 1 {
+                continue
+            }
             for i in 1...path.count-2 {
                 let d1 = path[i].position.distance(receiver: path[i-1].position)
                 let d2 = path[i].position.distance(receiver: path[i+1].position)
