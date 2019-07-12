@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Conant Map/Controllers/MapViewController.swift"
-            timestampString = "579590619.63998"
+            timestampString = "580096648.274302"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1116"
-            endingLineNumber = "1116"
+            startingLineNumber = "1122"
+            endingLineNumber = "1122"
             landmarkName = "startNavigation(_:)"
             landmarkType = "7">
          </BreakpointContent>

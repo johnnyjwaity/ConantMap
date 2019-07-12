@@ -15,6 +15,12 @@ import SystemConfiguration.CaptiveNetwork
 
 class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate, OptionsDelegate, CLLocationManagerDelegate {
     
+    override var prefersHomeIndicatorAutoHidden: Bool {
+        return true
+    }
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
     
     // Scene View Variables
     static var main:MapViewController? = nil
