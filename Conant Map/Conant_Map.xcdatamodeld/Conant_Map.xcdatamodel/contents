@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14490.99" systemVersion="18E226" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ScheduleClass" representedClassName="ScheduleClass" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="room" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="semester" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="teacher" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="StaffClass" representedClassName="StaffClass" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="location" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="period" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="staff" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="StaffPerson" inverseName="classes" inverseEntity="StaffPerson" syncable="YES"/>
+    </entity>
+    <entity name="StaffPerson" representedClassName="StaffPerson" syncable="YES" codeGenerationType="class">
+        <attribute name="department" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="classes" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="StaffClass" inverseName="staff" inverseEntity="StaffClass" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="ScheduleClass" positionX="-2807.34765625" positionY="-877.984375" width="189.37109375" height="118"/>
+        <element name="StaffPerson" positionX="-3030.7890625" positionY="-730.30078125" width="128" height="58"/>
+        <element name="StaffClass" positionX="-2775.48828125" positionY="-633.63671875" width="128" height="58"/>
+    </elements>
+</model>

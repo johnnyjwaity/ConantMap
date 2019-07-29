@@ -82,7 +82,8 @@ class InfinteCampusController: UIViewController, WKNavigationDelegate {
             break
         default:
             if (webView.url?.absoluteString.contains("main.xsl"))! {
-                webView.evaluateJavaScript("document.getElementById('frameDetail').contentWindow.document.getElementById('schedule').click()", completionHandler: nil)
+                print("eval")
+                 webView.evaluateJavaScript("document.getElementById('frameDetail').contentWindow.document.getElementById('schedule').click()", completionHandler: nil)
                 Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { (timer) in
                     webView.evaluateJavaScript(self.javascriptInject + "getTable();", completionHandler: { (res, error) in
                         if let sch = res as? String {
@@ -96,6 +97,9 @@ class InfinteCampusController: UIViewController, WKNavigationDelegate {
                     self.completion(nil, "Login Failed Check Information Entered")
                     return
                 }
+            }else{
+                print("Redirecting")
+                webView.load(URLRequest(url: URL(string: "https://campus.d211.org/campus/portal/main.xsl")!))
             }
             break
         }

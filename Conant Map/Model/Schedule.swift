@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 
 class Schedule{
     
@@ -15,23 +16,47 @@ class Schedule{
     var classes:[Class]!
     var semClasses:[[Class]] = [[],[]]
     
-    init(_ schedule:String) {
-        print(schedule)
-        self.classes = parseSchedule(schedule)
-    }
     init(_ schedule:SimpleSchedule) {
+        var sortedClasses = schedule.classes
+        sortedClasses.sort { (c1, c2) -> Bool in
+            if c1.period == "EB" {
+                return true
+            }
+            if c2.period == "EB" {
+                return false
+            }
+            if c1.period == "AC" {
+                return false
+            }
+            if c2.period == "AC" {
+                return true
+            }
+            
+            let p1 = Int(c1.period)!
+            let p2 = Int(c2.period)!
+            
+            if p1 < p2 {
+                return true
+            }
+            return false
+        }
         classes = []
-        for c in schedule.classes {
+        for c in sortedClasses {
             let cl = Class(period: c.period)
             cl.name = c.name
             cl.semester = c.semester
             cl.location = c.location
-            for s in Global.staff {
-                if s.name == c.staff.name {
-                    cl.potentialStaff = s
-                    print(s.name)
-                    print("Found \(c.staff.name)")
-                    break
+            if c.staff.name != "-" {
+                for s in Global.staff {
+                    if s.name.contains(c.staff.name) || c.staff.name.contains(s.name) {
+                        if cl.potentialStaff != nil {
+                            if s.name == c.staff.name {
+                                cl.potentialStaff = s
+                            }
+                        }else{
+                            cl.potentialStaff = s
+                        }
+                    }
                 }
             }
             semClasses[c.semester - 1].append(cl)
@@ -48,88 +73,28 @@ class Schedule{
         return nil
     }
     
-    func parseSchedule(_ schedule:String) -> [Class]{
-        let semesters = schedule.components(separatedBy: "S2,")
-        
-        var semesterIndex = 1
-        var allClasses:[Class] = []
-        for semester in semesters {
-            let classes = semester.components(separatedBy: ",")
-            var index = 0
-            var currentClass:Class!
-            for c in classes {
-                if index == 0 {
-                    //Period
-                    var p = c;
-                    if p.first == "0"{
-                        p.removeFirst()
-                    }
-                    currentClass = Class(period: p)
-                    currentClass.semester = semesterIndex
-                    
-                }else if index == 1{
-                    //Class Name
-                    currentClass.name = c
-                }else if index == 2 {
-                    //Room Number
-                    var roomName = c
-                    if roomName.lowercased().contains("caf") {
-                        roomName = "Cafeteria"
-                    }
-                    for room in Global.rooms {
-                        if room.lowercased() == roomName.lowercased() {
-                            currentClass.location = room
-                            break
-                        }
-                    }
-                    
-                }else {
-                    //Teacher
-                    for s in Global.staff {
-                        if s.name.contains(c){
-                            currentClass.potentialStaff = s
-                            break
-                        }
-                    }
-                    if currentClass.name != "EMPTY" {
-                        allClasses.append(currentClass)
-                        semClasses[semesterIndex - 1].append(currentClass)
-                    }
-                    
-                }
-                index += 1
-                if index == 4 {
-                    index = 0
-                }
-            }
-            semesterIndex += 1
-        }
-        return allClasses
-    }
-    
-    struct SimpleSchedule: Codable {
-        let classes:[SimpleClass]
-    }
-    struct SimpleClass: Codable {
-        let name:String
-        let location:String
-        let period:String
-        let semester:Int
-        let staff:SimpleStaff
-        
-    }
-    struct SimpleStaff:Codable {
-        let name:String
-        
-    }
     
     func save(){
-        let s = convertToSimpleSchedule()
-        let data = try? JSONEncoder().encode(s)
-        if let d = data {
-            UserDefaults.standard.set(d, forKey: "schedule")
+        let delegate = UIApplication.shared.delegate as! AppDelegate
+        let context = delegate.persistentContainer.viewContext
+        for c in classes {
+            let entity = NSEntityDescription.entity(forEntityName: "ScheduleClass", in: context)
+            let newClass = NSManagedObject(entity: entity!, insertInto: context)
+            newClass.setValue(c.name, forKey: "name")
+            newClass.setValue(c.period, forKey: "period")
+            newClass.setValue(c.location, forKey: "room")
+            newClass.setValue(c.semester, forKey: "semester")
+            newClass.setValue(c.potentialStaff?.name ?? "", forKey: "teacher")
         }
+        do{
+            try context.save()
+            print("Saved record")
+        }catch {
+            print("Couldnt save record")
+        }
+        
     }
+    
     func convertToSimpleSchedule() -> SimpleSchedule {
         var simpleClasses:[SimpleClass] = []
         for c in classes {
@@ -145,3 +110,18 @@ class Schedule{
 }
 
 
+struct SimpleSchedule: Codable {
+    let classes:[SimpleClass]
+}
+struct SimpleClass: Codable {
+    let name:String
+    let location:String
+    let period:String
+    let semester:Int
+    let staff:SimpleStaff
+    
+}
+struct SimpleStaff:Codable {
+    let name:String
+    
+}

@@ -164,6 +164,7 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
             return
         }
         
+        
         let alert = UIAlertController(title: "Importing Schedule", message: nil, preferredStyle: .alert)
         
         
@@ -184,30 +185,49 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         
         present(alert, animated: true, completion: nil)
         
-        
-        
-        let infiniteCampus = InfinteCampusController(firstName: firstName, lastName: lastName, birthday: birthday, id: id) { (result, error) in
-            if let res = result {
-               print(res)
-                alert.dismiss(animated: true, completion: {
-                    let schedule = Schedule(res)
-                    schedule.save()
-                    self.delegate.displayScheudle(schedule)
-//                    self.dismiss(animated: true, completion: nil)
-                    self.navigationController?.popViewController(animated: true)
-                })
-            }else if let err = error {
-                alert.dismiss(animated: true, completion: {
-                    let errAlert = UIAlertController(title: "Error", message: err, preferredStyle: .alert)
-                    let action1 = UIAlertAction(title: "Ok", style: .default)
-                    errAlert.addAction(action1)
-                    self.present(errAlert, animated: true, completion: nil)
-                })
+        Network.getSchedule(firstName: firstName, lastName: lastName, birthday: birthday, id: id) { (schedule, error) in
+            DispatchQueue.main.async {
+                if let e = error {
+                    alert.dismiss(animated: true, completion: {
+                        let errAlert = UIAlertController(title: "Error", message: e, preferredStyle: .alert)
+                        let action1 = UIAlertAction(title: "Ok", style: .default)
+                        errAlert.addAction(action1)
+                        self.present(errAlert, animated: true, completion: nil)
+                    })
+                }else if let s = schedule {
+                    alert.dismiss(animated: true, completion: {
+                        let schedule = Schedule(s)
+                        schedule.save()
+                        self.delegate.displayScheudle(schedule)
+                        self.navigationController?.popViewController(animated: true)
+                    })
+                }
             }
             
         }
-        view.addSubview(infiniteCampus.view)
-        addChild(infiniteCampus)
+        
+//        let infiniteCampus = InfinteCampusController(firstName: firstName, lastName: lastName, birthday: birthday, id: id) { (result, error) in
+//            if let res = result {
+//               print(res)
+//                alert.dismiss(animated: true, completion: {
+//                    let schedule = Schedule(res)
+//                    schedule.save()
+//                    self.delegate.displayScheudle(schedule)
+////                    self.dismiss(animated: true, completion: nil)
+//                    self.navigationController?.popViewController(animated: true)
+//                })
+//            }else if let err = error {
+//                alert.dismiss(animated: true, completion: {
+//                    let errAlert = UIAlertController(title: "Error", message: err, preferredStyle: .alert)
+//                    let action1 = UIAlertAction(title: "Ok", style: .default)
+//                    errAlert.addAction(action1)
+//                    self.present(errAlert, animated: true, completion: nil)
+//                })
+//            }
+//
+//        }
+//        view.addSubview(infiniteCampus.view)
+//        addChild(infiniteCampus)
     }
     
 

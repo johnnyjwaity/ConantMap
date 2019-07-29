@@ -10,12 +10,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Conant Map/Controllers/MapViewController.swift"
-            timestampString = "580096648.274302"
+            timestampString = "586132185.811741"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1122"
-            endingLineNumber = "1122"
+            startingLineNumber = "1141"
+            endingLineNumber = "1141"
             landmarkName = "startNavigation(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Conant Map/Logic/Network.swift"
+            timestampString = "585788122.1965359"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "getSchedule(firstName:lastName:birthday:id:completionHandler:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

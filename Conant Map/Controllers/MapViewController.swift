@@ -12,6 +12,7 @@ import SceneKit
 import CoreLocation
 import MapKit
 import SystemConfiguration.CaptiveNetwork
+import CoreData
 
 class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDelegate, FloorSelectDelegate, RouteBarDelegate, OptionsDelegate, CLLocationManagerDelegate {
     
@@ -680,6 +681,36 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                 }
             }
         }
+        struct SimplePosition:Codable {
+            let x:Float
+            let y:Float
+        }
+        struct SimpleNode:Codable{
+            let name:String
+            let position:SimplePosition
+            let floor:Int
+            let connections:[String]
+            let rooms:[String]
+        }
+        var simpleNodes:[SimpleNode] = []
+        for i in 0..<Global.nodes.count {
+            for node in Global.nodes[i] {
+                let position = SimplePosition(x: node.position.x, y: node.position.z)
+                let simpleNode = SimpleNode(name: node.name, position: position, floor: i, connections: node.strConnections, rooms: node.rooms)
+                simpleNodes.append(simpleNode)
+            }
+        }
+        do{
+            let data = try JSONEncoder().encode(simpleNodes)
+            let jsonString = String(data: data, encoding: .utf8)!
+            let fileURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("nodes.json")
+            try jsonString.write(to: fileURL, atomically: true, encoding: .utf8)
+            print("Exported Nodes")
+        }catch {
+            print("Node Export Failure")
+        }
+        
+        
         // Following Code Exports FIle with Node Locations included
 //        var fileStr = ""
 //        var curFloor = 1
@@ -794,21 +825,9 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
     }
     // Retrieve staff information
     func initStaff(){
-        //GEt Staff file
-        var file = "fallback"
-        if let f = UserDefaults.standard.object(forKey: "staff") as? String {
-            file = f
-        }
-        StaffParser.parseStaff(file)
-        //Get classes into array from staff
-        for s in Global.staff {
-            for c in Global.classes {
-                if s.classIds.contains(c.id){
-                    s.classes.append(c)
-                    c.staff = s
-                }
-            }
-        }
+        let staffData = Staff.load()
+        Global.staff = staffData.staff
+        Global.classes = staffData.classes
     }
     // Load Mac Address Data into project
     func initMacAddresses(){
