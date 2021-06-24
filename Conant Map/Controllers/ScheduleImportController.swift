@@ -131,6 +131,7 @@ class ScheduleImportController: UIViewController, UITableViewDelegate, UITableVi
         print("Index \(indexPath.row)")
         if(indexPath.row != 3){
             tableView.deselectRow(at: indexPath, animated: true)
+            textFields[indexPath.row].becomeFirstResponder()
             return
         }
         print("BDay")

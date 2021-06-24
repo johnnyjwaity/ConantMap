@@ -135,6 +135,7 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
         //Monitor Mac Address Changes
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { (timer) in
             let wifiInfo = self.getWIFIInformation()
+            print("Wifi Info \(wifiInfo)")
             if wifiInfo["SSID"] == "D211-Mobile" {
                 var bssid = wifiInfo["BSSID"]!//String((wifiInfo["BSSID"]!).filter{!":".contains($0)})
                 var components = bssid.components(separatedBy: ":")
@@ -157,6 +158,8 @@ class MapViewController: UIViewController, SCNSceneRendererDelegate, OverlayDele
                             self.currentLocationFloor = macLoc.floor
                             let locationNode = self.gameScene.rootNode.childNode(withName: "location", recursively: false)!
 //                            if self.locationType != 0 {
+                            print("Curr Floor \(self.currentLocationFloor)")
+                            print("View Floor \(self.floorSelect.getFloor())")
                                 if self.floorSelect.getFloor() != self.currentLocationFloor {
                                     locationNode.opacity = 0
                                 }else{

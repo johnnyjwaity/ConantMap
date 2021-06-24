@@ -102,7 +102,6 @@
 		3D20FB15225F0AAB00B621D0 /* Intersections.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Intersections.json; sourceTree = "<group>"; };
 		3D20FB17225F101E00B621D0 /* Intersection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intersection.swift; sourceTree = "<group>"; };
 		3D20FB192265826A00B621D0 /* MacLocations.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MacLocations.json; sourceTree = "<group>"; };
-		3D338EB22186253800A4368E /* Conant Map.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Conant Map.entitlements"; sourceTree = "<group>"; };
 		3D338EB32189EB6200A4368E /* SettingsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsController.swift; sourceTree = "<group>"; };
 		3D3CAE3A20E8544900735610 /* RoomSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSearchDelegate.swift; sourceTree = "<group>"; };
 		3D3CAE3C20E86E9C00735610 /* DataHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHolder.swift; sourceTree = "<group>"; };
@@ -143,6 +142,7 @@
 		3DC37916217F9EC4005790CB /* OptionsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsController.swift; sourceTree = "<group>"; };
 		3DC37918217FE8FD005790CB /* OptionsDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionsDelegate.swift; sourceTree = "<group>"; };
 		3DC3791A2180182D005790CB /* QuickSelectCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickSelectCell.swift; sourceTree = "<group>"; };
+		3DD0017823CDFB7A00011245 /* Conant Map.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Conant Map.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -175,7 +175,6 @@
 		3D17EFBA20C5F599002AEBE2 /* Conant Map */ = {
 			isa = PBXGroup;
 			children = (
-				3D338EB22186253800A4368E /* Conant Map.entitlements */,
 				3D17EFBB20C5F599002AEBE2 /* AppDelegate.swift */,
 				3D5B785520CCA72F0048AEE7 /* Controllers */,
 				3D6802EE224C4FDC00F26C58 /* Views */,
@@ -190,6 +189,7 @@
 				3D17EFC620C5F599002AEBE2 /* LaunchScreen.storyboard */,
 				3D17EFC920C5F599002AEBE2 /* Info.plist */,
 				3D1ABEE822EAA05C00DFC55C /* Conant_Map.xcdatamodeld */,
+				3DD0017823CDFB7A00011245 /* Conant Map.entitlements */,
 			);
 			path = "Conant Map";
 			sourceTree = "<group>";
@@ -337,7 +337,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Johnny Waity";
 				TargetAttributes = {
 					3D17EFB720C5F599002AEBE2 = {
@@ -601,6 +601,7 @@
 				INFOPLIST_FILE = "Conant Map/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.johnnywaity.Conant-Map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -620,6 +621,7 @@
 				INFOPLIST_FILE = "Conant Map/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.johnnywaity.Conant-Map";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

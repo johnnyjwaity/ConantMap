@@ -27,11 +27,13 @@ class StaffParser{
                 print(error)
             }
         }
+        jsonString = jsonString.replacingOccurrences(of: "&amp;", with: "&")
         var jsonStaff:[JSONStaff] = []
         do {
             jsonStaff = try JSONDecoder().decode([JSONStaff].self, from: jsonString.data(using: .utf8)!)
         }catch{
             print("Decode Error")
+            print(error.localizedDescription)
         }
         for js in jsonStaff {
             let s = Staff(js.name)

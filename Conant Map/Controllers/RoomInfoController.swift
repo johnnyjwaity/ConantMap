@@ -73,6 +73,7 @@ class RoomInfoController: UIViewController {
             print(c.name)
             print(c.period)
             print(c.location)
+            print(c.staff)
             if let pList = sorted[c.period]{
                 var isDuplicate = false
                 for c1 in pList{

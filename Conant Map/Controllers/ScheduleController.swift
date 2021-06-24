@@ -106,6 +106,7 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         semesterControl.selectedSegmentIndex = currentSemester
         if schedule == nil {
             semesterControl.alpha = 0
+            tableView.alpha = 0
         }
         view.addSubview(semesterControl)
         semesterControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
@@ -186,10 +187,12 @@ class ScheduleController: UIViewController, UITableViewDelegate, UITableViewData
         if let s = schedule {
             newHeight = CGFloat(50 * s.semClasses[semesterControl.selectedSegmentIndex].count)
             semesterControl.alpha = 1
+            tableView.alpha = 1
             importButton.alpha = 0
             importButton.isEnabled = false
         }else{
             semesterControl.alpha = 0
+            tableView.alpha = 0
             importButton.alpha = 1
             importButton.isEnabled = true
         }

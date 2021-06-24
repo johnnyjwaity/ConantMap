@@ -25,7 +25,7 @@ class Network {
         
         print(password)
         
-        var request = URLRequest(url: URL(string: "https://map.johnnywaity.com:3001/schedule")!)
+        var request = URLRequest(url: URL(string: "https://api.conantmap.com/schedule")!)
         request.httpMethod = "POST"
         
         let data = ["username":username, "password":password]
@@ -68,38 +68,38 @@ class Network {
                             return
                         }
                     }else{
-                        let classes = [SimpleClass(name: "English", location: "221", period: "02", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "04", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "06", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "03", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "05", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "01", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "08", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "07", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "EB", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "02", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "04", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "06", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "03", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "05", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "01", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "08", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "07", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "EB", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
-                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-"))]
-                        completionHandler(SimpleSchedule(classes: classes), nil)
-//                        completionHandler(nil, "Please check your information.")
+//                        let classes = [SimpleClass(name: "English", location: "221", period: "02", semester: 1, staff: SimpleStaff(name: "Garbage Man")),
+//                                       SimpleClass(name: "English", location: "221", period: "04", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "06", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "03", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "05", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "01", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "08", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "07", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "EB", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "English", location: "221", period: "AC", semester: 1, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "02", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "04", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "06", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "03", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "05", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "01", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "08", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "07", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "EB", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-")),
+//                                       SimpleClass(name: "Science", location: "221", period: "AC", semester: 2, staff: SimpleStaff(name: "-"))]
+//                        completionHandler(SimpleSchedule(classes: classes), nil)
+                        completionHandler(nil, "Please check your information.")
                         return
                     }
                 }

@@ -10,6 +10,8 @@ import UIKit
 
 class FloorSelectController: UIViewController {
     
+    var currentFloor = 1
+    
     let floor1Button = UIButton(type: .system)
     let floor2Button = UIButton(type: .system)
     
@@ -64,19 +66,22 @@ class FloorSelectController: UIViewController {
     }
     
     func setFloor(_ floor:Int){
-        if (floor == 1 && floor1Button.backgroundColor != UIView().tintColor) || (floor == 2 && floor2Button.backgroundColor != UIView().tintColor) {
+        if(floor != currentFloor){
+            currentFloor = floor
             switchButton(floor1Button)
             switchButton(floor2Button)
             delegate.changeFloor(floor)
         }
+//        if (floor == 1 && floor1Button.backgroundColor != UIView().tintColor) || (floor == 2 && floor2Button.backgroundColor != UIView().tintColor) {
+//            switchButton(floor1Button)
+//            switchButton(floor2Button)
+//            delegate.changeFloor(floor)
+//        }
         
     }
     
     func getFloor() -> Int {
-        if floor1Button.backgroundColor == UIView().tintColor {
-            return 1
-        }
-        return 2
+        return currentFloor
     }
     
     func switchButton(_ button:UIButton){

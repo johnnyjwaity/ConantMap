@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import CoreData
 
 class SettingsController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    let fields:[[String]] = [["Display Room Labels", "Current Location"], ["Created By John Waity"]]
+    let fields:[[String]] = [["Display Room Labels", "Current Location", "Delete All Data"], ["Created By John Waity", "Version"]]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,14 +53,7 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return 2
-        case 1:
-            return 1
-        default:
-            return 0
-        }
+        return fields[section].count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -78,9 +72,13 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
             segment.selectedSegmentIndex = UserDefaults.standard.integer(forKey: "location")
             cell.accessoryView = segment
             segment.addTarget(self, action: #selector(changeLocationType(_:)), for: .valueChanged)
-        }
-        else if indexPath.section == 1 {
+        }else if indexPath.section == 0 && indexPath.row == 2 {
+            cell.textLabel?.textColor = UIColor.red
+        }else if indexPath.section == 1 && indexPath.row == 0 {
             cell.textLabel?.textColor = UIView().tintColor
+        }else if indexPath.section == 1 && indexPath.row == 1 {
+            cell.textLabel?.textColor = UIView().tintColor
+            cell.textLabel?.text = "Version \((Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "??")"
         }
         return cell
     }
@@ -90,8 +88,19 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
             guard let url = URL(string: "https://johnnywaity.com") else { return }
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
-        else if indexPath.section == 1 && indexPath.row == 1 {
-            //Open Bug Reporter
+        else if indexPath.section == 0 && indexPath.row == 2 {
+            //Delete All Data
+            let alert = UIAlertController(title: "Are You Sure?", message: "This will remove all schedule data saved.", preferredStyle: .alert)
+            let delete = UIAlertAction(title: "Delete", style: .destructive) { (action) in
+                self.deleteAllData()
+                let a2 = UIAlertController(title: "Deleted All Data", message: nil, preferredStyle: .alert)
+                a2.addAction(UIAlertAction(title: "Ok!", style: .default, handler: nil))
+                self.present(a2, animated: true, completion: nil)
+            }
+            let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(delete)
+            alert.addAction(cancel)
+            present(alert, animated: true, completion: nil)
         }
         tableView.deselectRow(at: indexPath, animated: true)
     }
@@ -110,5 +119,48 @@ class SettingsController: UIViewController, UITableViewDelegate, UITableViewData
     func changeLocationType(_ sender:UISegmentedControl) {
         UserDefaults.standard.set(sender.selectedSegmentIndex, forKey: "location")
         NotificationCenter.default.post(name: Notification.Name("ChangeLocationType"), object: nil)
+    }
+    
+    func deleteAllData(){
+        var appDelegate:AppDelegate? = nil
+        if Thread.isMainThread {
+            appDelegate = (UIApplication.shared.delegate as! AppDelegate)
+        }else{
+            DispatchQueue.main.sync {
+                appDelegate = (UIApplication.shared.delegate as! AppDelegate)
+            }
+        }
+        guard let delegate = appDelegate else {print("No Delegate"); return}
+        let context = delegate.persistentContainer.viewContext
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "StaffPerson")
+        request.returnsObjectsAsFaults = false
+        do{
+            let result = (try context.fetch(request)) as! [StaffPerson]
+            for person in result {
+                if let staffclasses = person.classes?.array as? [StaffClass] {
+                    for staffclass in staffclasses {
+                        context.delete(staffclass)
+                    }
+                }
+                context.delete(person)
+            }
+            try context.save()
+            print("Old Staff Data Deleted")
+        }catch{
+            print("Core Data Staff Delete Failed")
+        }
+        
+        let scheduleRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ScheduleClass")
+        scheduleRequest.returnsObjectsAsFaults = false
+        do{
+            let result = (try context.fetch(request)) as! [ScheduleClass]
+            for sc in result {
+                
+                context.delete(sc)
+            }
+            try context.save()
+        }catch {
+            print("Schedule Delete Failed")
+        }
     }
 }
